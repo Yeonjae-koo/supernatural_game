@@ -22,10 +22,10 @@ namespace BeforeJericho
             _projectileTimer = new float[_projectiles.Length]; _projectileVelocity = new Vector3[_projectiles.Length]; _projectileState = new int[_projectiles.Length];
         }
         // Restores the whole haunt from chapter state; clears transient lines and throws.
-        public void Apply(int manifestations, bool lockdown)
+        public void Apply(int manifestations, bool lockdown, int first = 0)
         {
             if(_saltUntil == null) Awake();
-            for(int i = 0; i < _manifestations.Length; i++) { if(i < manifestations) _manifestations[i].Activate(); else _manifestations[i].Deactivate(); }
+            for(int i = 0; i < _manifestations.Length; i++) { if(i >= first && i < first + manifestations) _manifestations[i].Activate(); else _manifestations[i].Deactivate(); }
             for(int i = 0; i < _saltLines.Length; i++) { _saltUntil[i] = 0; _saltLines[i].gameObject.SetActive(false); }
             for(int i = 0; i < _projectiles.Length; i++) { _projectileState[i] = 0; _projectiles[i].gameObject.SetActive(false); }
             SaltCharges = MaxSalt; _lockdown = lockdown; _throwTimer = 3; _nextSource = 0;

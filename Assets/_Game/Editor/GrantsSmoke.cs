@@ -31,7 +31,7 @@ namespace BeforeJericho.Editor
                 var c=s.player.GetComponent<HunterCombat>(); var ch=s.grants; var p=ch.Poltergeist;
                 HuntInteractable Item(HuntItem kind)=>Array.Find(s.items,x=>x.kind==kind);
                 async Task Go(Vector3 point) { s.player.Teleport(point); await Task.Delay(150); }
-                GameObject Scene(string name) { foreach(var t in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include,FindObjectsSortMode.None)) if(t.name==name) return t.gameObject; return null; }
+                GameObject Scene(string name) { foreach(var t in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)) if(t.name==name) return t.gameObject; return null; }
                 foreach(var kind in new[]{HuntItem.LornaHayes,HuntItem.MotelGuest,HuntItem.ImpalaTrunk,HuntItem.GuestLedger,HuntItem.RenovationBlueprint,HuntItem.OldMotelPhoto,HuntItem.MaintenanceNote,HuntItem.WallCavity,HuntItem.WallDecoy,HuntItem.Anchor,HuntItem.JohnPhoneRecord,HuntItem.GrantsExit}) Check(Item(kind),"Scene binds "+kind);
                 Check(p.Manifestations.Length==2 && p.ActiveCount==0,"Two bounded manifestations start dormant");
                 Check(HuntSave.TryLoad(slot,out var initial,GrantsChapter.ChapterId)&&HuntSave.Valid(initial),"CH04 initial snapshot validates in its isolated slot");

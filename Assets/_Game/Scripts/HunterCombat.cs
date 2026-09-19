@@ -52,9 +52,9 @@ namespace BeforeJericho
         public void SetLighter(bool on) { if(lighter) lighter.enabled = on && !(motor.CanAim && motor.Input.Aim); }
         public void Equip(int index)
         {
-            bool kit = session.grants && session.grants.HasKit;
-            if(index == 2 && !session.Has(HuntItem.Iron) && !kit) { session.Notify(session.grants ? "Take the iron rod from the Impala trunk." : "Find the iron poker in the antique shop."); return; }
-            if(index == 3 && !kit) { if(session.grants) session.Notify("Take the salt from the Impala trunk."); return; }
+            bool kit = session.HasSpiritKit;
+            if(index == 2 && !session.Has(HuntItem.Iron) && !kit) { session.Notify(session.Haunt ? "Take the iron rod from the Impala trunk." : "Find the iron poker in the antique shop."); return; }
+            if(index == 3 && !kit) { if(session.Haunt) session.Notify("Take the salt from the Impala trunk."); return; }
             Weapon = index; _reload = 0;
             if(handgun) handgun.SetActive(index == 0); if(knife) knife.SetActive(index == 1); if(iron) iron.SetActive(index == 2);
         }
@@ -62,7 +62,7 @@ namespace BeforeJericho
         public void Attack()
         {
             if(!session.Playing || motor.IsCrawling || _cooldown > 0 || Reloading) return;
-            if(Weapon == 3) { _cooldown = .8f; session.grants.Poltergeist.PourSalt(transform.position, Quaternion.Euler(0, view.Yaw, 0) * Vector3.forward); return; }
+            if(Weapon == 3) { _cooldown = .8f; session.Haunt.PourSalt(transform.position, Quaternion.Euler(0, view.Yaw, 0) * Vector3.forward); return; }
             if(Weapon == 0)
             {
                 if(!motor.Input.Aim) { session.Notify("Hold RMB to aim."); return; }
@@ -78,7 +78,7 @@ namespace BeforeJericho
             else
             {
                 _cooldown = .65f; if(session.sound) session.sound.PlayCue(85, .12f, .12f);
-                if(session.grants) { session.grants.Poltergeist.Melee(transform.position + Vector3.up * motor.InteractionHeight, transform.forward, Weapon == 2); return; }
+                if(session.Haunt) { session.Haunt.Melee(transform.position + Vector3.up * motor.InteractionHeight, transform.forward, Weapon == 2); return; }
                 if(session.eastTexas) { session.eastTexas.Director.KnifeAttack(transform.position + Vector3.up * motor.InteractionHeight, transform.forward); return; }
                 if(session.chapter && session.chapter.Rawhead)
                 {
