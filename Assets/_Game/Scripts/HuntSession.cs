@@ -7,7 +7,8 @@ namespace BeforeJericho
     {
         public AtchafalayaChapter chapter;
         public EastTexasChapter eastTexas;
-        string ActiveChapterId => eastTexas ? EastTexasChapter.ChapterId : chapter ? AtchafalayaChapter.ChapterId : "";
+        public GrantsChapter grants;
+        string ActiveChapterId => grants ? GrantsChapter.ChapterId : eastTexas ? EastTexasChapter.ChapterId : chapter ? AtchafalayaChapter.ChapterId : "";
         public HuntDefinition definition; public HunterMotor player; public GhostHunt ghost; public HuntAudio sound; public HuntHUD hud;
         public HuntInteractable[] items; public GameObject saltCircle, fire;
         public string saveSlot = "before-jericho-prologue-v1";
@@ -25,12 +26,13 @@ namespace BeforeJericho
         public bool CanContinue => HuntSave.TryLoad(saveSlot, out _, ActiveChapterId);
         float _messageUntil, _lastDamage = -10; bool _firstGhost, _finalGhost; HuntSnapshot _checkpoint;
         HunterCombat _combat;
-        public string Objective => eastTexas ? eastTexas.Objective : chapter ? chapter.Objective : Resolved ? "RETURN TO THE IMPALA" : Has(HuntItem.Record) && Has(HuntItem.Salt) ? "RETURN TO THE CELLAR / SALT AND BURN THE NECKLACE" : (Evidence & 15) == 15 ? "ST. MARAIS / FIND THE BURIAL RECORD AND SALT" : "CHECK THE ANTIQUE SHOP / FIND FOUR CLUES";
+        public string Objective => grants ? grants.Objective : eastTexas ? eastTexas.Objective : chapter ? chapter.Objective : Resolved ? "RETURN TO THE IMPALA" : Has(HuntItem.Record) && Has(HuntItem.Salt) ? "RETURN TO THE CELLAR / SALT AND BURN THE NECKLACE" : (Evidence & 15) == 15 ? "ST. MARAIS / FIND THE BURIAL RECORD AND SALT" : "CHECK THE ANTIQUE SHOP / FIND FOUR CLUES";
         void Start()
         {
             _combat = player.GetComponent<HunterCombat>();
             if(chapter && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch02-atchafalaya-v1";
             if(eastTexas && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch03-east-texas-v1";
+            if(grants && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch04-grants-v1";
             ApplyInput();
         }
         void Update()
@@ -42,7 +44,7 @@ namespace BeforeJericho
                 else if(player.Input.Journal && !Paused) { Journal = !Journal; ApplyInput(); }
             }
             if(Playing && player.transform.position.y < -4) Damage(100);
-            if(!eastTexas && !chapter && Playing && !_finalGhost && !Resolved && Has(HuntItem.Record) && Has(HuntItem.Salt) && player.transform.position.z > 54)
+            if(!grants && !eastTexas && !chapter && Playing && !_finalGhost && !Resolved && Has(HuntItem.Record) && Has(HuntItem.Salt) && player.transform.position.z > 54)
             {
                 _finalGhost = true; SaveCheckpoint("Final hunt", new Vector3(0, .1f, 53));
                 ghost.Activate(new Vector3(2,1.3f,64)); Notify("Salt the necklace. Use iron to buy time, then hold E with the lighter.");
@@ -58,19 +60,20 @@ namespace BeforeJericho
         public void NewGame()
         {
             Evidence = 0; HP = 100; Resolved = Completed = Paused = Journal = false; Menu = false;
-            BurnProgress = 0; _firstGhost = _finalGhost = false; if(eastTexas) eastTexas.NewGame(); else if(chapter) chapter.NewGame(); else { ghost.ResetGhost(false); saltCircle.SetActive(false); fire.SetActive(false); }
-            player.Teleport(eastTexas ? eastTexas.ArrivalPosition : chapter ? chapter.ArrivalPosition : new Vector3(0,.1f,3)); player.view.Face(0); _combat.Restore(7,eastTexas ? 49 : 21);
-            SaveCheckpoint(eastTexas ? "Mercy Creek arrival" : chapter ? "Belle Rive arrival" : "Shop entrance", player.transform.position); ApplyInput(); Notify(eastTexas ? "EAST TEXAS / MERCY CREEK\nRadio: Cemetery vandalism reported.\nDean: That's subtle. Investigate the graves and funeral home." : chapter ? "ATCHAFALAYA BASIN / BELLE RIVE\nMissing children. Mud on the windowsills. Ask Mara at the diner." : "SAINT MERCY DISTRICT / 11:17 PM\nJohn can wait. Finish the job first.");
+            BurnProgress = 0; _firstGhost = _finalGhost = false; if(grants) grants.NewGame(); else if(eastTexas) eastTexas.NewGame(); else if(chapter) chapter.NewGame(); else { ghost.ResetGhost(false); saltCircle.SetActive(false); fire.SetActive(false); }
+            player.Teleport(grants ? grants.ArrivalPosition : eastTexas ? eastTexas.ArrivalPosition : chapter ? chapter.ArrivalPosition : new Vector3(0,.1f,3)); player.view.Face(0); _combat.Restore(7,grants ? 28 : eastTexas ? 49 : 21);
+            SaveCheckpoint(grants ? "Sunset Star parking lot" : eastTexas ? "Mercy Creek arrival" : chapter ? "Belle Rive arrival" : "Shop entrance", player.transform.position); ApplyInput(); Notify(grants ? "GRANTS, NEW MEXICO / ROUTE 66\nSunset Star Motor Court. Guests keep dying in the same place.\nTake the kit from the trunk and talk to the manager." : eastTexas ? "EAST TEXAS / MERCY CREEK\nRadio: Cemetery vandalism reported.\nDean: That's subtle. Investigate the graves and funeral home." : chapter ? "ATCHAFALAYA BASIN / BELLE RIVE\nMissing children. Mud on the windowsills. Ask Mara at the diner." : "SAINT MERCY DISTRICT / 11:17 PM\nJohn can wait. Finish the job first.");
         }
         public void ContinueGame() { if(HuntSave.TryLoad(saveSlot, out var s, ActiveChapterId)) { _checkpoint = s; RestoreCheckpoint(); } else Notify("No valid checkpoint found."); }
         public void Resume() { Paused = Journal = false; ApplyInput(); }
         public void MainMenu() { Menu = true; Paused = Journal = false; ApplyInput(); }
         public void SetJournal(bool value) { Journal = value; ApplyInput(); }
-        public bool Has(HuntItem kind) => !eastTexas && !chapter && kind >= HuntItem.Mirror && kind <= HuntItem.Salt && (Evidence & (1 << (int)kind)) != 0;
+        public bool Has(HuntItem kind) => !grants && !eastTexas && !chapter && kind >= HuntItem.Mirror && kind <= HuntItem.Salt && (Evidence & (1 << (int)kind)) != 0;
         public void Notify(string message) { Message = message; _messageUntil = Time.unscaledTime + 5; }
         public bool Interact(HuntInteractable item)
         {
             if(!Playing || !item || !item.Available(this)) return false;
+            if(grants) return grants.Interact(item);
             if(eastTexas) return eastTexas.Interact(item);
             if(chapter) return chapter.Interact(item);
             if(item.kind == HuntItem.Exit)
@@ -97,6 +100,13 @@ namespace BeforeJericho
         }
         public void AdvanceBurn(bool holding, float dt)
         {
+            if(grants)
+            {
+                if(!Playing || Resolved || !holding || !grants.AnchorSecured || Time.time - _lastDamage < .7f) return;
+                BurnProgress = Mathf.Min(definition.ignitionSeconds, BurnProgress + dt);
+                if(BurnProgress >= definition.ignitionSeconds) grants.AnchorBurned();
+                return;
+            }
             if(eastTexas || chapter || !Playing || Resolved || !holding || !saltCircle.activeSelf || !Has(HuntItem.Iron) || !Has(HuntItem.Record) || !Has(HuntItem.Salt) || !_combat.LighterOn || Time.time - _lastDamage < .7f) return;
             BurnProgress = Mathf.Min(definition.ignitionSeconds, BurnProgress + dt);
             if(BurnProgress >= definition.ignitionSeconds)
@@ -108,13 +118,13 @@ namespace BeforeJericho
         public void Damage(int amount)
         {
             if(!Playing) return; HP = Mathf.Max(0, HP - amount); _lastDamage = Time.time;
-            BurnProgress = Mathf.Max(0, BurnProgress - 1); Notify(eastTexas ? "Keep moving. Head hits stagger ghouls; knives finish staggered targets." : chapter ? "Keep moving. Guns and knives only stagger Rawhead." : "It is too close. Disperse it with iron [3 + LMB].");
+            BurnProgress = Mathf.Max(0, BurnProgress - 1); Notify(grants ? "Iron [3 + LMB] disperses it. Salt [4 + LMB] holds a line. Keep moving." : eastTexas ? "Keep moving. Head hits stagger ghouls; knives finish staggered targets." : chapter ? "Keep moving. Guns and knives only stagger Rawhead." : "It is too close. Disperse it with iron [3 + LMB].");
             if(HP == 0) ApplyInput();
         }
         public void SaveCheckpoint(string name, Vector3 point)
         {
             _checkpoint = new HuntSnapshot { evidence = Evidence, hp = HP, ammo = _combat.Ammo, reserve = _combat.Reserve, x = point.x, y = point.y, z = point.z, resolved = Resolved, checkpoint = name };
-            if(eastTexas) eastTexas.Capture(_checkpoint); else if(chapter) chapter.Capture(_checkpoint);
+            if(grants) grants.Capture(_checkpoint); else if(eastTexas) eastTexas.Capture(_checkpoint); else if(chapter) chapter.Capture(_checkpoint);
             try { HuntSave.Write(saveSlot, _checkpoint); } catch(Exception e) { Notify("Checkpoint kept in memory; disk save failed."); Debug.LogWarning("Checkpoint save failed: " + e.Message); }
         }
         public void RestoreCheckpoint()
@@ -123,7 +133,8 @@ namespace BeforeJericho
             Evidence = _checkpoint.evidence; HP = _checkpoint.hp; Resolved = _checkpoint.resolved;
             Menu = Paused = Journal = Completed = false; BurnProgress = 0;
             _firstGhost = (Evidence & 15) == 15; _finalGhost = false;
-            if(eastTexas) { eastTexas.Restore(_checkpoint); Completed = eastTexas.TransitionReady; }
+            if(grants) { grants.Restore(_checkpoint); Completed = grants.TransitionReady; }
+            else if(eastTexas) { eastTexas.Restore(_checkpoint); Completed = eastTexas.TransitionReady; }
             else if(chapter) { chapter.Restore(_checkpoint); Completed = chapter.TransitionReady; }
             else { ghost.ResetGhost(Resolved); saltCircle.SetActive(Resolved); fire.SetActive(Resolved); }
             player.Teleport(new Vector3(_checkpoint.x,_checkpoint.y,_checkpoint.z)); player.view.Face(0); _combat.Restore(_checkpoint.ammo,_checkpoint.reserve);
@@ -145,6 +156,13 @@ namespace BeforeJericho
             if(!chapter || !Completed) return;
             const string scene = "SCN_EastTexas_Slice";
             if(!Application.CanStreamedLevelBeLoaded(scene)) { Notify("CH03 scene is missing from Build Profiles."); return; }
+            Time.timeScale = 1; SceneManager.LoadScene(scene);
+        }
+        public void TravelToGrants()
+        {
+            if(!eastTexas || !Completed) return;
+            const string scene = "SCN_GrantsNM_Slice";
+            if(!Application.CanStreamedLevelBeLoaded(scene)) { Notify("CH04 scene is missing from Build Profiles."); return; }
             Time.timeScale = 1; SceneManager.LoadScene(scene);
         }
         void OnDestroy() { Time.timeScale = 1; Cursor.lockState = CursorLockMode.None; Cursor.visible = true; }

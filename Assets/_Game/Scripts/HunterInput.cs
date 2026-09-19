@@ -5,7 +5,7 @@ namespace BeforeJericho
     public sealed class HunterInput : MonoBehaviour
     {
         InputActionMap _game, _ui;
-        InputAction _move, _look, _sprint, _aim, _fire, _interact, _reload, _lighter, _one, _two, _three, _pause, _journal, _crouch, _crawl;
+        InputAction _move, _look, _sprint, _aim, _fire, _interact, _reload, _lighter, _one, _two, _three, _four, _pause, _journal, _crouch, _crawl;
         public Vector2 Move => _move.ReadValue<Vector2>();
         public Vector2 Look => _look.ReadValue<Vector2>();
         public bool Crouch => _crouch.WasPressedThisFrame();
@@ -17,7 +17,7 @@ namespace BeforeJericho
         public bool HoldInteract => _interact.IsPressed();
         public bool Reload => _reload.WasPressedThisFrame();
         public bool Lighter => _lighter.WasPressedThisFrame();
-        public int Equip => _one.WasPressedThisFrame() ? 0 : _two.WasPressedThisFrame() ? 1 : _three.WasPressedThisFrame() ? 2 : -1;
+        public int Equip => _one.WasPressedThisFrame() ? 0 : _two.WasPressedThisFrame() ? 1 : _three.WasPressedThisFrame() ? 2 : _four.WasPressedThisFrame() ? 3 : -1;
         public bool Pause => _pause.WasPressedThisFrame();
         public bool Journal => _journal.WasPressedThisFrame();
         void Awake()
@@ -31,7 +31,7 @@ namespace BeforeJericho
             _sprint = Button("Sprint", "<Keyboard>/leftShift"); _aim = Button("Aim", "<Mouse>/rightButton");
             _fire = Button("Attack", "<Mouse>/leftButton"); _interact = Button("Interact", "<Keyboard>/e");
             _reload = Button("Reload", "<Keyboard>/r"); _lighter = Button("Lighter", "<Keyboard>/f");
-            _one = Button("Handgun", "<Keyboard>/digit1"); _two = Button("Knife", "<Keyboard>/digit2"); _three = Button("Iron", "<Keyboard>/digit3");
+            _one = Button("Handgun", "<Keyboard>/1"); _two = Button("Knife", "<Keyboard>/2"); _three = Button("Iron", "<Keyboard>/3"); _four = Button("Salt", "<Keyboard>/4");
             _pause = _ui.AddAction("Pause", InputActionType.Button, "<Keyboard>/escape");
             _journal = _ui.AddAction("Journal", InputActionType.Button, "<Keyboard>/tab");
         }
