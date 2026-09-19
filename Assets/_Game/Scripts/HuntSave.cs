@@ -18,6 +18,7 @@ namespace BeforeJericho
         {
             if(s == null || s.hp <= 0 || s.hp > 100 || s.ammo < 0 || s.ammo > 7 || s.reserve < 0 || float.IsNaN(s.x) || float.IsInfinity(s.x) || Mathf.Abs(s.x) >= 100 || !(s.y > -5 && s.y < 20)) return false;
             if(s.version == 1) return string.IsNullOrEmpty(s.chapterId) && s.evidence >= 0 && s.evidence < 128 && s.z > -5 && s.z < 100 && (!s.resolved || (s.evidence & 127) == 127);
+            if(s.version == 6) return s.z > -5 && s.z < 200 && StanfordChapter.ValidSnapshot(s);
             if(s.version == 5) return s.z > -5 && s.z < 200 && WinslowChapter.ValidSnapshot(s);
             if(s.version == 4) return s.z > -5 && s.z < 200 && GrantsChapter.ValidSnapshot(s);
             if(s.version == 3) return s.z > -5 && s.z < 200 && EastTexasChapter.ValidSnapshot(s);

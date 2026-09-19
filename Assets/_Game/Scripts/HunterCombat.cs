@@ -62,6 +62,7 @@ namespace BeforeJericho
         public void Attack()
         {
             if(!session.Playing || motor.IsCrawling || _cooldown > 0 || Reloading) return;
+            if(session.stanford) { session.Notify("No hunting here. Not tonight."); return; }
             if(Weapon == 3) { _cooldown = .8f; session.Haunt.PourSalt(transform.position, Quaternion.Euler(0, view.Yaw, 0) * Vector3.forward); return; }
             if(Weapon == 0)
             {

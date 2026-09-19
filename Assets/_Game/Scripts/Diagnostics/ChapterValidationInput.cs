@@ -60,7 +60,7 @@ namespace BeforeJericho
                 command = _last, step = _command == null ? -1 : _step,
                 hp = _session.HP, evidence = _session.Evidence, power = ch ? ch.PowerStep : 0,
                 scene = SceneManager.GetActiveScene().name,
-                chapterId = _session.winslow ? WinslowChapter.ChapterId : _session.grants ? GrantsChapter.ChapterId : tx ? EastTexasChapter.ChapterId : ch ? AtchafalayaChapter.ChapterId : "PROLOGUE",
+                chapterId = _session.stanford ? StanfordChapter.ChapterId : _session.winslow ? WinslowChapter.ChapterId : _session.grants ? GrantsChapter.ChapterId : tx ? EastTexasChapter.ChapterId : ch ? AtchafalayaChapter.ChapterId : "PROLOGUE",
                 saveSlot = _session.saveSlot, phase = phase, stance = p.Stance.ToString(),
                 target = c.Target ? c.Target.kind.ToString() : "", prompt = c.Prompt,
                 objective = _session.Objective, checkpoint = _session.CheckpointName, message = _session.Message,
