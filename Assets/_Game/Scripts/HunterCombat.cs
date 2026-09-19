@@ -53,7 +53,7 @@ namespace BeforeJericho
         public void Equip(int index)
         {
             bool kit = session.HasSpiritKit;
-            if(index == 2 && !session.Has(HuntItem.Iron) && !kit) { session.Notify(session.Haunt ? "Take the iron rod from the Impala trunk." : "Find the iron poker in the antique shop."); return; }
+            if(index == 2 && !session.Has(HuntItem.Iron) && !kit) { if(session.Haunt) session.Notify("Take the iron rod from the Impala trunk."); else if(session.ghost) session.Notify("Find the iron poker in the antique shop."); return; }
             if(index == 3 && !kit) { if(session.Haunt) session.Notify("Take the salt from the Impala trunk."); return; }
             Weapon = index; _reload = 0;
             if(handgun) handgun.SetActive(index == 0); if(knife) knife.SetActive(index == 1); if(iron) iron.SetActive(index == 2);

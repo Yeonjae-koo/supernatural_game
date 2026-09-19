@@ -44,7 +44,9 @@ namespace BeforeJericho.Editor
                 Vector3 delta=new Vector3(x,session.player.transform.position.y,z)-session.player.transform.position;
                 if(delta.magnitude<tolerance) break;
                 if(Time.realtimeSinceStartup-start>100) throw new Exception("Walk timeout "+Stage+" at "+session.player.transform.position);
-                var keys=new KeyboardState(); Steer(ref keys,delta); Queue(keys);
+                // Face the destination with mouse look so 8-way WASD steering cannot accumulate a heading error.
+                float yawError=Mathf.DeltaAngle(session.player.view.Yaw,Mathf.Atan2(delta.x,delta.z)*Mathf.Rad2Deg);
+                var keys=new KeyboardState(); Steer(ref keys,delta); Queue(keys,new Vector2(Mathf.Clamp(yawError*.5f,-25,25)/session.player.view.sensitivity,0));
                 await Task.Delay(90);
                 float moved=Vector3.Distance(previous,session.player.transform.position);
                 stuck=moved<.004f?stuck+.09f:0; previous=session.player.transform.position;

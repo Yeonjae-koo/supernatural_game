@@ -4,7 +4,7 @@ namespace BeforeJericho
     // The building itself: manifestations, salt lines and lockdown throws. Fixed pools, no runtime spawning.
     public sealed class PoltergeistHunt : MonoBehaviour
     {
-        const int MaxSalt = 3; const float SaltSeconds = 14, SaltRadius = 1.5f;
+        const int MaxSalt = 3; const float SaltSeconds = 14, SaltHalfWidth = 1.2f, SaltBand = .35f;
         [SerializeField] HuntSession _session;
         [SerializeField] ManifestationHunt[] _manifestations;
         [SerializeField] Transform[] _saltLines, _throwSources, _projectiles;
@@ -40,15 +40,18 @@ namespace BeforeJericho
             _saltLines[slot].gameObject.SetActive(true); _saltUntil[slot] = Time.time + SaltSeconds; SaltCharges--;
             _session.Notify("Salt line poured. It will hold for a little while. " + SaltCharges + " left.");
         }
-        // ponytail: circular line footprint, swap for segment distance if players exploit the line ends.
+        // A salt line is a 2.4 m segment: nothing may cross it or step into the thin band in front of it. Its ends can be walked around.
         public bool SaltBlocks(Vector3 from, Vector3 to)
         {
             for(int i = 0; i < _saltLines.Length; i++)
             {
-                if(!_saltLines[i].gameObject.activeSelf) continue;
-                Vector3 line = _saltLines[i].position; line.y = to.y = from.y = 0;
-                float d = Vector3.Distance(to, line);
-                if(d < SaltRadius && d < Vector3.Distance(from, line)) return true;
+                var line = _saltLines[i];
+                if(!line.gameObject.activeSelf) continue;
+                Quaternion inverse = Quaternion.Inverse(line.rotation);
+                Vector3 a = inverse * (from - line.position), b = inverse * (to - line.position);
+                if(Mathf.Abs(b.x) > SaltHalfWidth + SaltBand) continue;
+                bool crosses = a.z * b.z < 0, entersBand = Mathf.Abs(b.z) < SaltBand && Mathf.Abs(b.z) < Mathf.Abs(a.z);
+                if(crosses || entersBand) return true;
             }
             return false;
         }

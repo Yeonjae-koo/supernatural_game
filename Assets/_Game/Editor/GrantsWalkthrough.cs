@@ -44,7 +44,9 @@ namespace BeforeJericho.Editor
                 Vector3 delta=new Vector3(x,session.player.transform.position.y,z)-session.player.transform.position;
                 if(delta.magnitude<tolerance) break;
                 if(Time.realtimeSinceStartup-start>100) throw new Exception("Walk timeout "+Stage+" at "+session.player.transform.position);
-                var keys=new KeyboardState(); Steer(ref keys,delta); Queue(keys);
+                // Face the destination with mouse look so 8-way WASD steering cannot accumulate a heading error.
+                float yawError=Mathf.DeltaAngle(session.player.view.Yaw,Mathf.Atan2(delta.x,delta.z)*Mathf.Rad2Deg);
+                var keys=new KeyboardState(); Steer(ref keys,delta); Queue(keys,new Vector2(Mathf.Clamp(yawError*.5f,-25,25)/session.player.view.sensitivity,0));
                 await Task.Delay(90);
                 float moved=Vector3.Distance(previous,session.player.transform.position);
                 stuck=moved<.004f?stuck+.09f:0; previous=session.player.transform.position;
@@ -118,7 +120,13 @@ namespace BeforeJericho.Editor
             {
                 Live();
                 if(Time.realtimeSinceStartup-start>90) throw new Exception("Burn timeout progress="+session.BurnProgress+" HP="+session.HP);
-                if(session.HP<lastHp) hits++; lastHp=session.HP;
+                if(session.HP<lastHp)
+                {
+                    hits++; var near=Threat(4); string flying="";
+                    for(int i=0;i<2;i++) if(root.Find("Thrown object "+(i+1)).gameObject.activeSelf) flying+=" throw"+(i+1)+"@"+(root.Find("Thrown object "+(i+1)).position-session.player.transform.position).magnitude.ToString("F1");
+                    report.AppendLine("HIT: -"+(lastHp-session.HP)+" HP="+session.HP+" near="+(near?near.name+"@"+(near.transform.position-session.player.transform.position).magnitude.ToString("F1"):"none")+flying+" dodging="+(Time.realtimeSinceStartup<dodgeUntil)+" pos="+session.player.transform.position);
+                }
+                lastHp=session.HP;
                 if(Threat(2.8f)) { await FightNear(); continue; }
                 bool salted=false; for(int i=1;i<=3;i++) salted|=root.Find("Salt line "+i).gameObject.activeSelf;
                 if(!salted && session.grants.Poltergeist.SaltCharges>0) { await PourSaltSouth(); continue; }

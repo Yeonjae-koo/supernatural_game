@@ -60,7 +60,9 @@ namespace BeforeJericho.Editor
                 mf.Hit(false); Check(mf.Active&&!mf.Dispersed,"Bullets and knives cannot harm a manifestation");
                 mf.Hit(true); Check(mf.Active&&mf.Dispersed,"Iron disperses it without a permanent kill");
                 await Press(k,Key.Digit4); await Click(m); Check(p.SaltCharges==2&&Scene("Salt line 1").activeSelf,"Salt input pours a bounded line");
-                Vector3 line=Scene("Salt line 1").transform.position; Check(p.SaltBlocks(line+Vector3.forward*3,line+Vector3.forward*1.2f)&&!p.SaltBlocks(line+Vector3.forward*1.2f,line+Vector3.forward*3),"Salt blocks approach but not retreat");
+                var saltLine=Scene("Salt line 1").transform; Vector3 line=saltLine.position, across=saltLine.forward, along=saltLine.right;
+                Check(p.SaltBlocks(line+across*.5f,line-across*.5f)&&p.SaltBlocks(line-across*1f,line-across*.2f),"Salt line blocks crossing and stepping onto it");
+                Check(!p.SaltBlocks(line-across*.5f,line-across*2)&&!p.SaltBlocks(line+along*2+across*.5f,line+along*2-across*.5f),"Salt line allows retreat and passing beyond its ends");
                 await Press(k,Key.Digit1);
                 s.Heal(); await Go(new Vector3(11,.25f,58)); Check(ch.EventFired(3),"Room 6 mirror event fires after evidence");
                 foreach(var kind in new[]{HuntItem.OldMotelPhoto,HuntItem.MaintenanceNote}) Check(s.Interact(Item(kind)),"Collect "+kind);
