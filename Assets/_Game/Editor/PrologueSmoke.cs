@@ -70,6 +70,7 @@ namespace BeforeJericho.Editor
                 while(!session.Resolved && Time.realtimeSinceStartup<deadline)
                 {
                     await Task.Delay(300);
+                    Keys(keyboard,Key.E); // same held state again: survives an Editor-side virtual device reset, never a new press
                     if(session.ghost.Stagger<1) session.ghost.Hit(true);
                 }
                 Keys(keyboard);await Task.Delay(100);

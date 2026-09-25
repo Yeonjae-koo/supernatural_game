@@ -7,9 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace BeforeJericho.Editor
@@ -48,6 +46,7 @@ namespace BeforeJericho.Editor
             Session.items = Items.ToArray();
             Hud();
             Atmosphere();
+            HdrpAuthoring.FinishScene("SCN_Stanford_Slice", false);
             EditorSceneManager.SaveScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene(), ScenePath);
             var build = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
             if(!build.Exists(scene => scene.path == ScenePath)) build.Add(new EditorBuildSettingsScene(ScenePath, true));
@@ -160,37 +159,12 @@ namespace BeforeJericho.Editor
             motor.session = Session; combat.session = Session; combat.motor = motor; Session.player = motor;
             var camera = new GameObject("OTS Camera"); camera.tag = "MainCamera";
             var lens = camera.AddComponent<Camera>(); camera.AddComponent<AudioListener>(); lens.nearClipPlane = .05f; lens.farClipPlane = 170; lens.clearFlags = CameraClearFlags.SolidColor; lens.backgroundColor = new Color(.03f, .03f, .05f);
-            camera.AddComponent<UniversalAdditionalCameraData>().renderPostProcessing = true;
             var shoulder = camera.AddComponent<ShoulderCamera>(); shoulder.player = motor; shoulder.session = Session; shoulder.lens = lens;
             motor.view = shoulder; combat.view = shoulder;
         }
 
         static void Hud()
-        {
-            var root = new GameObject("Hunt HUD", typeof(RectTransform));
-            var canvas = root.AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            var scaler = root.AddComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution = new Vector2(1600, 900); scaler.matchWidthOrHeight = .5f;
-            root.AddComponent<GraphicRaycaster>();
-            var eventSystem = new GameObject("EventSystem"); eventSystem.AddComponent<EventSystem>(); eventSystem.AddComponent<InputSystemUIInputModule>();
-            var hud = root.AddComponent<HuntHUD>(); hud.session = Session; hud.combat = Session.player.GetComponent<HunterCombat>(); Session.hud = hud;
-            Panel(root.transform, "Objective shade", new Vector2(.025f, .83f), new Vector2(.5f, .97f), new Color(.02f, .015f, .02f, .86f));
-            Text(root.transform, "Chapter", "06 / STANFORD", new Vector2(.04f, .93f), new Vector2(.48f, .96f), 17);
-            hud.objective = Text(root.transform, "Objective", "", new Vector2(.04f, .845f), new Vector2(.48f, .915f), 23);
-            hud.stats = Text(root.transform, "Equipment", "", new Vector2(.73f, .055f), new Vector2(.97f, .145f), 22, TextAlignmentOptions.BottomRight);
-            hud.prompt = Text(root.transform, "Interaction", "", new Vector2(.2f, .16f), new Vector2(.8f, .21f), 23, TextAlignmentOptions.Center);
-            hud.message = Text(root.transform, "Subtitle", "", new Vector2(.15f, .23f), new Vector2(.85f, .32f), 23, TextAlignmentOptions.Center);
-            Text(root.transform, "Crosshair", "·", new Vector2(.49f, .485f), new Vector2(.51f, .515f), 30, TextAlignmentOptions.Center);
-            Text(root.transform, "Controls", "WASD MOVE   SHIFT SPRINT   E INSPECT   F LIGHTER   TAB JOURNAL", new Vector2(.04f, .02f), new Vector2(.75f, .055f), 16);
-            Panel(root.transform, "Health back", new Vector2(.04f, .09f), new Vector2(.19f, .102f), new Color(.15f, .08f, .07f));
-            hud.healthFill = Panel(root.transform, "Health", new Vector2(.04f, .09f), new Vector2(.19f, .102f), new Color(.66f, .31f, .23f)); hud.healthFill.type = Image.Type.Filled; hud.healthFill.fillMethod = Image.FillMethod.Horizontal;
-            hud.burnFill = Panel(root.transform, "Case progress", new Vector2(.35f, .14f), new Vector2(.65f, .15f), Gold.color); hud.burnFill.type = Image.Type.Filled; hud.burnFill.fillMethod = Image.FillMethod.Horizontal;
-            var overlay = Panel(root.transform, "Menu overlay", Vector2.zero, Vector2.one, new Color(.015f, .012f, .02f, .97f)); overlay.raycastTarget = true; hud.overlay = overlay.gameObject;
-            Panel(overlay.transform, "Neon accent", new Vector2(.095f, .18f), new Vector2(.099f, .88f), Neon.color);
-            hud.subtitle = Text(overlay.transform, "Kicker", "", new Vector2(.13f, .87f), new Vector2(.9f, .92f), 20);
-            hud.overlayTitle = Text(overlay.transform, "Title", "", new Vector2(.13f, .65f), new Vector2(.93f, .85f), 55);
-            hud.overlayBody = Text(overlay.transform, "Body", "", new Vector2(.13f, .19f), new Vector2(.9f, .64f), 23); hud.overlayBody.enableAutoSizing = true; hud.overlayBody.fontSizeMin = 17; hud.overlayBody.fontSizeMax = 23;
-            hud.primary = Button(overlay.transform, "Primary", .13f, out hud.primaryLabel); hud.secondary = Button(overlay.transform, "Secondary", .395f, out hud.secondaryLabel); hud.tertiary = Button(overlay.transform, "Tertiary", .66f, out hud.tertiaryLabel);
-        }
+        { UIPrefabBuilder.PlaceInScene(Session); } // PF_HuntUI: the HTML-prototype UI (screens, HUD, options); keeps one EventSystem
 
 
         static void Atmosphere()
@@ -233,9 +207,7 @@ namespace BeforeJericho.Editor
 
         static Material Mat(string name, Color color, float smoothness = 0, Color? emission = null)
         {
-            var material = new Material(Shader.Find("Universal Render Pipeline/Lit")) { name = name };
-            material.SetColor("_BaseColor", color); material.SetFloat("_Smoothness", smoothness);
-            if(emission.HasValue) { material.EnableKeyword("_EMISSION"); material.SetColor("_EmissionColor", emission.Value); }
+            var material = HdrpAuthoring.Lit(name, color, smoothness, emission);
             AssetDatabase.CreateAsset(material, Root + "/Art/Materials/Stanford/" + name + ".mat");
             return material;
         }
@@ -250,8 +222,5 @@ namespace BeforeJericho.Editor
         static Light Light(string name, Vector3 position, Color color, float intensity, float range) { var light = new GameObject(name).AddComponent<Light>(); light.transform.position = position; light.type = LightType.Point; light.color = color; light.intensity = intensity; light.range = range; return light; }
         static GameObject Part(Transform parent, string name, Vector3 localPosition, Vector3 scale, Material material) { var part = Box(name, Vector3.zero, scale, material); if(parent) part.transform.SetParent(parent, false); part.transform.localPosition = localPosition; UnityEngine.Object.DestroyImmediate(part.GetComponent<Collider>()); part.layer = 8; return part; }
         static void Sign(string text, Vector3 position, float size, Material material, float yaw = 0) { var sign = new GameObject("Sign - " + text); sign.transform.SetPositionAndRotation(position, Quaternion.Euler(0, yaw, 0)); sign.transform.localScale = Vector3.one * .09f; var label = sign.AddComponent<TextMeshPro>(); label.font = Font; label.text = text; label.fontSize = size * 10; label.alignment = TextAlignmentOptions.Center; label.color = material.color; label.textWrappingMode = TextWrappingModes.NoWrap; label.rectTransform.sizeDelta = new Vector2(size * 3, 2); }
-        static TMP_Text Text(Transform parent, string name, string value, Vector2 min, Vector2 max, int size, TextAlignmentOptions alignment = TextAlignmentOptions.TopLeft) { var textRoot = new GameObject(name, typeof(RectTransform)); textRoot.transform.SetParent(parent, false); var text = textRoot.AddComponent<TextMeshProUGUI>(); text.font = Font; text.text = value; text.fontSize = size; text.color = new Color(.92f, .86f, .76f); text.alignment = alignment; text.raycastTarget = false; var rect = text.rectTransform; rect.anchorMin = min; rect.anchorMax = max; rect.offsetMin = rect.offsetMax = Vector2.zero; return text; }
-        static Image Panel(Transform parent, string name, Vector2 min, Vector2 max, Color color) { var panelRoot = new GameObject(name, typeof(RectTransform)); panelRoot.transform.SetParent(parent, false); var image = panelRoot.AddComponent<Image>(); image.color = color; image.raycastTarget = false; var rect = image.rectTransform; rect.anchorMin = min; rect.anchorMax = max; rect.offsetMin = rect.offsetMax = Vector2.zero; return image; }
-        static Button Button(Transform parent, string name, float x, out TMP_Text label) { var image = Panel(parent, name, new Vector2(x, .08f), new Vector2(x + .23f, .155f), new Color(.16f, .1f, .07f, .96f)); image.raycastTarget = true; var button = image.gameObject.AddComponent<Button>(); button.targetGraphic = image; label = Text(image.transform, "Label", name, Vector2.zero, Vector2.one, 20, TextAlignmentOptions.Center); return button; }
     }
 }

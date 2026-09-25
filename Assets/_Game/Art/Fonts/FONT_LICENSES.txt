@@ -1,0 +1,4 @@
+Fonts downloaded from Google Fonts (fonts.google.com) for the UI prototype port.
+SIL Open Font License 1.1: Overpass, Noto Sans KR, IBM Plex Mono, Old Standard TT, Nanum Myeongjo.
+Apache License 2.0: Special Elite.
+Full license texts: https://openfontlicense.org and https://www.apache.org/licenses/LICENSE-2.0

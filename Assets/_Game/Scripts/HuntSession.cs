@@ -31,24 +31,23 @@ namespace BeforeJericho
         float _messageUntil, _lastDamage = -10; bool _firstGhost, _finalGhost; HuntSnapshot _checkpoint;
         HunterCombat _combat;
         public string Objective => stanford ? stanford.Objective : winslow ? winslow.Objective : grants ? grants.Objective : eastTexas ? eastTexas.Objective : chapter ? chapter.Objective : Resolved ? "RETURN TO THE IMPALA" : Has(HuntItem.Record) && Has(HuntItem.Salt) ? "RETURN TO THE CELLAR / SALT AND BURN THE NECKLACE" : (Evidence & 15) == 15 ? "ST. MARAIS / FIND THE BURIAL RECORD AND SALT" : "CHECK THE ANTIQUE SHOP / FIND FOUR CLUES";
-        void Start()
+        // Chapter slot is resolved in Awake: HuntHUD.Start may query CanContinue before this Start runs.
+        void Awake()
         {
-            _combat = player.GetComponent<HunterCombat>();
             if(chapter && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch02-atchafalaya-v1";
             if(eastTexas && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch03-east-texas-v1";
             if(grants && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch04-grants-v1";
             if(winslow && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch05-winslow-v1";
             if(stanford && saveSlot == "before-jericho-prologue-v1") saveSlot = "before-jericho-ch06-stanford-v1";
+        }
+        void Start()
+        {
+            _combat = player.GetComponent<HunterCombat>();
             ApplyInput();
         }
         void Update()
         {
             if(Time.unscaledTime > _messageUntil) Message = "";
-            if(!Menu && !Completed && HP > 0)
-            {
-                if(player.Input.Pause) { if(Journal) Journal = false; else Paused = !Paused; ApplyInput(); }
-                else if(player.Input.Journal && !Paused) { Journal = !Journal; ApplyInput(); }
-            }
             if(Playing && player.transform.position.y < -4) Damage(100);
             if(!stanford && !winslow && !grants && !eastTexas && !chapter && Playing && !_finalGhost && !Resolved && Has(HuntItem.Record) && Has(HuntItem.Salt) && player.transform.position.z > 54)
             {
@@ -74,6 +73,8 @@ namespace BeforeJericho
         public void Resume() { Paused = Journal = false; ApplyInput(); }
         public void MainMenu() { Menu = true; Paused = Journal = false; ApplyInput(); }
         public void SetJournal(bool value) { Journal = value; ApplyInput(); }
+        // Esc / Tab / M routing lives in HuntHUD, which knows which screen is open.
+        public void SetPaused(bool value) { if(Menu || Completed || HP == 0) return; Paused = value; ApplyInput(); }
         public bool Has(HuntItem kind) => !stanford && !winslow && !grants && !eastTexas && !chapter && kind >= HuntItem.Mirror && kind <= HuntItem.Salt && (Evidence & (1 << (int)kind)) != 0;
         public void Notify(string message) { Message = message; _messageUntil = Time.unscaledTime + 5; }
         public bool Interact(HuntInteractable item)

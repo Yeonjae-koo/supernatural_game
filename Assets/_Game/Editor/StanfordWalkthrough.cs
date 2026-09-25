@@ -103,7 +103,7 @@ namespace BeforeJericho.Editor
                 Vector3 frozen=session.player.transform.position; Queue(new KeyboardState(Key.W)); await Task.Delay(500); Queue(new KeyboardState());
                 Check(Vector3.Distance(frozen,session.player.transform.position)<.05f,"Dean stops at the door");
                 waited=0; while(!session.Completed&&waited<5) { await Task.Delay(200); waited+=.2f; }
-                Check(session.Completed&&session.hud.primaryLabel.text=="MAIN MENU","Fade to TO BE CONTINUED with credits and main-menu button");
+                Check(session.Completed&&session.hud.overlayTitle.text=="TO BE CONTINUED"&&session.hud.primaryLabel.text==BeforeJericho.UI.Loc.T("UI_Common/complete.continue"),"Fade to TO BE CONTINUED with the continue-to-credits button");
                 Result="PASS\n"+report; Stage="Complete";
             }
             catch(Exception e) { Result="FAIL at "+Stage+": "+e+"\n"+report; Debug.LogError(Result); }

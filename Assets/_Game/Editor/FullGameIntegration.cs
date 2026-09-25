@@ -50,7 +50,8 @@ namespace BeforeJericho.Editor
             await Frames(300);
             while(result()=="Running" && t<600) { await Frames(500); t+=.5f; }
             string r=result(); File.WriteAllText("Logs/FullGameIntegration-"+name+".txt",r);
-            Check(r.StartsWith("PASS"),name+" route completed ("+r.Split('\n')[0]+")");
+            // PrologueSmoke reports "PASS: …" lines before a trailing "FAIL:", so a prefix check alone is not enough.
+            Check(r.StartsWith("PASS")&&!r.Contains("FAIL"),name+" route completed ("+r.Split('\n')[0]+")");
         }
         // Prologue/CH02 route runners return to the main menu when done; resume their last checkpoint and use the real exit with E.
         static async Task ExitWithE(HuntSession s,HuntItem exit,string label)
@@ -65,12 +66,13 @@ namespace BeforeJericho.Editor
             InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.E)); await Frames(150); InputSystem.QueueStateEvent(keyboard,new KeyboardState()); await Frames(300);
             Check(s.Completed,label+" exit with E completes the chapter ("+s.Message.Split('\n')[0]+")");
         }
+        // Chapter-complete screen: Continue travels on; the "Next —" line names the destination.
         static async Task Advance(HuntSession s,string next,string label)
         {
             Stage="End card "+label; await Frames(300);
             Check(s.Completed&&s.hud.overlay.activeSelf,label+" end card shown");
-            Check(s.hud.primaryLabel.text==next,label+" end card offers "+next+" (actual "+s.hud.primaryLabel.text+")");
-            await Click(s.hud.primary,next);
+            Check(s.hud.primaryLabel.text==UI.Loc.T("UI_Common/complete.continue")&&s.hud.completeNext.text.Contains(next),label+" end card offers "+next+" (actual "+s.hud.completeNext.text+")");
+            await Click(s.hud.primary,"CONTINUE → "+next);
         }
         [MenuItem("Before Jericho/QA/Full Game Integration")]
         public static async void Run()
@@ -81,6 +83,7 @@ namespace BeforeJericho.Editor
             bool oldRun=Application.runInBackground; var oldBg=InputSystem.settings.backgroundBehavior; var oldEditor=InputSystem.settings.editorInputBehaviorInPlayMode;
             try
             {
+                UI.GameSettings.UseTransientDefaults(true,"en"); // default options, English strings; the player's options are untouched
                 Application.runInBackground=true; InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus; InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
                 foreach(var d in InputSystem.devices) if((d is Keyboard || d is Mouse) && d.enabled) physical.Add(d);
                 foreach(var d in physical) InputSystem.DisableDevice(d);
@@ -89,12 +92,12 @@ namespace BeforeJericho.Editor
                 var s=await Load("SCN_NewOrleans_Slice"); await StartChapter(s,"PROLOGUE");
                 await RunRoute("Prologue",PrologueSmoke.Run,()=>PrologueSmoke.Result);
                 await ExitWithE(s,HuntItem.Exit,"Prologue");
-                await Advance(s,"CONTINUE TO ATCHAFALAYA","Prologue");
+                await Advance(s,"ATCHAFALAYA","Prologue");
                 // CH02.
                 s=await Load("SCN_Atchafalaya_Slice"); await StartChapter(s,"CHAPTER 02");
                 await RunRoute("CH02",AtchafalayaSmoke.Run,()=>AtchafalayaSmoke.Result);
                 await ExitWithE(s,HuntItem.ChapterExit,"CH02");
-                await Advance(s,"CONTINUE TO EAST TEXAS","CH02");
+                await Advance(s,"EAST TEXAS","CH02");
                 // CH03: weapon hotkeys through the real input path first.
                 s=await Load("SCN_EastTexas_Slice"); await StartChapter(s,"CHAPTER 03");
                 var c=s.player.GetComponent<HunterCombat>(); string keys="";
@@ -104,22 +107,24 @@ namespace BeforeJericho.Editor
                 Check(keys.Contains("Digit2->1")&&keys.Contains("Digit1->0"),"CH03 keys 1/2 switch gun/knife");
                 Check(keys.Contains("Digit3->0")&&keys.Contains("Digit4->0"),"CH03 keys 3/4 are refused (no iron or salt in this chapter)");
                 await RunRoute("CH03",EastTexasWalkthrough.Run,()=>EastTexasWalkthrough.Result);
-                await Advance(s,"CONTINUE TO NEW MEXICO","CH03");
+                await Advance(s,"NEW MEXICO","CH03");
                 // CH04: death and Retry through the dead-screen button.
                 s=await Load("SCN_GrantsNM_Slice"); await StartChapter(s,"CHAPTER 04");
-                Stage="CH04 death/retry"; s.Damage(100); await Frames(300); Check(s.HP==0&&s.hud.primaryLabel.text=="RETRY CHECKPOINT","Death shows the retry screen");
+                Stage="CH04 death/retry"; s.Damage(100); await Frames(300); Check(s.HP==0&&s.hud.primaryLabel.text==UI.Loc.T("UI_Common/dead.retry"),"Death shows the game-over screen with Continue (retry)");
                 await Click(s.hud.primary,"RETRY CHECKPOINT"); Check(s.Playing&&s.HP==100,"Retry restores a playable checkpoint");
                 await RunRoute("CH04",GrantsWalkthrough.Run,()=>GrantsWalkthrough.Result);
-                await Advance(s,"CONTINUE TO ARIZONA","CH04");
+                await Advance(s,"ARIZONA","CH04");
                 // CH05.
                 s=await Load("SCN_Winslow_Slice"); await StartChapter(s,"CHAPTER 05");
                 await RunRoute("CH05",WinslowWalkthrough.Run,()=>WinslowWalkthrough.Result);
-                await Advance(s,"CONTINUE TO STANFORD","CH05");
+                await Advance(s,"STANFORD","CH05");
                 // CH06, credits, main menu, re-entry.
                 s=await Load("SCN_Stanford_Slice"); await StartChapter(s,"CHAPTER 06");
                 await RunRoute("CH06",StanfordWalkthrough.Run,()=>StanfordWalkthrough.Result);
-                Stage="Credits"; Check(s.Completed&&s.hud.overlayTitle.text=="TO BE CONTINUED"&&s.hud.overlayBody.text.Contains("CREDITS"),"TO BE CONTINUED credits card");
-                await Click(s.hud.primary,"MAIN MENU"); Check(s.Menu&&s.hud.overlayTitle.text.Contains("SUPERNATURAL"),"Credits return to the main menu");
+                Stage="Credits"; Check(s.Completed&&s.hud.overlayTitle.text=="TO BE CONTINUED"&&s.hud.completeNext.text.Contains(UI.Loc.T("System/complete.ch06.next")),"TO BE CONTINUED card leads to the credits");
+                await Click(s.hud.primary,"CONTINUE → CREDITS"); await Frames(300); Check(s.hud.Current==HuntHUD.Screen.Credits,"Credits roll");
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Escape)); await Frames(150); InputSystem.QueueStateEvent(keyboard,new KeyboardState()); await Frames(300);
+                Check(s.Menu&&s.hud.overlayTitle.text.Contains("SUPERNATURAL"),"Esc on the credits returns to the main menu");
                 Check(s.CanContinue,"Main menu offers CONTINUE for the saved epilogue");
                 await Click(s.hud.secondary,"CONTINUE"); Check(!s.Menu&&(s.Playing||s.Completed),"CONTINUE re-enters from the saved checkpoint ("+s.CheckpointName+")");
                 Result="PASS\n"+report; Stage="Complete";
@@ -129,6 +134,7 @@ namespace BeforeJericho.Editor
             {
                 if(keyboard!=null) InputSystem.RemoveDevice(keyboard); keyboard=null;
                 foreach(var d in physical) if(d.added) InputSystem.EnableDevice(d);
+                UI.GameSettings.UseTransientDefaults(false);
                 Application.runInBackground=oldRun; InputSystem.settings.backgroundBehavior=oldBg; InputSystem.settings.editorInputBehaviorInPlayMode=oldEditor;
                 foreach(var f in Directory.GetFiles(Application.persistentDataPath,"qa-integration-"+run+"*")) File.Delete(f);
                 Directory.CreateDirectory("Logs"); File.WriteAllText("Logs/FullGameIntegration.txt",Result);

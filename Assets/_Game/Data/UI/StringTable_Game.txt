@@ -1,0 +1,577 @@
+key	ko	en
+# A · common (HuntSession / HunterCombat / shared hunts)
+Messages/common.no_checkpoint	유효한 체크포인트가 없다.	No valid checkpoint found.
+Messages/common.save_failed	체크포인트는 메모리에만 남았다. 디스크 저장 실패.	Checkpoint kept in memory; disk save failed.
+Messages/common.checkpoint_restored	체크포인트 복원 · {0}	Checkpoint restored / {0}
+Messages/common.missing_ch02	CH02 씬이 Build Profiles에 없다. 계속하려면 SCN_Atchafalaya_Slice를 추가하라.	CH02 scene is missing from Build Profiles. Add SCN_Atchafalaya_Slice to continue.
+Messages/common.missing_ch03	CH03 씬이 Build Profiles에 없다.	CH03 scene is missing from Build Profiles.
+Messages/common.missing_ch04	CH04 씬이 Build Profiles에 없다.	CH04 scene is missing from Build Profiles.
+Messages/common.missing_ch05	CH05 씬이 Build Profiles에 없다.	CH05 scene is missing from Build Profiles.
+Messages/common.missing_ch06	CH06 씬이 Build Profiles에 없다.	CH06 scene is missing from Build Profiles.
+Messages/common.reloading	재장전 중...	Reloading...
+Messages/common.no_hunting	여기선 사냥 안 해. 오늘 밤은.	No hunting here. Not tonight.
+Tutorial/common.hold_aim	RMB를 누르고 있으면 조준한다.	Hold RMB to aim.
+Tutorial/common.empty	탄창이 비었다. [R] 재장전.	Empty. [R] Reload.
+Tutorial/common.damage_spirit_kit	쇠 [3 + LMB]로 흩어내고, 소금 [4 + LMB]으로 선을 그어라. 계속 움직여.	Iron [3 + LMB] disperses it. Salt [4 + LMB] holds a line. Keep moving.
+Tutorial/common.damage_ghoul	계속 움직여. 머리를 맞히면 구울이 휘청이고, 휘청일 때 칼로 끝낸다.	Keep moving. Head hits stagger ghouls; knives finish staggered targets.
+Tutorial/common.damage_rawhead	계속 움직여. 총과 칼은 로헤드를 잠깐 휘청이게 할 뿐이다.	Keep moving. Guns and knives only stagger Rawhead.
+Tutorial/common.damage_ghost	너무 가깝다. 쇠 [3 + LMB]로 흩어내라.	It is too close. Disperse it with iron [3 + LMB].
+Messages/common.need_iron_trunk	임팔라 트렁크에서 쇠막대를 꺼내라.	Take the iron rod from the Impala trunk.
+Messages/common.need_salt_trunk	임팔라 트렁크에서 소금을 꺼내라.	Take the salt from the Impala trunk.
+Prompts/common.reveal_residue	[F] 라이터  /  흔적 드러내기	[F] LIGHTER  /  Reveal the residue
+Prompts/common.ignite_anchor	[HOLD E] 앵커 점화  /  라이터 필요	[HOLD E] IGNITE ANCHOR  /  Lighter required
+Prompts/common.interact	[E] {0}	[E] {0}
+# A · prologue
+Objectives/prologue.return_impala	임팔라로 돌아가라	RETURN TO THE IMPALA
+Objectives/prologue.burn_necklace	지하실로 돌아가라 / 목걸이에 소금을 뿌리고 태워라	RETURN TO THE CELLAR / SALT AND BURN THE NECKLACE
+Objectives/prologue.st_marais	세인트 마레 / 매장 기록과 소금을 찾아라	ST. MARAIS / FIND THE BURIAL RECORD AND SALT
+Objectives/prologue.antique_shop	골동품 가게를 조사하라 / 단서 네 개를 찾아라	CHECK THE ANTIQUE SHOP / FIND FOUR CLUES
+Intro/prologue	SAINT MERCY DISTRICT / 11:17 PM\n아빠는 나중에. 일부터 끝내자.	SAINT MERCY DISTRICT / 11:17 PM\nJohn can wait. Finish the job first.
+Tutorial/prologue.final_hunt	목걸이에 소금을 뿌려라. 쇠로 시간을 벌고, 라이터를 켠 채 E를 길게 눌러라.	Salt the necklace. Use iron to buy time, then hold E with the lighter.
+Messages/prologue.hunt_unfinished	아직이야. 끝내야 할 사냥이 남았다.	Not yet. There is still a hunt to finish.
+Messages/prologue.need_record_salt	먼저 세인트 마레에서 매장 기록과 소금을 찾아라.	Find the burial record and salt at St. Marais first.
+Messages/prologue.shop_first	골동품 가게에 단서가 네 개 남아 있다. 거기서부터 시작해.	The antique shop still holds four clues. Start there.
+Tutorial/prologue.first_ghost	뒤다. 총알로는 못 죽인다. 쇠 부지깽이를 찾아라.	Behind you. Bullets cannot kill it. Find the iron poker.
+Messages/prologue.resolved	목걸이가 갈라진다. 정적. 이제 아빠한테 전화할 시간이다.	The necklace cracks. Silence. Time to call Dad.
+Messages/prologue.need_poker	골동품 가게에서 쇠 부지깽이를 찾아라.	Find the iron poker in the antique shop.
+Tutorial/prologue.iron_disperses	쇠는 영체를 흩어낸다. 사라진 틈에 앵커를 태워라.	IRON DISPERSES SPIRITS. Burn the anchor while it is gone.
+Tutorial/prologue.no_wound	상처 하나 없다. 평범한 무기로는 이 사냥을 끝낼 수 없다.	No wound. Ordinary weapons cannot end this hunt.
+Checkpoints/prologue.shop_entrance	가게 입구	Shop entrance
+Checkpoints/prologue.final_hunt	최후의 사냥	Final hunt
+Checkpoints/prologue.st_marais	세인트 마레 묘지	St. Marais cemetery
+Checkpoints/prologue.resolved	사냥 종료	Hunt resolved
+Prompts/prologue.Photos	사진 살펴보기	Inspect photographs
+Prompts/prologue.Ledger	유산 장부 읽기	Read estate ledger
+Prompts/prologue.Salt	굵은 소금 챙기기	Take rock salt
+Prompts/prologue.Mirror	깨진 거울 조사하기	Examine broken mirror
+Prompts/prologue.Anchor	목걸이에 소금 뿌리고 태우기	Salt and burn necklace
+Prompts/prologue.Exit	임팔라로 돌아가기	Return to the Impala
+Prompts/prologue.Scratches	그을음 흔적 살펴보기	Inspect soot residue
+Prompts/prologue.Record	매장 기록 읽기	Read burial record
+Prompts/prologue.Iron	쇠 부지깽이 챙기기	Take iron poker
+Clues/prologue.Photos	사진: 같은 황동 목걸이가 세 방에 걸쳐 찍혀 있다.	PHOTOS: The same brass necklace appears in three rooms.
+Clues/prologue.Ledger	장부: 유산 경매품 / 세인트 마레 / 목걸이, 출처 불명.	LEDGER: Estate lot / St. Marais / necklace, no provenance.
+Clues/prologue.Salt	소금: 목걸이를 가둔 다음 태운다. 지하실로 돌아가라.	SALT: Contain the necklace, then burn it. Return to the cellar.
+Clues/prologue.Mirror	거울: 유리가 바깥쪽으로 흩어졌다. 발자국은 없다.	MIRROR: Glass scattered outward. No footprints.
+Messages/prologue.Anchor_desc	목걸이가 앵커다.	The necklace is the anchor.
+Messages/prologue.Exit_desc	존에게 전화하자.	Call John.
+Clues/prologue.Scratches	흔적: 할퀸 자국 속 그을음. 물건에 묶인 영혼이다.	RESIDUE: Soot in claw marks. A spirit bound to an object.
+Clues/prologue.Record	기록: 무덤은 비어 있다. 그녀의 목걸이는 끝내 회수되지 않았다. 그게 앵커다.	RECORD: The grave is empty. Her necklace was never recovered. It is the anchor.
+Clues/prologue.Iron	쇠: 벽난로 부지깽이는 영혼을 흩어낸다. [3]으로 장비.	IRON: A fireplace poker disperses spirits. Equip with [3].
+# A · ch02 Atchafalaya
+Intro/ch02	ATCHAFALAYA BASIN / BELLE RIVE\n사라진 아이들. 창틀에 묻은 진흙. 식당의 마라에게 물어보자.	ATCHAFALAYA BASIN / BELLE RIVE\nMissing children. Mud on the windowsills. Ask Mara at the diner.
+Objectives/ch02.preview	텍사스 / 다음 챕터 미리보기	TEXAS / NEXT CHAPTER PREVIEW
+Objectives/ch02.return_impala	임팔라로 돌아가라 / 존의 흔적을 따라가라	RETURN TO THE IMPALA / FOLLOW JOHN'S TRAIL
+Objectives/ch02.ask_eli	일라이에게 존에 대해 묻고 / 모텔 영수증을 받아라	ASK ELI ABOUT JOHN / TAKE THE MOTEL RECEIPT
+Objectives/ch02.throw_switch	로헤드가 물속에 있다 / 전압 스위치를 내려라	RAWHEAD IN WATER / THROW THE VOLTAGE SWITCH
+Objectives/ch02.lure	로헤드를 물속으로 유인하라 / 스위치를 써라	LURE RAWHEAD INTO THE WATER / USE THE SWITCH
+Objectives/ch02.power_1	전력 복구 / 1. 연료 밸브를 열어라	RESTORE POWER / 1. OPEN THE FUEL VALVE
+Objectives/ch02.power_2	전력 복구 / 2. 메인 차단기를 올려라	RESTORE POWER / 2. RESET THE MAIN BREAKER
+Objectives/ch02.power_3	전력 복구 / 3. 발전기 가동 + 회로 전환	RESTORE POWER / 3. START GENERATOR + REROUTE
+Objectives/ch02.escape	바닥 밑에서 탈출하라 / 철문을 닫아라	ESCAPE THE SUBFLOOR / CLOSE THE IRON DOOR
+Objectives/ch02.subfloor	양수장 바닥 밑을 수색하라 / 기기 + 라이터	SEARCH THE PUMP SUBFLOOR / CRAWL + LIGHTER
+Objectives/ch02.ask_mara	마라에게 사라진 아이들에 대해 물어라	ASK MARA ABOUT THE MISSING KIDS
+Objectives/ch02.investigate	벨 리브를 조사하라 / 증거 {0}/4	INVESTIGATE BELLE RIVE / EVIDENCE {0}/4
+Tutorial/ch02.rawhead_coming	로헤드가 온다. 표시된 물속으로 끌어들인 다음 전압 스위치로 가라.	Rawhead is coming. Draw it into the marked water, then reach the voltage switch.
+Messages/ch02.identified	로헤드다. 전기 사고 이후로 실종이 멈췄다. 낮은 양수장 배관 밑을 뒤져라.	RAWHEAD. The electrical accident stopped the disappearances. Search the low pump-station pipes.
+Dialogue/ch02.mara	마라: 보안관은 악어 짓이래요. 악어가 침실 창문을 열진 않잖아요.\n딘: 그렇지. 걔들은 보통 가택 침입까진 안 하지.	Mara: Sheriff says gators. Gators don't open bedroom windows.\nDean: Yeah. They usually skip the breaking-and-entering part.
+Dialogue/ch02.eli_resolved	일라이: 다른 남자도 양수장 얘길 물어봤어. 나이 좀 있고. 군인 타입. 잘 웃지도 않더군. 영수증 가져가.	Eli: Another guy asked about the station. Older. Military type. Didn't smile much. Take the receipt.
+Dialogue/ch02.eli	일라이: 6년 전에 전력이 튀었지. 양수장 절반이 타버렸어. 그 뒤로 실종이 멈췄고.	Eli: Power surged six years ago. Fried half the station. After that, the disappearances stopped.
+Messages/ch02.traces_first	먼저 바닥 밑 흔적을 조사해. 라이터를 켜고 배관 밑으로 기어 들어가.	Investigate the subfloor traces first. Crawl under the pipes with your lighter.
+Messages/ch02.through_door	문을 닫기 전에 철문 너머로 먼저 넘어가.	Get through the iron doorway before closing it behind you.
+Messages/ch02.door_holds	좋아. 총알은 공식적으로 답이 아니다.\n철문이 버틴다. 수조실에 전력을 복구하라.	Okay. Bullets are officially not the answer.\nThe iron door holds. Restore power to the water chamber.
+Messages/ch02.escape_first	바닥 밑을 수색하고 철문으로 먼저 빠져나와.	Search the subfloor and escape through the iron door first.
+Messages/ch02.fuel_open	연료 밸브 개방. 다음은 메인 차단기.	Fuel valve open. Next: the main breaker.
+Messages/ch02.fuel_first	발전기 연료 밸브부터 열어.	Open the generator's fuel valve first.
+Messages/ch02.breaker_reset	메인 차단기 복구. 발전기를 돌리고 수조실 회로를 전환하라.	Main breaker reset. Start the generator and reroute the chamber circuit.
+Messages/ch02.breaker_first	연료를 넣고 메인 차단기부터 올려.	Restore fuel, then reset the main breaker.
+Messages/ch02.generator_online	발전기 가동. 얕은 물 회로에 전기가 흐른다. 로헤드를 물속으로 유인한 뒤 스위치를 내려라.	Generator online. The shallow-water circuit is armed. Lure Rawhead into the water, then throw the switch.
+Messages/ch02.no_power	전력이 없다. 연료, 차단기, 발전기부터 복구해.	No power. Restore fuel, breaker and generator first.
+Messages/ch02.wait_water	기다려. 로헤드가 표시된 물 구역에 서 있어야 한다.	Wait. Rawhead must be standing in the marked water zone.
+Messages/ch02.resolved	하얀 빛. 경련. 정적.\n비상 전원이 돌아온다. 일라이에게 존의 흔적을 물어보자.	White light. A convulsion. Silence.\nEmergency power returns. Ask Eli about John's trail.
+Messages/ch02.finish_first	존의 흔적을 쫓기 전에 사냥부터 끝내.	Finish the hunt before following John's trail.
+Dialogue/ch02.receipt	일라이: 나이 좀 있는 남자. 군인 타입. 잘 웃지도 않더군.\n존의 모텔 영수증이 서쪽을 가리킨다. 텍사스. 임팔라로 돌아가자.	Eli: Older guy. Military type. Didn't smile much.\nJohn's motel receipt points west. Texas. Return to the Impala.
+Messages/ch02.exit_refuse	사냥을 끝내고 일라이에게서 존의 모텔 영수증을 받아.	Finish the hunt and collect John's motel receipt from Eli.
+Messages/ch02.leads_first	양수장 바닥 밑에 들어가기 전에 단서 네 개를 모두 찾아.	Find all four leads before entering the pump subfloor.
+Tutorial/ch02.crawl_light	배관 밑으로 기어 [Z] 들어가서 라이터 [F]로 흔적을 읽어라.	Crawl [Z] beneath the pipes and use your lighter [F] to read the traces.
+Messages/ch02.chase	배관 밑에 뭔가 있다. 기어 나온 다음 철문까지 달려서 닫아라 [E]!	Something is under the pipes. Crawl out, then sprint to the iron door and close it [E]!
+Tutorial/ch02.wound_closes	휘청이지만 상처가 아문다. 이 사냥을 끝낼 방법은 전기뿐이다.	It staggers, but the wound closes. Electricity is the only way to end this hunt.
+Checkpoints/ch02.arrival	벨 리브 도착	Belle Rive arrival
+Checkpoints/ch02.identified	로헤드 정체 확인	Rawhead identified
+Checkpoints/ch02.door_escape	철문 탈출	Iron door escape
+Checkpoints/ch02.water_chamber	수조실 사냥	Water chamber hunt
+Checkpoints/ch02.resolved	로헤드 처치	Rawhead resolved
+Checkpoints/ch02.receipt	존의 모텔 영수증	John's motel receipt
+Checkpoints/ch02.leaving	벨 리브를 떠나며 / 텍사스로	Leaving Belle Rive / Texas trail
+Checkpoints/ch02.subfloor_chase	바닥 밑 추격	Subfloor chase
+Checkpoints/ch02.generator_prep	발전기 준비 {0}/3	Generator preparation {0}/3
+Prompts/ch02.MissingReport	옛 아동 실종 보고서 읽기	Read old missing-child report
+Prompts/ch02.JohnReceipt	존의 모텔 영수증 챙기기	Take John's motel receipt
+Prompts/ch02.MudHandprints	진흙 손자국 살펴보기	Inspect mud handprints
+Prompts/ch02.IronDoor	지나온 뒤 철문 닫기	Close iron door behind you
+Prompts/ch02.CrawlTrace	새로 난 기어간 자국 조사하기	Examine fresh crawl traces
+Prompts/ch02.Mara	마라에게 사라진 아이들에 대해 묻기	Ask Mara about the missing kids
+Prompts/ch02.GeneratorStart	발전기 가동 및 수조실 회로 전환	Start generator and reroute chamber
+Prompts/ch02.FuelValve	연료 밸브 열기	Open fuel valve
+Prompts/ch02.MainBreaker	메인 차단기 올리기	Reset main breaker
+Prompts/ch02.ChapterExit	벨 리브를 떠나 존의 흔적 따라가기	Leave Belle Rive / follow John's trail
+Prompts/ch02.Eli	일라이에게 양수장에 대해 묻기	Ask Eli about the station
+Prompts/ch02.VoltageSwitch	절연 전압 스위치 내리기	Throw isolated voltage switch
+Prompts/ch02.ElectricalReport	전기 사고 보고서 읽기	Read electrical accident report
+Prompts/ch02.HairTissue	털과 조직 채취하기	Collect hair and tissue
+Clues/ch02.MissingReport	아동 실종 보고서: 6년 전, 이 고상 가옥들에서 아이들이 사라졌다. 체포 없이 실종이 멈췄다.	MISSING CHILD REPORT: Six years ago, children vanished from these raised homes. The pattern stopped without an arrest.
+Clues/ch02.JohnReceipt	모텔 영수증: 현금으로 계산한 방. 메모가 서쪽을 가리킨다: 텍사스.	MOTEL RECEIPT: A room paid in cash. A note points west: Texas.
+Clues/ch02.MudHandprints	진흙 손자국: 아이 것이라기엔 너무 크다. 침실 창문은 잠겨 있는데 자국은 안쪽으로 이어진다.	MUD HANDPRINTS: Too large for a child. The marks lead inward, though the bedroom window is locked.
+Messages/ch02.IronDoor_desc	철문: 안전한 쪽으로 건넌 다음 뒤에서 닫아라.	IRON DOOR: Cross to the safe side, then close it behind you.
+Clues/ch02.CrawlTrace	기어간 자국: 진흙에 새로 파인 홈. 뭔가 커다란 것이 철문 쪽으로 기어갔다.	CRAWL TRACE: Fresh gouges in the mud. Something large crawled toward the iron door.
+Messages/ch02.GeneratorStart_desc	발전기: 수조실 회로에 전기가 흐른다. 얕은 물과 절연 스위치를 이용하라.	GENERATOR: The chamber circuit is live. Use the shallow water and isolated switch.
+Messages/ch02.FuelValve_desc	연료 밸브: 발전기에 연료가 있다. 밸브를 열고 메인 차단기를 올려라.	FUEL VALVE: The generator has fuel. Open the valve, then reset the main breaker.
+Messages/ch02.MainBreaker_desc	메인 차단기: 발전기까지 전력이 들어온다. 가동하고 수조실 회로를 전환하라.	MAIN BREAKER: Power reaches the generator. Start it and reroute the chamber circuit.
+Messages/ch02.ChapterExit_desc	임팔라 준비 완료. 텍사스는 서쪽이다.	The Impala is ready. Texas is west.
+Messages/ch02.VoltageSwitch_desc	전압 스위치: 로헤드가 표시된 물속에 서 있을 때만 방전된다.	VOLTAGE SWITCH: It discharges only if Rawhead stands in the marked water.
+Clues/ch02.ElectricalReport	전기 사고 보고서: 변압기 과전류가 양수장을 덮쳤다. 그 직후 실종이 멈췄다.	ELECTRICAL ACCIDENT REPORT: A transformer surge struck the pump station. The disappearances stopped immediately after.
+Clues/ch02.HairTissue	털 / 조직: 집 밑에 걸린 거친 털. 실체가 있는 무언가가 배수 공간을 쓴다.	HAIR / TISSUE: Coarse hair caught below the house. Something physical uses the drain space.
+# A · ch03 East Texas
+Intro/ch03	EAST TEXAS / MERCY CREEK\n무전: 묘지 훼손 신고 접수.\n딘: 참 티 안 나게도 했네. 무덤과 장례식장을 조사하자.	EAST TEXAS / MERCY CREEK\nRadio: Cemetery vandalism reported.\nDean: That's subtle. Investigate the graves and funeral home.
+Objectives/ch03.preview	뉴멕시코 / CHAPTER 04 미리보기	NEW MEXICO / CHAPTER 04 PREVIEW
+Objectives/ch03.return_impala	임팔라로 돌아가라 / 서쪽으로 존을 따라가라	RETURN TO THE IMPALA / FOLLOW JOHN WEST
+Objectives/ch03.collect_map	지하실 / 존의 접힌 지도를 챙겨라	BASEMENT / COLLECT JOHN'S FOLDED MAP
+Objectives/ch03.gideon	기디언 베일 / 머리를 노리고 마무리하라	GIDEON VALE / AIM FOR THE HEAD, THEN FINISH
+Objectives/ch03.show_photo	기디언에게 옛 장례식장 사진을 보여줘라	SHOW GIDEON THE OLD FUNERAL PHOTO
+Objectives/ch03.clear_ghouls	기디언과 대면하기 전에 구울을 처치하라	CLEAR THE GHOULS BEFORE CONFRONTING GIDEON
+Objectives/ch03.investigate	머시 크릭 / 장례식장을 조사하라 {0}/5	MERCY CREEK / INVESTIGATE THE FUNERAL HOME {0}/5
+Dialogue/ch03.reddick	레딕: 코요테가 파헤친 거요. 사람들이 호들갑이지.\n딘: 코요테는 보통 한 끼를 통째로 가져가거든.	Reddick: Coyotes dig. People panic.\nDean: Coyotes usually take the whole meal.
+Dialogue/ch03.nora	노라: 베일 씨는 제가 태어나기 전부터 여길 운영하셨어요.\n노라는 사람이다. 옛 사진과 직원 기록을 확인하라.	Nora: Mr. Vale has run this place longer than I've been alive.\nNora is human. Check the old photograph and staff records.
+Dialogue/ch03.gideon_refuse	기디언: 죽음은 사람을 상상력 풍부하게 만들죠.\n사진을 보여주기 전에 단서 다섯 개를 모아라.	Gideon: Death makes people imaginative.\nGather five leads before showing him the photograph.
+Messages/ch03.clear_four	머시 크릭 주변을 사냥하는 구울 넷부터 처치해.	Clear the four ghouls hunting around Mercy Creek first.
+Dialogue/ch03.reveal	딘: 여권 사진 한번 끝내주게 나오겠어.\n기디언의 눈이 검게 물든다. 인간의 가면이 벗겨진다. 지하실로 그를 쫓아라.	Dean: You take a hell of a passport photo.\nGideon's eyes darken. The human disguise falls. Follow him into the basement.
+Messages/ch03.ammo	여분의 .45 탄과 구급품. 머리를 노리고, 칼 마무리로 탄약을 아껴라.	Spare .45 rounds and first aid. Aim for heads; save ammunition with knife finishes.
+Messages/ch03.gideon_hunting	기디언이 아직 사냥 중이다. 싸움부터 끝내.	Gideon is still hunting. Finish the fight first.
+Messages/ch03.clear_remaining	존의 지도를 살피기 전에 남은 구울을 처치해.	Clear the remaining ghoul before examining John's map.
+Dialogue/ch03.map	딘: 여기 왔었구나.\n존의 글씨. NEW MEXICO. 신문 스크랩 하나가 이 사냥들을 더 큰 패턴으로 잇는다.	Dean: You were here.\nJohn's handwriting. NEW MEXICO. A clipping links these hunts to a larger pattern.
+Messages/ch03.exit_refuse	사냥을 끝내고 지하실에서 존의 지도를 챙겨.	Finish the hunt and collect John's map in the basement.
+Messages/ch03.boss_killed	기디언이 쓰러진다. 공범을 처치하고 존의 접힌 지도를 살펴라.	Gideon collapses. Clear his accomplice, then inspect John's folded map.
+Messages/ch03.ghoul_down	구울 처치. 탄약을 확인하고 조사를 계속하라.	Ghoul down. Check your ammunition and continue investigating.
+Messages/ch03.gideon_lunge	기디언이 덤벼든다 — 옆으로 피해!	Gideon lunges — move sideways!
+Messages/ch03.ghoul_windup	구울이 공격을 준비한다 — 물러서거나 머리를 쏴서 휘청이게 해!	Ghoul winds up — back away or stagger its head!
+Messages/ch03.knife_finish	칼로 마무리.	Knife finish.
+Messages/ch03.head_hit	헤드샷 — 휘청인다! 칼 [2]로 파고들어.	Head hit — staggered! Close in with the knife [2].
+Messages/ch03.body_hit	몸통 명중. 탄약을 아끼려면 머리를 노려.	Body hit. Aim for the head to conserve ammunition.
+Checkpoints/ch03.arrival	머시 크릭 도착	Mercy Creek arrival
+Checkpoints/ch03.identified	구울 정체 확인	Ghoul identified
+Checkpoints/ch03.evidence	머시 크릭 증거 {0}/5	Mercy Creek evidence {0}/5
+Checkpoints/ch03.revealed	기디언의 정체	Gideon revealed
+Checkpoints/ch03.supplies	머시 크릭 보급품	Mercy Creek supplies
+Checkpoints/ch03.map	존의 뉴멕시코 지도	John's New Mexico map
+Checkpoints/ch03.complete	머시 크릭 완료 / 뉴멕시코로	Mercy Creek complete / New Mexico
+Prompts/ch03.TexasExit	임팔라로 돌아가기	Return to the Impala
+Prompts/ch03.EmptyGrave	빈 무덤 살펴보기	Inspect empty grave
+Prompts/ch03.OldFuneralPhoto	옛 장례식장 사진 살펴보기	Study old funeral home photo
+Prompts/ch03.MissingBodyParts	시신 목록 대조하기	Compare body inventory
+Prompts/ch03.TexasAmmo	정비실 탄약 상자 열기	Open maintenance ammo tin
+Prompts/ch03.SheriffReddick	레딕 보안관과 이야기하기	Talk to Sheriff Reddick
+Prompts/ch03.FeedingArea	먹이터 살펴보기	Inspect feeding area
+Prompts/ch03.JohnMap	존의 접힌 지도 챙기기	Take John's folded map
+Prompts/ch03.GideonVale	기디언 베일 추궁하기	Question Gideon Vale
+Prompts/ch03.NoraBell	노라 벨과 이야기하기	Talk to Nora Bell
+Prompts/ch03.StolenPersonalItem	도난당한 펜던트 되찾기	Recover stolen pendant
+Messages/ch03.TexasExit_desc	모텔 지도가 서쪽을 가리킨다. 다음은 뉴멕시코.	The motel map points west. New Mexico is next.
+Clues/ch03.EmptyGrave	빈 무덤: 흙을 조심스레 파낸 뒤 다시 다져 놓았다. 짐승 짓이 아니다.	EMPTY GRAVE: The earth was opened carefully, then packed back down. This was not an animal attack.
+Clues/ch03.OldFuneralPhoto	옛 장례식장 사진: 기디언 베일이 40년 전 사진에 있다. 하루도 늙지 않았다.	OLD FUNERAL HOME PHOTO: Gideon Vale is in a forty-year-old picture and has not aged a day.
+Clues/ch03.MissingBodyParts	사라진 시신 일부: 장례 기록과 시신 목록이 맞지 않는다. 누군가 매장 전에 먹고 있다.	MISSING BODY PARTS: The funeral record and the body inventory do not match. Someone has been feeding before burial.
+Messages/ch03.TexasAmmo_desc	탄약: 깨끗한 .45 탄 한 상자. 버티기엔 충분하다.	AMMO: A clean box of .45 rounds. Enough to keep moving.
+Dialogue/ch03.SheriffReddick	레딕 보안관: 코요테가 파헤친 거요. 사람들이 호들갑이지.\n딘: 코요테는 보통 한 끼를 통째로 가져가거든.	Sheriff Reddick: Coyotes dig. People panic.\nDean: Coyotes usually take the whole meal.
+Clues/ch03.FeedingArea	먹이터: 뼛조각과 꼬리표 붙은 유해가 폐기실을 채우고 있다. 구울 둥지다.	FEEDING AREA: Bone scraps and tagged remains fill the disposal bay. This is a ghoul nest.
+Clues/ch03.JohnMap	존의 지도: 존의 글씨로 뉴멕시코에 동그라미. 같은 패턴을 쫓아 서쪽으로 갔다.	JOHN'S MAP: New Mexico is circled in John's handwriting. He was following the same pattern west.
+Dialogue/ch03.GideonVale	기디언 베일: 죽음은 사람을 상상력 풍부하게 만들죠.\n딘: 웃기네. 내 일은 보통 꽤 단순해지던데.	Gideon Vale: Death makes people imaginative.\nDean: Funny. Usually makes my job pretty straightforward.
+Dialogue/ch03.NoraBell	노라 벨: 베일 씨는 제가 태어나기 전부터 여길 운영하셨어요.\n딘: 어떻게 그게 되는지 궁금한 사람이 둘이 됐네.	Nora Bell: Mr. Vale has run this place longer than I've been alive.\nDean: That makes two of us wondering how.
+Clues/ch03.StolenPersonalItem	도난당한 유품: 죽은 여자의 펜던트가 직원실에 숨겨져 있다. 도둑은 시신 가까이에서 일한다.	STOLEN PERSONAL ITEM: A dead woman's pendant is hidden in the employee room. The thief works close to the bodies.
+# A · ch04 Grants
+Intro/ch04	GRANTS, NEW MEXICO / ROUTE 66\n선셋 스타 모터 코트. 투숙객들이 같은 자리에서 계속 죽는다.\n트렁크에서 장비를 챙기고 관리인과 이야기하자.	GRANTS, NEW MEXICO / ROUTE 66\nSunset Star Motor Court. Guests keep dying in the same place.\nTake the kit from the trunk and talk to the manager.
+Objectives/ch04.preview	JERICHO, CA / CHAPTER 05 미리보기	JERICHO, CA / CHAPTER 05 PREVIEW
+Objectives/ch04.return_impala	임팔라로 돌아가라 / 66번 국도 서쪽으로	RETURN TO THE IMPALA / ROUTE 66 WEST
+Objectives/ch04.phone_records	사무실 / 전화 기록을 확인하라	FRONT OFFICE / CHECK THE PHONE RECORDS
+Objectives/ch04.lockdown	봉쇄 / 버티다가 뒤편 창고에서 앵커를 태워라	LOCKDOWN / HOLD THEM OFF, THEN BURN THE ANCHOR IN REAR STORAGE
+Objectives/ch04.open_wall	유틸리티 룸 / 사망선 위의 벽을 뜯어라	UTILITY ROOM / OPEN THE WALL ON THE DEATH AXIS
+Objectives/ch04.trunk	주차장 / 임팔라 트렁크에서 쇠와 소금을 챙겨라	PARKING LOT / TAKE IRON AND SALT FROM THE IMPALA TRUNK
+Objectives/ch04.investigate	선셋 스타 / 방 번호가 아니라 벽을 따라가라 {0}/5	SUNSET STAR / FOLLOW THE WALL, NOT THE ROOM NUMBER {0}/5
+Messages/ch04.utility_encounter	벽이 숨을 내쉰다. 반쯤 형체를 갖춘 것이 벽에서 빠져나온다.\n총알은 통과한다. 쇠 [3 + LMB]로 흩어내라.	The wall exhales. A half-formed shape pulls free of it.\nBullets pass through. Iron [3 + LMB] scatters it.
+Dialogue/ch04.event_door	줄 끝에서 객실 문 하나가 저절로 쾅 닫힌다.\n딘: "참 친절한 동네네."	Down the row, a room door slams shut on its own.\nDean: "Friendly place."
+Messages/ch04.event_tv	8호실 TV가 저절로 켜진다. 잡음, 그리고 1958년 일기예보.	Room eight's TV snaps on by itself. Static, then a 1958 weather report.
+Messages/ch04.event_lights	복도 조명이 하나씩 꺼지며 이쪽으로 다가온다.	The walkway lights die one by one, marching toward you.
+Messages/ch04.event_mirror	6호실 거울 속, 누군가 바로 뒤에 서 있다. 돌아보면 방은 비어 있다.	In room six's mirror someone stands right behind you. The room behind you is empty.
+Messages/ch04.event_radio	임팔라 라디오가 저절로 켜진다. 잡음 너머로: "...8호실... 6호실..."	The Impala's radio turns itself on. Through the static: "...room eight... room six..."
+Messages/ch04.wall_not_yet	석고와 낡은 샛기둥뿐. 벽을 뜯기 전에 장부, 설계도, 사진, 정비 메모부터 맞춰 봐.	Plaster and old studs. Line up the ledger, blueprint, photograph and maintenance note before tearing into the wall.
+Messages/ch04.wall_no_kit	쇠와 소금 없이는 안 돼. 임팔라 트렁크에서 장비부터 챙겨.	Not without iron and salt. Get the kit from the Impala trunk first.
+Messages/ch04.lockdown_start	{0}\n동 전체의 문이 쾅 닫히며 잠긴다.	{0}\nEvery door in the block slams and locks.
+Tutorial/ch04.burn_anchor	라이터를 켜고 [F], E를 길게 눌러 앵커를 태워라.	Lighter on [F], then hold E to burn the anchor.
+Messages/ch04.barrel_empty	낡은 소각 드럼. 아직 태울 게 없다.	An old burn barrel. Nothing worth burning yet.
+Dialogue/ch04.lorna_log	로나: 그 기록은 비공개예요.\n사무실을 뒤지기 전에 일부터 끝내.	Lorna: That log's private.\nFinish the job before digging through the office.
+Dialogue/ch04.phone_record	전화 기록: 존은 이 책상에서 캘리포니아 번호로 전화를 걸었다. 옆에 그의 글씨로: JERICHO, CA.\n딘: "Jericho..."	PHONE RECORD: John called a California number from this desk. Beside it, in his hand: JERICHO, CA.\nDean: "Jericho..."
+Messages/ch04.phone_first	사무실 전화 기록부터 확인해.	Check the front office phone records first.
+Messages/ch04.still_hunting	아직이야. 모텔이 여전히 손님을 사냥하고 있다.	Not yet. The motel is still hunting its guests.
+Messages/ch04.anchor_burned	광부의 인식표가 검게 탄다. 전구가 모두 과부하로 터지고 — 정적.\nVACANCY 간판이 흔들림 없이 빛난다. 사무실을 확인하라.	The miner's tag blackens. Every bulb overloads — then silence.\nThe VACANCY sign burns steady. Check the office.
+Messages/ch04.flicker	맞은 자리가 일렁일 뿐. 상처 입힐 몸이 없다.	It flickers around the hit. Nothing there to wound.
+Messages/ch04.iron_scatters	쇠가 흩어냈다. 다시 모인다. 움직여.	Iron scatters it. It will re-form. Move.
+Messages/ch04.out_of_salt	소금이 떨어졌다. 쇠 [3]는 아직 통한다.	Out of salt. Iron [3] still works.
+Messages/ch04.salt_poured	소금선을 그었다. 잠시 버틸 거다. 남은 소금 {0}.	Salt line poured. It will hold for a little while. {0} left.
+Messages/ch04.object_lifts	선반에서 뭔가 떠오른다 — 움직여!	Something lifts off the shelf — move!
+Checkpoints/ch04.lot	선셋 스타 주차장	Sunset Star parking lot
+Checkpoints/ch04.utility	유틸리티 룸	Utility room
+Checkpoints/ch04.lockdown	봉쇄	Lockdown
+Checkpoints/ch04.evidence	선셋 스타 증거 {0}/5	Sunset Star evidence {0}/5
+Checkpoints/ch04.trunk	임팔라 트렁크	Impala trunk
+Checkpoints/ch04.phone	존의 전화 기록	John's phone record
+Checkpoints/ch04.complete	선셋 스타 완료 / Jericho로	Sunset Star complete / Jericho
+Checkpoints/ch04.anchor_burned	앵커 소각	Anchor burned
+Prompts/ch04.OldMotelPhoto	액자 사진 살펴보기	Study the framed photo
+Prompts/ch04.GrantsExit	66번 국도 서쪽으로 달리기	Drive west on Route 66
+Prompts/ch04.WallCavity	2번 기둥의 벽 뜯기	Tear open the wall at post 2
+Prompts/ch04.RenovationBlueprint	개축 설계도 살펴보기	Study the renovation blueprint
+Prompts/ch04.JohnPhoneRecord	전화 기록 확인하기	Check the phone records
+Prompts/ch04.Anchor	앵커 태우기	Burn the anchor
+Prompts/ch04.LornaHayes	로나 헤이스와 이야기하기	Talk to Lorna Hayes
+Prompts/ch04.WallDecoy_post3	3번 기둥의 벽 뜯기	Open the wall at post 3
+Prompts/ch04.ImpalaTrunk	임팔라 트렁크 열기	Open the Impala trunk
+Prompts/ch04.MaintenanceNote	정비 메모 읽기	Read the maintenance note
+Prompts/ch04.MotelGuest	투숙객과 이야기하기	Talk to the guest
+Prompts/ch04.WallDecoy_post1	1번 기둥의 벽 뜯기	Open the wall at post 1
+Prompts/ch04.GuestLedger	투숙객 장부 읽기	Read the guest ledger
+Clues/ch04.OldMotelPhoto	옛 사진: 1952년, 모텔이 들어서기 전. 광부들이 목재 지지 기둥 앞에 서 있다 — 2번 기둥. 사망 사건이 바로 그 들보를 따라 늘어선다.	OLD PHOTO: 1952, before the motel. A mining crew poses at a timber support post — POST 2. The deaths line up with that same beam.
+Messages/ch04.GrantsExit_desc	66번 국도 서쪽. 캘리포니아.	Route 66 west. California.
+Clues/ch04.WallCavity	벽 속 공간: 광부의 황동 인식표와 그을린 캔버스 주머니 — 1952년 광산 사고 희생자의 유품. 이게 앵커다.	WALL CAVITY: A miner's brass tag and a scorched canvas pouch — personal effects of a 1952 mine accident victim. This is the anchor.
+Clues/ch04.RenovationBlueprint	개축 설계도: 개축할 때마다 방 번호가 둘씩 밀렸다. 옛 8, 6, 4, 2호실은 같은 방이다 — 유틸리티 룸 동쪽 벽에 붙은 그 방.	RENOVATION BLUEPRINT: Every remodel shifted the room numbers by two. Old 8, 6, 4 and 2 are the same physical unit — the one backing onto the utility room's east wall.
+Messages/ch04.JohnPhoneRecord_desc	전화 기록	PHONE RECORD
+Messages/ch04.Anchor_desc	소각 드럼.	The burn barrel.
+Dialogue/ch04.LornaHayes	로나: 오래된 모텔은 원래 소리가 나요.\n딘: 보통 완전한 문장으론 안 나지.	Lorna: Old motels make noise.\nDean: Usually not in complete sentences.
+Messages/ch04.WallDecoy_post3	3번 기둥의 속 빈 석고벽. 아무것도 없다. 사망선이 여기와 맞지 않는다.	Hollow drywall at post 3. Nothing inside. The deaths don't line up here.
+Tutorial/ch04.ImpalaTrunk	임팔라 트렁크: 쇠막대와 굵은 소금 한 통. [3] 쇠는 흩어낸다. [4] 후 LMB로 소금선을 긋는다.	IMPALA TRUNK: An iron rod and a canister of rock salt. [3] Iron disperses. [4] then LMB pours a salt line.
+Clues/ch04.MaintenanceNote	정비 메모 (1996): 유틸리티 룸 배선 교체 중. 동쪽 벽 안에서 캔버스 주머니 발견. 도로 넣어둠. 그 라인 투숙객들이 계속 노크 소리를 호소함.	MAINTENANCE NOTE (1996): Rewiring the utility room. Found a canvas pouch inside the east wall. Put it back. Guests on that line keep complaining about knocking.
+Dialogue/ch04.MotelGuest	투숙객: 8호실에 체크인했는데. 깨어보니 6호실이었어요.\n딘: 힘든 밤이었나 봐?\n투숙객: 술 안 마셨어요. 그날 밤엔.	Guest: I checked into room eight. Woke up in six.\nDean: Rough night?\nGuest: I didn't drink. Not that night.
+Messages/ch04.WallDecoy_post1	1번 기둥의 속 빈 석고벽. 아무것도 없다. 사망선이 여기와 맞지 않는다.	Hollow drywall at post 1. Nothing inside. The deaths don't line up here.
+Clues/ch04.GuestLedger	투숙객 장부: 1958년(8호실), 1971년(6호실), 1989년(4호실), 2003년(2호실) 사망. 번호는 달라도 죽음은 같다.	GUEST LEDGER: Deaths in 1958 (room 8), 1971 (room 6), 1989 (room 4) and 2003 (room 2). Different numbers, same kind of death.
+# A · ch05 Winslow
+Intro/ch05	WINSLOW, ARIZONA / COYOTE MILE\n안개 속 헤드라이트. 도로 한가운데 선 남자 — 딘이 급브레이크를 밟는다. 아무도 없다.\n올해만 이 구간에서 사고 세 건. 스키드 마크부터 보자.	WINSLOW, ARIZONA / COYOTE MILE\nHeadlights in the haze. A man standing in the middle of the road — Dean brakes hard. Nobody there.\nThree crashes on this mile this year. Start at the skid marks.
+Objectives/ch05.preview	팰로앨토 / CHAPTER 06 미리보기	PALO ALTO / CHAPTER 06 PREVIEW
+Objectives/ch05.get_sam	임팔라 / 샘을 데리러 가라	THE IMPALA / GO GET SAM
+Objectives/ch05.voicemail	모텔 방 / 존의 음성 메시지를 재생하라	MOTEL ROOM / PLAY JOHN'S VOICEMAIL
+Objectives/ch05.drive_back	폐차장 / 모텔로 돌아가라	SALVAGE YARD / DRIVE BACK TO THE MOTEL
+Objectives/ch05.burn_wheel	운전대를 태워라 / 소금과 쇠로 시간을 벌어라	BURN THE STEERING WHEEL / SALT AND IRON BUY TIME
+Objectives/ch05.find_wheel	폐차장 / 사고 차량의 운전대를 찾아라	SALVAGE YARD / FIND THE CRASH CAR'S STEERING WHEEL
+Objectives/ch05.drive_salvage	임팔라 / 폐차장으로 가라	THE IMPALA / DRIVE TO THE SALVAGE YARD
+Objectives/ch05.talk_mae	식당 / 메이와 이야기하라	DINER / TALK TO MAE
+Objectives/ch05.investigate	코요테 마일 / 사고들을 조사하라 {0}/5	COYOTE MILE / INVESTIGATE THE CRASHES {0}/5
+Messages/ch05.motel_encounter	사고로 찢긴 재킷을 입은 형체가 모텔 복도에 서 있다. 눈이 있어야 할 자리에 헤드라이트가 있다.\n쇠 [3 + LMB]로 몰아내고 소금 [4 + LMB]으로 막아라.	A figure in a crash-torn jacket stands in the motel hallway, headlights where its eyes should be.\nIron [3 + LMB] drives it back. Salt [4 + LMB] holds it.
+Messages/ch05.event_road	앞쪽 도로 한가운데 누군가 서 있다. 딘이 눈을 깜빡이자 도로는 비어 있다.	Someone stands in the middle of the road ahead. Dean blinks, and the road is empty.
+Messages/ch05.event_car	한순간, 가드레일에 불타는 차가 보인다. 그리고 그을린 기둥만 남는다.	For a heartbeat there is a burning car against the guardrail. Then only the scorched post.
+Messages/ch05.event_mirror	임팔라 백미러 속, 뒷좌석에 불탄 남자가 앉아 있다. 딘이 돌아본다. 아무도 없다.	In the Impala's rear-view mirror a burned man sits in the back seat. Dean turns. Empty.
+Messages/ch05.just_wreck	그냥 폐차일 뿐. 누구 차였는지부터 알아내.	Just another wreck. Figure out whose car this was first.
+Messages/ch05.wheel_secured	{0}\n폐차장 조명이 꺼진다. 놈이 자기 차를 찾아온다. 소금을 뿌리고 드럼통에서 태워라.	{0}\nThe yard lights die. It is coming for its car. Salt it, then burn it in the barrel.
+Dialogue/ch05.mae	메이: 어젯밤에 나이 든 남자가 지나갔어요. 같은 걸 묻더군요.\n딘: 키 크고? 뚱하고? 잠이 인생의 모욕인 것처럼 생긴?\n메이: 그 사람 맞아요.\n딘: (하루. 하루 차이로 놓쳤어.)	Mae: Older guy came through last night. Same questions.\nDean: Tall? Grumpy? Looks like sleep is a personal insult?\nMae: That's the one.\nDean: (One day. I missed him by one day.)
+Messages/ch05.not_done	아직 안 끝났어. 사고, 보고서, 차, 운전자 — 그다음이 시신이다.	Not done here. The crash, the report, the car and the driver — then the body.
+Messages/ch05.talk_mae_first	마을을 뜨기 전에 식당의 메이와 이야기해.	Talk to Mae at the diner before leaving town.
+Messages/ch05.drive	자정의 66번 국도. 전화가 울리지만 딘은 놓친다. 백미러 속, 뒷좌석에 불탄 남자가 앉아 있다.\n딘이 브레이크를 밟는다 — 좌석은 비어 있다. 폐차장 정문이 바로 앞이다.	Route 66, midnight. The phone buzzes; Dean misses it. In the rear-view mirror, a burned man sits in the back seat.\nDean stands on the brake — the seat is empty. The salvage yard gate is right there.
+Tutorial/ch05.burn_wheel	라이터를 켜고 [F], E를 길게 눌러 운전대를 태워라.	Lighter on [F], then hold E to burn the steering wheel.
+Messages/ch05.oil_drum	기름 드럼통. 앵커부터 찾아.	An oil drum. Find the anchor first.
+Messages/ch05.wheel_must_burn	아직이야. 운전대부터 태워야 한다.	Not yet. The wheel still has to burn.
+Messages/ch05.back_motel	모텔로 돌아왔다. 딘이 더플백을 내려놓는다. 새 음성 메시지 한 통.	Back at the motel. Dean drops the duffel. One new voicemail.
+Messages/ch05.later	나중에. 일부터 끝내.	Later. Finish the job.
+Dialogue/ch05.voicemail	존 (음성 메시지): "딘. 뭔가 안 좋은 걸 쫓고 있다. 따라오지 마라. 몸조심해."\n딘이 다시 재생한다. 잡음 밑으로 여자의 속삭임: "...Jericho..."\n딘: 눈이 하나 더 필요해. ... 새미.	JOHN (voicemail): "Dean. I'm onto something bad. Don't follow me. Watch yourself."\nDean replays it. Under the static, a woman's whisper: "...Jericho..."\nDean: I need another set of eyes. ... Sammy.
+Messages/ch05.play_first	음성 메시지부터 들어.	Play the voicemail first.
+Messages/ch05.not_leaving	아직 안 떠나.	Not leaving yet.
+Messages/ch05.anchor_burned	헤드라이트 불빛이 폐차장을 가로지른다. 멀리서 경적 소리. 영혼의 분노가 부서지고, 한순간 평온해 보인다.\n바람 한 줄기, 그리고 사라진다.	Headlights flicker across the yard. A distant horn. The spirit's rage breaks; for a second it looks calm.\nA gust of wind, and it is gone.
+Checkpoints/ch05.arrival	코요테 마일 도착	Coyote Mile arrival
+Checkpoints/ch05.closed_motel	폐업한 모텔	Closed motel
+Checkpoints/ch05.wheel	운전대 확보	Steering wheel secured
+Checkpoints/ch05.evidence	코요테 마일 증거 {0}/5	Coyote Mile evidence {0}/5
+Checkpoints/ch05.diner	메이의 식당	Mae's diner
+Checkpoints/ch05.salvage	폐차장	Salvage yard
+Checkpoints/ch05.motel_room	모텔 방	Motel room
+Checkpoints/ch05.voicemail	존의 음성 메시지	John's voicemail
+Checkpoints/ch05.complete	코요테 마일 완료 / 팰로앨토로	Coyote Mile complete / Palo Alto
+Checkpoints/ch05.at_rest	잠든 도로의 영혼	Road spirit at rest
+Prompts/ch05.CrashMarks	스키드 마크 살펴보기	Inspect the skid marks
+Prompts/ch05.CremationRecord	부고 스크랩 읽기	Read the obituary clipping
+Prompts/ch05.GarageRecord	정비 기록 확인하기	Check the work record
+Prompts/ch05.DriverIdentity	숙박부 읽기	Read the guest register
+Prompts/ch05.SteeringWheel	운전대 뜯어내기	Pry out the steering wheel
+Prompts/ch05.HankDoyle	행크 도일과 이야기하기	Talk to Hank Doyle
+Prompts/ch05.PoliceReport	옛 경찰 보고서 읽기	Read the old police report
+Prompts/ch05.WinslowDrive	폐차장으로 가기	Drive to the salvage yard
+Prompts/ch05.MaeTorres	메이 토레스와 이야기하기	Talk to Mae Torres
+Prompts/ch05.JohnVoicemail	음성 메시지 재생하기	Play the voicemail
+Prompts/ch05.WinslowExit	팰로앨토로 가기	Drive to Palo Alto
+Prompts/ch05.Anchor	운전대 태우기	Burn the steering wheel
+Prompts/ch05.WinslowReturn	모텔로 돌아가기	Drive back to the motel
+Clues/ch05.CrashMarks	사고 흔적: 오래된 자국 위에 새 스키드 마크. 모두 같은 가드레일에서 꺾였다. 누군가 도로 위의 무언가 때문에 계속 브레이크를 밟는다.	CRASH MARKS: Fresh skids over old ones, all swerving at the same guardrail. Somebody keeps braking for something in the road.
+Clues/ch05.CremationRecord	화장 기록: 레이 콜턴은 플래그스태프에서 화장됐다. 무덤도, 소금 칠 뼈도 없다. 다른 무언가가 그를 붙잡고 있다.	CREMATION RECORD: Ray Colton was cremated in Flagstaff. No grave, no bones to salt. Something else is holding him here.
+Clues/ch05.GarageRecord	정비소 작업 기록: 1979년 견인, 쉐비 벨 에어, 차대번호가 콜턴 사고와 일치. 코요테 폐차장으로 견인됐고 폐기되지 않았다.	GARAGE WORK RECORD: 1979 tow, Chevy Bel Air, VIN matches the Colton crash. Towed to Coyote Salvage and never scrapped.
+Clues/ch05.DriverIdentity	운전자 신원: 레이 콜턴은 죽던 날 밤 4호실에 체크인했다. 최근 사고 희생자 셋도 모두 여기 묵었다.	DRIVER IDENTITY: Ray Colton checked in the night he died, room 4. The last three crash victims all stayed here too.
+Clues/ch05.SteeringWheel	운전대 파편: 반쯤 녹았고, 말라붙은 피와 결혼반지가 테에 녹아 붙어 있다. 레이는 끝까지 놓지 않았다. 이게 앵커다.	STEERING WHEEL FRAGMENT: Half-melted, with dried blood and a wedding band fused to the rim. Ray never let go. This is the anchor.
+Dialogue/ch05.HankDoyle	행크: 차는 완전히 박살났지. 운전자도 별반 다르지 않았고.\n행크: 잔해는 폐차장으로 끌고 갔어. 찾아가는 사람이 없더군.	Hank: Car was totaled. Driver wasn't much better.\nHank: Hauled the wreck to the salvage yard. Nobody ever claimed it.
+Clues/ch05.PoliceReport	경찰 보고서 (1979): 레이 콜턴(31)이 코요테 마일에서 통제를 잃고 쉐비 안에서 불타 죽었다. 이 구간의 첫 사망자.	POLICE REPORT (1979): Ray Colton, 31, lost control on Coyote Mile and burned in his Chevy. First death on this stretch.
+Messages/ch05.WinslowDrive_desc	임팔라. 폐차장은 폐쇄된 도로 끝에 있다.	The Impala. The salvage yard is down the closed road.
+Messages/ch05.MaeTorres_desc	메이 토레스	Mae Torres
+Messages/ch05.JohnVoicemail_desc	존의 음성 메시지	JOHN'S VOICEMAIL
+Messages/ch05.WinslowExit_desc	스탠퍼드. 샘.	Stanford. Sam.
+Messages/ch05.WinslowReturn_desc	모텔로.	Back to the motel.
+# A · ch06 Stanford
+Intro/ch06	MOTEL ROOM / WINSLOW, ARIZONA\n전화, 아빠의 메모, 신문 스크랩, 지도. 전부 펼쳐 보자.\n오늘 밤은 사냥 없다.	MOTEL ROOM / WINSLOW, ARIZONA\nThe phone, Dad's notes, the clippings, the map. Lay it out.\nNo hunting tonight.
+Objectives/ch06.continued	다음 이야기에서 계속	TO BE CONTINUED
+Objectives/ch06.find_sam	샘을 찾아라	FIND SAM
+Objectives/ch06.call_john	존에게 전화하라	CALL JOHN
+Objectives/ch06.connect	모텔 방 / 존의 흔적을 연결하라 {0}/4	MOTEL ROOM / CONNECT JOHN'S TRAIL {0}/4
+Messages/ch06.montage_1	40번 주간고속도로, 서쪽으로. 임팔라가 어둠을 삼킨다.	Interstate 40, westbound. The Impala eats the dark.
+Messages/ch06.montage_2	새벽 3시의 주유소. 커피에서 주전자 맛이 난다.	A gas station at 3 AM. Coffee that tastes like the pot.
+Messages/ch06.montage_3	WELCOME TO CALIFORNIA.	WELCOME TO CALIFORNIA.
+Messages/ch06.montage_4	조수석에 놓인 존의 접힌 지도. JERICHO에 동그라미가 두 번.	John's folded map on the passenger seat. JERICHO circled twice.
+Messages/ch06.montage_5	저녁. 팰로앨토. 현관 불빛, 자전거, 열린 창문 너머 누군가의 웃음소리.	Evening. Palo Alto. Porch lights, bicycles, somebody laughing through an open window.
+Messages/ch06.palo_alto	팰로앨토. 깨끗한 거리, 따뜻한 창문. 딘은 여기서 녹슨 건 자기뿐인 것 같다.	Palo Alto. Clean streets, warm windows. Dean feels like the only thing here with rust on it.
+Dialogue/ch06.door	딘이 멈춰 선다. 복도가 조용해진다. 그의 손이 자물쇠를 찾는다.\n딘: "좋아, 새미."	Dean stops. The hallway goes quiet. His hand finds the lock.\nDean: "All right, Sammy."
+Messages/ch06.converged	{0}\n\nJERICHO, CALIFORNIA / 사라진 남자들 / 존의 경로	{0}\n\nJERICHO, CALIFORNIA / MISSING MEN / JOHN'S ROUTE
+Messages/ch06.lay_out	아직이야. 전부 펼쳐 놓고 보자.	Not yet. Lay it all out first.
+Dialogue/ch06.call	신호음. 신호음. 음성 사서함. 또.\n딘: "그래." ... "귀찮은 녀석을 불러낼 때가 됐군."\n목표: 샘을 찾아라	Ringing. Ringing. Voicemail. Again.\nDean: "Fine." ... "Time to call in the pain in my ass."\nOBJECTIVE: FIND SAM
+Messages/ch06.call_first	떠나기 전에 아빠한테 한 번 더 전화해.	Call Dad one more time before leaving.
+Messages/ch06.trunk	트렁크: 권총, 칼, 소금, 쇠, 라이터, 아빠의 파일.\n딘은 총을 두고 간다. "가족 방문이다. 품위 있게."	The trunk: handgun, knife, salt, iron, lighter, Dad's files.\nDean leaves the gun. "Family visit. Keep it classy."
+Checkpoints/ch06.motel_count	모텔 방 {0}/4	Motel room {0}/4
+Checkpoints/ch06.find_sam	샘을 찾아서	Find Sam
+Checkpoints/ch06.palo_alto	팰로앨토	Palo Alto
+Checkpoints/ch06.trunk	임팔라 트렁크 / 팰로앨토	Impala trunk / Palo Alto
+Checkpoints/ch06.complete	게임 완료	Game complete
+Prompts/ch06.VoicemailTape	존의 음성 메시지 다시 듣기	Replay John's voicemail
+Prompts/ch06.CallJohn	존에게 전화하기	Call John
+Prompts/ch06.HitTheRoad	길을 나서기	Hit the road
+Prompts/ch06.JerichoClippings	신문 스크랩 살펴보기	Study the clippings
+Prompts/ch06.SamNeighbor	이웃과 이야기하기	Talk to the neighbor
+Prompts/ch06.StanfordTrunk	트렁크 열기	Open the trunk
+Prompts/ch06.JohnNotes	존의 메모 읽기	Read John's notes
+Prompts/ch06.RouteMap	존의 지도 따라가기	Trace John's map
+Clues/ch06.VoicemailTape	음성 메시지: 딘이 다시 재생한다. "...따라오지 마라..." 그리고 그 밑의 속삭임: "...Jericho..."	VOICEMAIL: Dean plays it again. "...don't follow me..." And underneath, the whisper: "...Jericho..."
+Messages/ch06.CallJohn_desc	모텔 전화.	The motel phone.
+Messages/ch06.HitTheRoad_desc	팰로앨토.	Palo Alto.
+Clues/ch06.JerichoClippings	신문 스크랩: 캘리포니아 Jericho 외곽 같은 도로에서 남자들이 사라진다. 몇 달에 한 명씩, 몇 년째.	CLIPPINGS: Men vanishing on the same stretch outside Jericho, California. One every few months, going back years.
+Dialogue/ch06.SamNeighbor	이웃 (빨래 바구니를 든): 샘 찾아요? 복도 끝이에요. 기말고사 기간이라… 행운을 빌어요.	Neighbor (with a laundry basket): Looking for Sam? End of the hall. He's got finals, so... good luck.
+Messages/ch06.StanfordTrunk_desc	트렁크.	The trunk.
+Clues/ch06.JohnNotes	존의 메모: 날짜들, 고속도로 이정표, 그리고 세 번 밑줄 친 이름 하나: JERICHO.	JOHN'S NOTES: Dates, highway mile markers, and one name underlined three times: JERICHO.
+Clues/ch06.RouteMap	존의 경로: 뉴올리언스, 벨 리브, 머시 크릭, 그랜츠, 윈슬로. 모든 선이 서쪽의 Jericho를 가리킨다.	JOHN'S ROUTE: New Orleans, Belle Rive, Mercy Creek, Grants, Winslow. Every line points west to Jericho.
+# B · clue names / kinds
+ClueNames/Mirror	깨진 거울	Broken mirror
+ClueNames/Photos	사진	Photographs
+ClueNames/Ledger	유산 장부	Estate ledger
+ClueNames/Scratches	그을음 흔적	Soot residue
+ClueNames/Record	매장 기록	Burial record
+ClueNames/MudHandprints	진흙 손자국	Mud handprints
+ClueNames/HairTissue	털과 조직	Hair and tissue
+ClueNames/MissingReport	아동 실종 보고서	Missing-child report
+ClueNames/ElectricalReport	전기 사고 보고서	Electrical accident report
+ClueNames/CrawlTrace	기어간 자국	Crawl traces
+ClueNames/EmptyGrave	빈 무덤	Empty grave
+ClueNames/MissingBodyParts	사라진 시신 일부	Missing body parts
+ClueNames/OldFuneralPhoto	옛 장례식장 사진	Old funeral home photo
+ClueNames/StolenPersonalItem	도난당한 펜던트	Stolen pendant
+ClueNames/FeedingArea	먹이터	Feeding area
+ClueNames/GuestLedger	투숙객 장부	Guest ledger
+ClueNames/RenovationBlueprint	개축 설계도	Renovation blueprint
+ClueNames/OldMotelPhoto	옛 모텔 사진	Old motel photo
+ClueNames/MaintenanceNote	정비 메모	Maintenance note
+ClueNames/WallCavity	벽 속 유품	Wall cavity
+ClueNames/CrashMarks	스키드 마크	Crash marks
+ClueNames/PoliceReport	경찰 보고서 (1979)	Police report (1979)
+ClueNames/GarageRecord	정비소 작업 기록	Garage work record
+ClueNames/DriverIdentity	운전자 신원	Driver identity
+ClueNames/CremationRecord	화장 기록	Cremation record
+ClueNames/SteeringWheel	운전대 파편	Steering wheel fragment
+ClueNames/JohnNotes	존의 메모	John's notes
+ClueNames/JerichoClippings	Jericho 신문 스크랩	Jericho clippings
+ClueNames/RouteMap	존의 경로 지도	John's route map
+ClueNames/VoicemailTape	음성 메시지 테이프	Voicemail tape
+ClueKinds/prologue	Mirror,Photos,Ledger,Scratches,Record	Mirror,Photos,Ledger,Scratches,Record
+ClueKinds/ch02	MudHandprints,HairTissue,MissingReport,ElectricalReport	MudHandprints,HairTissue,MissingReport,ElectricalReport
+ClueKinds/ch03	EmptyGrave,MissingBodyParts,OldFuneralPhoto,StolenPersonalItem,FeedingArea	EmptyGrave,MissingBodyParts,OldFuneralPhoto,StolenPersonalItem,FeedingArea
+ClueKinds/ch04	GuestLedger,RenovationBlueprint,OldMotelPhoto,MaintenanceNote,WallCavity	GuestLedger,RenovationBlueprint,OldMotelPhoto,MaintenanceNote,WallCavity
+ClueKinds/ch05	CrashMarks,PoliceReport,GarageRecord,DriverIdentity,CremationRecord,SteeringWheel	CrashMarks,PoliceReport,GarageRecord,DriverIdentity,CremationRecord,SteeringWheel
+ClueKinds/ch06	JohnNotes,JerichoClippings,RouteMap,VoicemailTape	JohnNotes,JerichoClippings,RouteMap,VoicemailTape
+# B · people
+PeopleNames/Mara	마라	Mara
+PeopleNames/Mara.d	식당 주인 · 사라진 아이들 사건을 알려줬다	Diner owner · told Dean about the missing children
+PeopleNames/Eli	일라이 머서	Eli Mercer
+PeopleNames/Eli.d	양수장 관리인 · 6년 전 전기 사고를 기억한다	Pump station caretaker · remembers the surge six years ago
+PeopleNames/SheriffReddick	톰 레딕 보안관	Sheriff Tom Reddick
+PeopleNames/SheriffReddick.d	보안관 · 무덤 훼손을 코요테 탓으로 돌린다	County sheriff · blames the graves on coyotes
+PeopleNames/NoraBell	노라 벨	Nora Bell
+PeopleNames/NoraBell.d	장례식장 직원 · 베일의 늙지 않는 근속을 이상하게 여긴다	Funeral home staff · finds Vale's endless tenure strange
+PeopleNames/GideonVale	기디언 베일	Gideon Vale
+PeopleNames/GideonVale.d	장례식장 원장 · 40년째 늙지 않았다	Funeral director · has not aged in forty years
+PeopleNames/LornaHayes	로나 헤이스	Lorna Hayes
+PeopleNames/LornaHayes.d	프런트 직원 · 사망 기록을 기억하고 있다	Front desk · remembers every death
+PeopleNames/MotelGuest	8호실 투숙객	Room 8 guest
+PeopleNames/MotelGuest.d	8호실에 체크인했는데 6호실에서 깨어났다	Checked into room eight, woke up in six
+PeopleNames/MaeTorres	메이 토레스	Mae Torres
+PeopleNames/MaeTorres.d	식당 주인 · 어젯밤 존을 봤다	Diner owner · saw John last night
+PeopleNames/HankDoyle	행크 도일	Hank Doyle
+PeopleNames/HankDoyle.d	견인 기사 · 콜턴의 차를 폐차장으로 옮겼다	Tow driver · hauled Colton's wreck to the salvage yard
+PeopleNames/SamNeighbor	샘의 이웃	Sam's neighbor
+PeopleNames/SamNeighbor.d	같은 층 학생 · 샘은 복도 끝 방이다	Student down the hall · Sam's door is at the end
+PeopleNames/John	존 윈체스터	John Winchester
+PeopleNames/John.d	실종 · 서쪽으로 이동 중	Missing · Heading west
+# B · John's trail files
+Files/JohnReceipt	존의 모텔 영수증	John's motel receipt
+Files/JohnReceipt.d	CH02 · 텍사스로 가는 길을 가리킨다	CH02 · Points toward Texas
+Files/JohnMap	존의 뉴멕시코 지도	John's New Mexico map
+Files/JohnMap.d	CH03 · 머시 크릭 장례식장 지하에서 발견	CH03 · Found under the Mercy Creek funeral home
+Files/JohnPhoneRecord	선셋 스타 전화 기록	Sunset Star phone record
+Files/JohnPhoneRecord.d	CH04 · 캘리포니아 번호 옆에 JERICHO	CH04 · JERICHO beside a California number
+Files/JohnVoicemail	존의 음성 메시지	John's voicemail
+Files/JohnVoicemail.d	CH05 · "따라오지 마라" 그리고 속삭임: Jericho	CH05 · "Don't follow me" and a whisper: Jericho
+Files/JohnNotes	존의 메모	John's notes
+Files/JohnNotes.d	CH06 · 세 번 밑줄 친 이름: JERICHO	CH06 · One name underlined three times: JERICHO
+Files/JerichoClippings	Jericho 신문 스크랩	Jericho clippings
+Files/JerichoClippings.d	CH06 · 같은 도로에서 사라지는 남자들	CH06 · Men vanishing on the same stretch
+Files/RouteMap	존의 경로 지도	John's route map
+Files/RouteMap.d	CH06 · 모든 선이 서쪽 Jericho로	CH06 · Every line points west to Jericho
+Files/VoicemailTape	음성 메시지 테이프	Voicemail tape
+Files/VoicemailTape.d	CH06 · 잡음 속의 두 번째 목소리	CH06 · A second voice under the static
+# C · prologue
+Chapter/prologue.card.chapter	PROLOGUE · 마지막 의뢰	PROLOGUE · THE LAST JOB
+Chapter/prologue.menu	PROLOGUE · 뉴올리언스	PROLOGUE · NEW ORLEANS
+Chapter/prologue.short	PROLOGUE · 세인트 머시 지구	PROLOGUE · Saint Mercy District
+Chapter/prologue.card.place	NEW ORLEANS, LOUISIANA	NEW ORLEANS, LOUISIANA
+Chapter/prologue.card.place_sub	루이지애나주 뉴올리언스	
+Chapter/prologue.card.date	OCTOBER 17, 2005	OCTOBER 17, 2005
+Chapter/prologue.card.date_sub	2005년 10월 17일	
+Journal/prologue.case.title	CASE 01 · SAINT MERCY	CASE 01 · SAINT MERCY
+Journal/prologue.case.location.v	루이지애나주 뉴올리언스 · 세인트 머시 지구	New Orleans, Louisiana · Saint Mercy District
+Journal/prologue.case.rules.v	쇠 — 흩어냄 · 소금 — 가둠 · 불 — 앵커를 끝냄	Iron — disperses · Salt — contains · Fire — ends the anchor
+Journal/prologue.case.john.v	아빠는 연락이 없다. 이 일만 끝내고 전화하자.	Dad isn't answering. Finish this job, then call.
+Journal/prologue.case.theory.v	죽은 골동품상, 출처 없는 목걸이. 영혼이 물건에 묶여 있다.	A dead antique dealer, a necklace with no history. The spirit is bound to an object.
+Journal/prologue.note.body	거울은 바깥으로 깨졌다. 사진 세 장에 같은 목걸이. 장부엔 세인트 마레. 할퀸 자국에 그을음.	Mirror broke outward. Same necklace in three photos. Ledger says St. Marais. Soot in the claw marks.
+Journal/prologue.note.deduction	결론: 원한 품은 영혼. 목걸이가 앵커다. 소금 치고 태운다.	Conclusion: vengeful spirit. The necklace is the anchor. Salt it, burn it.
+Journal/prologue.map.title	MERCER ESTATE · SAINT MERCY	MERCER ESTATE · SAINT MERCY
+Journal/prologue.map.sub	NEW ORLEANS, LA · FRENCH QUARTER	NEW ORLEANS, LA · FRENCH QUARTER
+System/dead.hint.prologue	평범한 무기로는 영혼을 죽일 수 없다. 쇠 부지깽이 [3]로 흩어내라.	Ordinary weapons cannot kill a spirit. Use the iron poker [3] to disperse it.
+System/complete.prologue.label	프롤로그 완료	PROLOGUE COMPLETE
+System/complete.prologue.title	NO RESPONSE.	NO RESPONSE.
+System/complete.prologue.body	딘은 존에게 전화한다. 또 음성 사서함. "일 끝났어. 전화해, 아빠." 응답은 없다.	Dean calls John. Voicemail. Again. "Job's done. Call me back, Dad." No response.
+System/complete.prologue.next	다음 — CHAPTER 02 · 아차팔라야 분지	Next — CHAPTER 02 · ATCHAFALAYA BASIN
+Tutorial/prologue.first.title	쇠는 흩어낸다	Iron disperses
+Tutorial/prologue.first.body	총알은 통하지 않는다. [3] 쇠 부지깽이로 영체를 잠시 흩어낼 수 있다.	Bullets pass through. Swing the iron poker [3] to scatter it for a few seconds.
+# C · ch02
+Chapter/ch02.card.chapter	CHAPTER 02 · 벨 리브	CHAPTER 02 · BELLE RIVE
+Chapter/ch02.menu	CHAPTER 02 · 아차팔라야 분지	CHAPTER 02 · ATCHAFALAYA BASIN
+Chapter/ch02.short	CH02 · 벨 리브 양수장	CH02 · Belle Rive pump station
+Chapter/ch02.card.place	ATCHAFALAYA BASIN, LOUISIANA	ATCHAFALAYA BASIN, LOUISIANA
+Chapter/ch02.card.place_sub	루이지애나주 아차팔라야 분지	
+Chapter/ch02.card.date	OCTOBER 20, 2005	OCTOBER 20, 2005
+Chapter/ch02.card.date_sub	2005년 10월 20일	
+Journal/ch02.case.title	CASE 02 · 벨 리브	CASE 02 · BELLE RIVE
+Journal/ch02.case.location.v	루이지애나주 벨 리브 · 아차팔라야 분지	Belle Rive, Louisiana · Atchafalaya Basin
+Journal/ch02.case.rules.v	총·칼 — 잠깐 휘청임 · 물 + 전기 — 끝냄	Guns and knives — stagger only · Water + electricity — ends it
+Journal/ch02.case.john.v	아빠가 이 근처를 지나갔을지도. 일라이에게 물어볼 것.	Dad may have passed through. Ask Eli.
+Journal/ch02.case.theory.v	아이들이 사라진다. 창틀에 진흙. 6년 전 전기 사고 뒤로 멈췄던 일이다.	Children vanish. Mud on the windowsills. It stopped once, after an electrical accident six years ago.
+Journal/ch02.note.body	손자국은 너무 크다. 집 밑에 털. 실종은 과전류 뒤에 멈췄다. 낮고 어두운 곳에 숨는 놈.	Handprints too big. Hair under the house. Disappearances stopped after the surge. It hides somewhere low and dark.
+Journal/ch02.note.deduction	결론: 로헤드. 전력을 되살리고 물속으로 유인해 스위치를 내린다.	Conclusion: Rawhead. Restore power, lure it into the water, throw the switch.
+Journal/ch02.map.title	BELLE RIVE PUMP STATION	BELLE RIVE PUMP STATION
+Journal/ch02.map.sub	ATCHAFALAYA BASIN, LA	ATCHAFALAYA BASIN, LA
+System/dead.hint.ch02	로헤드는 실체가 있지만 평범한 상처는 아문다. 총과 칼로 시간을 벌어라. 전력을 복구하고 물속으로 유인한 뒤 전압 스위치를 내려라.	Rawhead is physical, but ordinary wounds close. Use guns and knives to buy time. Restore power, lure it into water, then throw the voltage switch.
+System/complete.ch02.label	2장 완료	CHAPTER 02 COMPLETE
+System/complete.ch02.title	WESTBOUND.	WESTBOUND.
+System/complete.ch02.body	아이들은 무사하다. 일라이의 모텔 영수증이 텍사스를 가리킨다. 존은 여기 있었고, 계속 움직였다.	The children are safe. Eli's motel receipt points toward Texas. John was here. He kept moving.
+System/complete.ch02.next	다음 — CHAPTER 03 · 텍사스 동부	Next — CHAPTER 03 · EAST TEXAS
+Tutorial/ch02.first.title	총알은 시간을 벌 뿐이다	Bullets only buy time
+Tutorial/ch02.first.body	로헤드는 상처가 아문다. 총과 칼로 휘청이게 하고, 끝내는 건 물과 전기다.	Rawhead's wounds close. Guns and knives stagger it; only water and electricity end it.
+# C · ch03
+Chapter/ch03.card.chapter	CHAPTER 03 · 머시 크릭	CHAPTER 03 · MERCY CREEK
+Chapter/ch03.menu	CHAPTER 03 · 텍사스 동부	CHAPTER 03 · EAST TEXAS
+Chapter/ch03.short	CH03 · 머시 크릭 장례식장	CH03 · Mercy Creek Funeral Home
+Chapter/ch03.card.place	MERCY CREEK, TEXAS	MERCY CREEK, TEXAS
+Chapter/ch03.card.place_sub	텍사스주 머시 크릭	
+Chapter/ch03.card.date	OCTOBER 24, 2005	OCTOBER 24, 2005
+Chapter/ch03.card.date_sub	2005년 10월 24일	
+Journal/ch03.case.title	CASE 03 · 머시 크릭	CASE 03 · MERCY CREEK
+Journal/ch03.case.location.v	텍사스주 머시 크릭 · 장례식장과 묘지	Mercy Creek, Texas · Funeral home and cemetery
+Journal/ch03.case.rules.v	머리 명중 — 휘청임 · 칼 — 휘청인 대상을 마무리	Head hits — stagger · Knife — finishes staggered targets
+Journal/ch03.case.john.v	아빠가 같은 패턴을 쫓고 있었다면, 흔적이 남아 있을 것.	If Dad was following this pattern, he left a trace.
+Journal/ch03.case.theory.v	파헤쳐진 무덤, 사라진 유해, 늙지 않는 얼굴. 누군가 죽은 자를 먹고 산다.	Opened graves, missing remains, a face that never ages. Something lives off the dead.
+Journal/ch03.note.body	짐승이 판 게 아니다. 시신 목록이 모자란다. 기디언은 40년 전 사진에 그대로다.	Not an animal dig. The body inventory comes up short. Gideon looks the same in a forty-year-old photo.
+Journal/ch03.note.deduction	결론: 구울. 머리를 쏴서 휘청이게 하고 칼로 끝낸다.	Conclusion: ghouls. Headshot to stagger, knife to finish.
+Journal/ch03.map.title	MERCY CREEK FUNERAL HOME	MERCY CREEK FUNERAL HOME
+Journal/ch03.map.sub	EAST TEXAS · COUNTY ROAD 9	EAST TEXAS · COUNTY ROAD 9
+System/dead.hint.ch03	머리를 맞히면 구울이 휘청인다. 칼로 마무리하라. 공격은 뒤로 피하고, 기디언의 돌진은 옆으로 피하라.	Head hits stagger ghouls. Finish with a knife. Back away from attacks; sidestep Gideon's lunge.
+System/complete.ch03.label	3장 완료	CHAPTER 03 COMPLETE
+System/complete.ch03.title	YOU WERE HERE.	YOU WERE HERE.
+System/complete.ch03.body	모텔 램프 아래 존의 접힌 지도. 그의 글씨: NEW MEXICO. 존은 더 큰 패턴을 쫓고 있다.	John's folded map lies beneath the motel lamp. His handwriting: NEW MEXICO. John is following a larger pattern.
+System/complete.ch03.next	다음 — CHAPTER 04 · 뉴멕시코주 그랜츠	Next — CHAPTER 04 · GRANTS, NEW MEXICO
+Tutorial/ch03.first.title	머리를 노려라	Aim for the head
+Tutorial/ch03.first.body	몸통 사격은 탄약 낭비다. 머리를 맞혀 휘청이게 한 뒤 칼 [2]로 마무리하라.	Body shots waste ammo. Hit the head to stagger it, then finish with the knife [2].
+# C · ch04
+Chapter/ch04.card.chapter	CHAPTER 04 · 선셋 스타	CHAPTER 04 · SUNSET STAR
+Chapter/ch04.menu	CHAPTER 04 · 뉴멕시코주 그랜츠	CHAPTER 04 · GRANTS, NEW MEXICO
+Chapter/ch04.short	CH04 · 선셋 스타 모터 코트	CH04 · Sunset Star Motor Court
+Chapter/ch04.card.place	GRANTS, NEW MEXICO	GRANTS, NEW MEXICO
+Chapter/ch04.card.place_sub	뉴멕시코주 그랜츠	
+Chapter/ch04.card.date	OCTOBER 29, 2005	OCTOBER 29, 2005
+Chapter/ch04.card.date_sub	2005년 10월 29일	
+Journal/ch04.case.title	CASE 04 · 선셋 스타 모터 코트	CASE 04 · SUNSET STAR MOTOR COURT
+Journal/ch04.case.location.v	뉴멕시코주 그랜츠 · 66번 국도	Grants, New Mexico · Route 66
+Journal/ch04.case.rules.v	쇠 — 흩어냄 · 소금 — 선을 막음 · 불 — 앵커를 끝냄	Iron — disperses · Salt — holds a line · Fire — ends the anchor
+Journal/ch04.case.john.v	아빠는 이 모텔에 묵었다. 사무실 전화 기록을 확인할 것.	Dad stayed here. Check the office phone records.
+Journal/ch04.case.theory.v	사망은 방 번호가 아니라 하나의 벽선을 따라 일어난다. 벽 안에 무언가가 있다.	The deaths follow one wall line, not a room number. Something is inside that wall.
+Journal/ch04.note.body	8, 6, 4, 2호실 = 같은 방. 1952년 광산 2번 기둥 위. 정비공이 벽 속 주머니를 도로 넣었다. 벽이 뭔가를 품고 있다.	Rooms 8, 6, 4, 2 = the same unit. On top of the '52 mine's post 2. Maintenance found a pouch in the wall and put it back. The wall is holding something.
+Journal/ch04.note.deduction	결론: 앵커는 벽 속에 있다. 꺼내서 소금 치고 태운다.	Conclusion: the anchor is inside the wall. Dig it out, salt it, burn it.
+Journal/ch04.map.title	SUNSET STAR MOTOR COURT	SUNSET STAR MOTOR COURT
+Journal/ch04.map.sub	GRANTS, NM · ROUTE 66	GRANTS, NM · ROUTE 66
+System/dead.hint.ch04	이것은 죽일 수 없다. [3] 쇠로 흩어내고 [4] 소금으로 선을 그어라. 떠오르는 물건을 조심하라.	It cannot be killed. Iron [3] disperses it. Salt [4] holds a line. Watch for lifting objects.
+System/complete.ch04.label	4장 완료	CHAPTER 04 COMPLETE
+System/complete.ch04.title	JERICHO, CA.	JERICHO, CA.
+System/complete.ch04.body	존은 이 책상에서 캘리포니아 번호로 전화를 걸었다. 옆에 그의 글씨로 한 단어: JERICHO.	John called a California number from this desk. Beside it, in his hand, one word: JERICHO.
+System/complete.ch04.next	다음 — CHAPTER 05 · 애리조나주 윈슬로	Next — CHAPTER 05 · WINSLOW, ARIZONA
+Tutorial/ch04.first.title	쇠는 흩어낸다	Iron disperses
+Tutorial/ch04.first.body	총알은 통하지 않는다. [3] 쇠막대로 7초간 흩어낼 수 있다.	Bullets pass through. Swing the iron rod [3] to scatter it for 7 seconds.
+# C · ch05
+Chapter/ch05.card.chapter	CHAPTER 05 · 코요테 마일	CHAPTER 05 · COYOTE MILE
+Chapter/ch05.menu	CHAPTER 05 · 애리조나주 윈슬로	CHAPTER 05 · WINSLOW, ARIZONA
+Chapter/ch05.short	CH05 · 코요테 마일	CH05 · Coyote Mile
+Chapter/ch05.card.place	WINSLOW, ARIZONA	WINSLOW, ARIZONA
+Chapter/ch05.card.place_sub	애리조나주 윈슬로	
+Chapter/ch05.card.date	OCTOBER 30, 2005	OCTOBER 30, 2005
+Chapter/ch05.card.date_sub	2005년 10월 30일	
+Journal/ch05.case.title	CASE 05 · 코요테 마일	CASE 05 · COYOTE MILE
+Journal/ch05.case.location.v	애리조나주 윈슬로 · 66번 국도 코요테 마일	Winslow, Arizona · Coyote Mile, Route 66
+Journal/ch05.case.rules.v	쇠 — 몰아냄 · 소금 — 선을 막음 · 불 — 앵커를 끝냄	Iron — repels · Salt — holds a line · Fire — ends the anchor
+Journal/ch05.case.john.v	아빠가 어젯밤 여길 지나갔다. 하루 차이다.	Dad came through last night. One day behind him.
+Journal/ch05.case.theory.v	같은 구간에서 밤마다 사고. 운전자들은 도로 위의 누군가 때문에 브레이크를 밟는다.	Night crashes on the same mile. Drivers keep braking for someone standing in the road.
+Journal/ch05.note.body	1979년 레이 콜턴. 화장됐으니 뼈는 없다. 차는 폐차되지 않고 폐차장에 남았다. 그가 붙잡은 건 차다.	Ray Colton, 1979. Cremated, so no bones. The car was never scrapped. Whatever holds him stayed with the wreck.
+Journal/ch05.note.deduction	결론: 도로의 영혼. 앵커는 운전대다. 소금 치고 태운다.	Conclusion: road spirit. The steering wheel is the anchor. Salt it, burn it.
+Journal/ch05.map.title	COYOTE MILE · ROUTE 66	COYOTE MILE · ROUTE 66
+Journal/ch05.map.sub	WINSLOW, AZ · COYOTE SALVAGE	WINSLOW, AZ · COYOTE SALVAGE
+System/dead.hint.ch05	도로의 영혼은 죽일 수 없다. 쇠 [3]로 몰아내고 소금 [4]으로 선 뒤에 붙잡아 둬라. 앵커를 태워서 끝내라.	The road spirit cannot be killed. Iron [3] drives it back. Salt [4] holds it behind a line. Burn the anchor to end it.
+System/complete.ch05.label	5장 완료	CHAPTER 05 COMPLETE
+System/complete.ch05.title	SAMMY.	SAMMY.
+System/complete.ch05.body	딘은 지도에 선을 긋는다. 서쪽으로 JERICHO. 그리고 북쪽으로 팰로앨토 — 스탠퍼드. 존은 실종됐다. 딘은 동생을 데리러 간다.	Dean draws a line west. JERICHO. Then north: PALO ALTO — STANFORD. John is missing. Dean is going to get his brother.
+System/complete.ch05.next	다음 — CHAPTER 06 · 스탠퍼드	Next — CHAPTER 06 · STANFORD
+Tutorial/ch05.first.title	쇠는 몰아내고, 소금은 막는다	Iron repels, salt holds
+Tutorial/ch05.first.body	쇠 [3]로 몰아내고, 소금 [4] 후 LMB로 선을 그어 막아라. 끝내는 건 불뿐이다.	Iron [3] drives it back. Salt [4] then LMB pours a line it cannot cross. Only fire ends it.
+# C · ch06
+Chapter/ch06.card.chapter	CHAPTER 06 · 샘을 찾아서	CHAPTER 06 · FIND SAM
+Chapter/ch06.menu	CHAPTER 06 · 스탠퍼드	CHAPTER 06 · STANFORD
+Chapter/ch06.short	CH06 · 팰로앨토	CH06 · Palo Alto
+Chapter/ch06.card.place	PALO ALTO, CALIFORNIA	PALO ALTO, CALIFORNIA
+Chapter/ch06.card.place_sub	캘리포니아주 팰로앨토	
+Chapter/ch06.card.date	OCTOBER 31, 2005	OCTOBER 31, 2005
+Chapter/ch06.card.date_sub	2005년 10월 31일	
+Journal/ch06.case.title	EPILOGUE · 샘을 찾아서	EPILOGUE · FIND SAM
+Journal/ch06.case.location.v	애리조나주 윈슬로 → 캘리포니아주 팰로앨토	Winslow, Arizona → Palo Alto, California
+Journal/ch06.case.rules.v	오늘 밤은 사냥 없다.	No hunt tonight.
+Journal/ch06.case.john.v	모든 흔적이 Jericho를 가리킨다. 아빠는 바쁜 게 아니라 곤경에 빠졌다.	Every trail points to Jericho. Dad isn't busy. He's in trouble.
+Journal/ch06.case.theory.v	메모, 신문 스크랩, 지도, 음성 메시지. 전부 한곳으로 모인다.	Notes, clippings, the map, the voicemail. It all converges on one place.
+Journal/ch06.note.body	Jericho, 캘리포니아. 사라진 남자들. 아빠의 경로. 혼자서는 무리다.	Jericho, California. Missing men. Dad's route. Not a one-man job.
+Journal/ch06.note.deduction	결론: 샘을 찾는다.	Conclusion: find Sam.
+Journal/ch06.map.title	PALO ALTO · STANFORD	PALO ALTO · STANFORD
+Journal/ch06.map.sub	CALIFORNIA · I-40 WEST	CALIFORNIA · I-40 WEST
+System/dead.hint.ch06	발밑을 조심해.	Watch your footing.
+System/complete.ch06.label	에필로그 완료	EPILOGUE COMPLETE
+System/complete.ch06.title	TO BE CONTINUED	TO BE CONTINUED
+System/complete.ch06.body	아버지를 찾아 나선 딘은 하나의 패턴을 발견했다. 이제 그는 동생의 문 앞에 서 있다.	Dean Winchester went looking for his father and found a pattern. Now he is standing at his brother's door.
+System/complete.ch06.next	크레딧	Credits
+Tutorial/ch06.first.title	사냥 없는 밤	No hunt tonight
+Tutorial/ch06.first.body	무기는 필요 없다. 단서를 연결하고 샘을 찾아가라.	No weapons needed. Connect the trail and go find Sam.

@@ -5,9 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 namespace BeforeJericho.Editor
 {
     public static class PrologueBuilder
@@ -101,10 +99,8 @@ namespace BeforeJericho.Editor
             RenderSettings.fog=true; RenderSettings.fogColor=new Color(.06f,.09f,.12f); RenderSettings.fogMode=FogMode.ExponentialSquared; RenderSettings.fogDensity=.018f;
             var volume=new GameObject("Atmosphere").AddComponent<Volume>(); volume.isGlobal=true;
             var profile=ScriptableObject.CreateInstance<VolumeProfile>(); AssetDatabase.CreateAsset(profile,Root+"/Data/Atmosphere.asset"); volume.sharedProfile=profile;
-            var tone=profile.Add<Tonemapping>(); tone.mode.Override(TonemappingMode.ACES);
-            var vignette=profile.Add<Vignette>(); vignette.intensity.Override(.28f);
-            var bloom=profile.Add<Bloom>(); bloom.intensity.Override(.25f); bloom.threshold.Override(1.1f);
-            AssetDatabase.AddObjectToAsset(tone,profile); AssetDatabase.AddObjectToAsset(vignette,profile); AssetDatabase.AddObjectToAsset(bloom,profile);
+            HdrpAuthoring.Atmosphere(profile);
+            HdrpAuthoring.FinishScene("SCN_NewOrleans_Slice", true);
             EditorSceneManager.SaveScene(scene,Root+"/Scenes/SCN_NewOrleans_Slice.unity");
             EditorBuildSettings.scenes=new[]{new EditorBuildSettingsScene(scene.path,true)};
             AssetDatabase.SaveAssets();
@@ -112,8 +108,7 @@ namespace BeforeJericho.Editor
         }
         static Material Material(string name,Color color,float smooth=0,Color? emission=null)
         {
-            var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name}; m.SetColor("_BaseColor",color); m.SetFloat("_Smoothness",smooth);
-            if(emission.HasValue) { m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",emission.Value); }
+            var m=HdrpAuthoring.Lit(name, color, smooth, emission);
             AssetDatabase.CreateAsset(m,Root+"/Art/Materials/"+name+".mat");return m;
         }
         static GameObject Box(string name,Vector3 position,Vector3 scale,Material m)
@@ -163,7 +158,6 @@ namespace BeforeJericho.Editor
             // Save actor prefab before scene references are assigned.
             PrefabUtility.SaveAsPrefabAsset(g,Root+"/Prefabs/Actors/PF_Dean.prefab");
             var cameraGO=new GameObject("OTS Camera");var camera=cameraGO.AddComponent<Camera>();cameraGO.tag="MainCamera";cameraGO.AddComponent<AudioListener>();camera.nearClipPlane=.05f;camera.farClipPlane=150;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.05f,.07f,.1f);
-            cameraGO.AddComponent<UniversalAdditionalCameraData>().renderPostProcessing=true;
             var view=cameraGO.AddComponent<ShoulderCamera>();view.player=motor;view.session=_session;view.lens=camera;
             motor.view=view;motor.session=_session;combat.motor=motor;combat.view=view;combat.session=_session;_session.player=motor;
         }
@@ -177,44 +171,7 @@ namespace BeforeJericho.Editor
             var glow=LightAt("Ghost glow",Vector3.zero,new Color(.2f,.8f,.85f),2,4);glow.transform.SetParent(g.transform,false);glow.enabled=false;
             ghost.apparition=body;ghost.glow=glow;PrefabUtility.SaveAsPrefabAsset(g,Root+"/Prefabs/Actors/PF_Ghost.prefab");ghost.session=_session;_session.ghost=ghost;body.gameObject.SetActive(false);
         }
-        static TMP_Text Text(Transform parent,string name,string value,Vector2 min,Vector2 max,int size,TextAlignmentOptions align=TextAlignmentOptions.TopLeft)
-        {
-            var g=new GameObject(name,typeof(RectTransform));g.transform.SetParent(parent,false);var t=g.AddComponent<TextMeshProUGUI>();t.font=_font;t.text=value;t.fontSize=size;t.color=new Color(.88f,.86f,.78f);t.alignment=align;t.raycastTarget=false;
-            var r=t.rectTransform;r.anchorMin=min;r.anchorMax=max;r.offsetMin=Vector2.zero;r.offsetMax=Vector2.zero;return t;
-        }
-        static UnityEngine.UI.Image Panel(Transform parent,string name,Vector2 min,Vector2 max,Color color)
-        {
-            var g=new GameObject(name,typeof(RectTransform));g.transform.SetParent(parent,false);var image=g.AddComponent<UnityEngine.UI.Image>();image.color=color;image.raycastTarget=false;var r=image.rectTransform;r.anchorMin=min;r.anchorMax=max;r.offsetMin=r.offsetMax=Vector2.zero;return image;
-        }
-        static UnityEngine.UI.Button Button(Transform parent,string name,float x,out TMP_Text label)
-        {
-            var image=Panel(parent,name,new Vector2(x,.08f),new Vector2(x+.23f,.155f),new Color(.18f,.15f,.1f,.95f));image.raycastTarget=true;
-            var button=image.gameObject.AddComponent<UnityEngine.UI.Button>();button.targetGraphic=image;
-            label=Text(image.transform,"Label",name,Vector2.zero,Vector2.one,20,TextAlignmentOptions.Center);return button;
-        }
         static void UI()
-        {
-            var root=new GameObject("Hunt HUD",typeof(RectTransform));var canvas=root.AddComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;
-            var scaler=root.AddComponent<UnityEngine.UI.CanvasScaler>();scaler.uiScaleMode=UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1600,900);scaler.matchWidthOrHeight=.5f;root.AddComponent<UnityEngine.UI.GraphicRaycaster>();
-            var eventSystem=new GameObject("EventSystem");eventSystem.AddComponent<EventSystem>();eventSystem.AddComponent<InputSystemUIInputModule>();
-            var hud=root.AddComponent<HuntHUD>();hud.session=_session;hud.combat=_session.player.GetComponent<HunterCombat>();_session.hud=hud;
-            Panel(root.transform,"Objective shade",new Vector2(.025f,.83f),new Vector2(.5f,.97f),new Color(.025f,.035f,.045f,.82f));
-            Text(root.transform,"Chapter","01  /  THE LAST JOB",new Vector2(.04f,.93f),new Vector2(.48f,.96f),17);
-            hud.objective=Text(root.transform,"Objective","",new Vector2(.04f,.845f),new Vector2(.48f,.915f),23);
-            hud.stats=Text(root.transform,"Equipment","",new Vector2(.73f,.055f),new Vector2(.97f,.145f),22,TextAlignmentOptions.BottomRight);
-            hud.prompt=Text(root.transform,"Interaction","",new Vector2(.2f,.16f),new Vector2(.8f,.21f),23,TextAlignmentOptions.Center);
-            hud.message=Text(root.transform,"Subtitle","",new Vector2(.15f,.23f),new Vector2(.85f,.32f),23,TextAlignmentOptions.Center);
-            Text(root.transform,"Crosshair","·",new Vector2(.49f,.485f),new Vector2(.51f,.515f),30,TextAlignmentOptions.Center);
-            Text(root.transform,"Controls","WASD / MOVE    E / INVESTIGATE    F / LIGHTER    TAB / JOURNAL",new Vector2(.04f,.02f),new Vector2(.7f,.055f),16);
-            Panel(root.transform,"Health back",new Vector2(.04f,.09f),new Vector2(.19f,.102f),new Color(.15f,.08f,.07f));
-            hud.healthFill=Panel(root.transform,"Health",new Vector2(.04f,.09f),new Vector2(.19f,.102f),new Color(.66f,.31f,.23f));hud.healthFill.type=UnityEngine.UI.Image.Type.Filled;hud.healthFill.fillMethod=UnityEngine.UI.Image.FillMethod.Horizontal;
-            hud.burnFill=Panel(root.transform,"Ritual",new Vector2(.35f,.14f),new Vector2(.65f,.15f),new Color(.94f,.6f,.2f));hud.burnFill.type=UnityEngine.UI.Image.Type.Filled;hud.burnFill.fillMethod=UnityEngine.UI.Image.FillMethod.Horizontal;hud.burnFill.fillAmount=0;
-            var overlay=Panel(root.transform,"Menu overlay",Vector2.zero,Vector2.one,new Color(.025f,.035f,.045f,.97f));overlay.raycastTarget=true;hud.overlay=overlay.gameObject;
-            Panel(overlay.transform,"Brass accent",new Vector2(.095f,.18f),new Vector2(.099f,.88f),new Color(.7f,.46f,.2f));
-            hud.subtitle=Text(overlay.transform,"Kicker","",new Vector2(.13f,.87f),new Vector2(.9f,.92f),20);
-            hud.overlayTitle=Text(overlay.transform,"Title","",new Vector2(.13f,.65f),new Vector2(.93f,.85f),55);
-            hud.overlayBody=Text(overlay.transform,"Body","",new Vector2(.13f,.19f),new Vector2(.9f,.64f),23);hud.overlayBody.enableAutoSizing=true;hud.overlayBody.fontSizeMin=17;hud.overlayBody.fontSizeMax=23;
-            hud.primary=Button(overlay.transform,"Primary",.13f,out hud.primaryLabel);hud.secondary=Button(overlay.transform,"Secondary",.395f,out hud.secondaryLabel);hud.tertiary=Button(overlay.transform,"Tertiary",.66f,out hud.tertiaryLabel);
-        }
+        { UIPrefabBuilder.PlaceInScene(_session); } // PF_HuntUI: the HTML-prototype UI (screens, HUD, options); keeps one EventSystem
     }
 }
