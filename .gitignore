@@ -55,3 +55,12 @@ crashlytics-build.properties
 /[Dd]ocs/
 /[Dd]ocumentation/
 *.blend1
+
+# Heavy art stays out of git during development (kept locally / backed up separately).
+# Restorable: re-download the CC0 sets listed in Assets/_Game/Art/Textures/POLYHAVEN_LICENSE.txt, then run
+# `Before Jericho/Art/Apply Surface Textures` and `Before Jericho/Rendering/Migrate Project To HDRP`.
+/Assets/_Game/Art/Textures/
+/Assets/_Game/Art/Textures.meta
+/Assets/_Game/Art/HDRI/
+/Assets/_Game/Art/HDRI.meta
+/ArtSource/
