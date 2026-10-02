@@ -14,7 +14,7 @@ namespace BeforeJericho.Editor
         // material → (Poly Haven id, metres per texture repeat, wet = glossy rain-soaked surface). Stanford "Steel" is mostly the sidewalk, hence concrete. Emissive, marker, paper, salt, water and actor-placeholder materials stay flat.
         static readonly (string mat, string id, float metres, bool wet)[] Map =
         {
-            ("Rain dark asphalt", "asphalt_02", 4, true), ("Wet limestone", "cobblestone_floor_04", 2.5f, true), ("Aged stucco", "worn_cracked_plaster", 3, false),
+            ("Rain dark asphalt", "asphalt_02", 4, true), ("Wet limestone", "cobblestone_floor_04", 2.5f, true), ("Trim limestone", "concrete_floor_worn_001", 2, false), ("Aged stucco", "worn_cracked_plaster", 3, false),
             ("Tomb marble", "marble_01", 2, false), ("Walnut", "dark_wooden_planks", 2, false), ("Wrought iron", "rusty_metal_02", 2, false),
             ("Atchafalaya/CH02 Concrete", "concrete_floor_worn_001", 3, true), ("Atchafalaya/CH02 Cypress", "weathered_planks", 2, false),
             ("Atchafalaya/CH02 Iron", "rusty_metal_02", 2, false), ("Atchafalaya/CH02 Mud", "brown_mud_03", 3, true),
@@ -39,17 +39,22 @@ namespace BeforeJericho.Editor
                 string dir = Textures + id + "/";
                 if(!m || !File.Exists(dir + id + "_diff_2k.jpg")) { log.AppendLine("skip " + mat + (m ? " (no textures " + id + ")" : " (no material)")); continue; }
                 if(!means.ContainsKey(id)) means[id] = Prepare(dir, id);
-                // On a re-run the tint is already original / mean of the texture it was made for (possibly a since-swapped one),
-                // so multiply back to the authored flat colour instead of dividing twice.
+                // The tint is original / mean of the texture it was made for. Same texture again: keep it (re-deriving only adds float
+                // drift to the .mat). Swapped texture: multiply back to the authored flat colour instead of dividing twice.
                 Color mean = means[id], current = m.GetColor("_BaseColor").linear, flat = current;
-                if(m.GetTexture("_BaseColorMap") is Texture old)
+                var old = m.GetTexture("_BaseColorMap");
+                var tint = m.GetColor("_BaseColor");
+                if(!old || old.name != id + "_diff_2k")
                 {
-                    string oldDir = Path.GetDirectoryName(AssetDatabase.GetAssetPath(old)) + "/", oldId = Path.GetFileName(oldDir.TrimEnd('/'));
-                    if(!means.ContainsKey(oldId)) means[oldId] = Prepare(oldDir, oldId);
-                    flat = current * means[oldId];
+                    if(old)
+                    {
+                        string oldDir = Path.GetDirectoryName(AssetDatabase.GetAssetPath(old)) + "/", oldId = Path.GetFileName(oldDir.TrimEnd('/'));
+                        if(!means.ContainsKey(oldId)) means[oldId] = Prepare(oldDir, oldId);
+                        flat = current * means[oldId];
+                    }
+                    tint = new Color(Mathf.Min(1, flat.r / mean.r), Mathf.Min(1, flat.g / mean.g), Mathf.Min(1, flat.b / mean.b)).gamma;
+                    m.SetColor("_BaseColor", tint);
                 }
-                var tint = new Color(Mathf.Min(1, flat.r / mean.r), Mathf.Min(1, flat.g / mean.g), Mathf.Min(1, flat.b / mean.b)).gamma;
-                m.SetColor("_BaseColor", tint);
                 m.SetTexture("_BaseColorMap", AssetDatabase.LoadAssetAtPath<Texture2D>(dir + id + "_diff_2k.jpg"));
                 m.SetTexture("_NormalMap", AssetDatabase.LoadAssetAtPath<Texture2D>(dir + id + "_nor_gl_2k.jpg")); m.SetFloat("_NormalScale", 1);
                 m.SetTexture("_MaskMap", AssetDatabase.LoadAssetAtPath<Texture2D>(dir + id + "_mask_2k.png"));

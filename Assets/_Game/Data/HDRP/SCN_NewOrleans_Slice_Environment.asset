@@ -45,13 +45,13 @@ MonoBehaviour:
     m_Value: 0
   top:
     m_OverrideState: 1
-    m_Value: {r: 0.041380282, g: 0.05411268, b: 0.07002817, a: 0.31830987}
+    m_Value: {r: 0.10345071, g: 0.1352817, b: 0.17507043, a: 0.31830987}
   middle:
     m_OverrideState: 1
-    m_Value: {r: 0.041380282, g: 0.05411268, b: 0.07002817, a: 0.31830987}
+    m_Value: {r: 0.10345071, g: 0.1352817, b: 0.17507043, a: 0.31830987}
   bottom:
     m_OverrideState: 1
-    m_Value: {r: 0.033104226, g: 0.043290146, b: 0.056022536, a: 0.2546479}
+    m_Value: {r: 0.082760565, g: 0.10822536, b: 0.14005636, a: 0.2546479}
   gradientDiffusion:
     m_OverrideState: 0
     m_Value: 1
@@ -79,7 +79,7 @@ MonoBehaviour:
     m_Value: 0
   multiplier:
     m_OverrideState: 1
-    m_Value: 0.16000769
+    m_Value: 0.4000192
   upperHemisphereLuxValue:
     m_OverrideState: 1
     m_Value: 1
