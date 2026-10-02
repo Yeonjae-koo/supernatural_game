@@ -29,13 +29,12 @@ namespace BeforeJericho.Editor
         {
             System.IO.Directory.CreateDirectory("Assets/Settings/HDRP");
             var asset = AssetDatabase.LoadAssetAtPath<HDRenderPipelineAsset>(AssetPath);
-            if(!asset)
+            if(!asset) { asset = ScriptableObject.CreateInstance<HDRenderPipelineAsset>(); AssetDatabase.CreateAsset(asset, AssetPath); }
             {
-                asset = ScriptableObject.CreateInstance<HDRenderPipelineAsset>(); AssetDatabase.CreateAsset(asset, AssetPath);
-                // Features the greybox slices do not use: fewer shader variants, shorter builds.
+                // Features the slices do not use are off: fewer shader variants, shorter builds. Volumetrics + SSR carry the night look (lamp halos, wet streets).
                 var so = new SerializedObject(asset);
                 void Set(string name, bool value) { var p = so.FindProperty("m_RenderPipelineSettings." + name); if(p != null) p.boolValue = value; else log.AppendLine("missing setting " + name); }
-                Set("supportSSR", false); Set("supportSSGI", false); Set("supportVolumetrics", false); Set("supportDecals", false);
+                Set("supportSSR", true); Set("supportSSGI", false); Set("supportVolumetrics", true); Set("supportDecals", false);
                 Set("supportSubsurfaceScattering", false); Set("supportRayTracing", false); Set("supportWater", false); Set("supportTransparentBackface", false);
                 var mode = so.FindProperty("m_RenderPipelineSettings.supportedLitShaderMode"); if(mode != null) mode.intValue = (int)RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly;
                 so.ApplyModifiedPropertiesWithoutUndo();
@@ -53,7 +52,8 @@ namespace BeforeJericho.Editor
             foreach(string guid in AssetDatabase.FindAssets("t:Material", new[]{"Assets/_Game"}))
             {
                 var m = AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(guid));
-                if(!m || m.shader.name == "HDRP/Lit") continue;
+                // Only former URP materials (missing shader once URP is removed); TMP font and other materials keep their shaders.
+                if(!m || !(m.shader.name.StartsWith("Universal Render Pipeline/") || m.shader.name == "Hidden/InternalErrorShader")) continue;
                 Color color = m.HasProperty("_BaseColor") ? m.GetColor("_BaseColor") : m.color;
                 float smooth = m.HasProperty("_Smoothness") ? m.GetFloat("_Smoothness") : 0, metal = m.HasProperty("_Metallic") ? m.GetFloat("_Metallic") : 0;
                 Color emission = m.HasProperty("_EmissionColor") ? m.GetColor("_EmissionColor") : Color.black;

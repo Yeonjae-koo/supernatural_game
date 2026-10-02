@@ -1,0 +1,13 @@
+# Git LFS only for heavy, new art. Small UI images and fonts already in history stay plain git (no renormalize, saves LFS quota).
+# Unity YAML (.unity, .prefab, .mat, .asset, .meta) stays plain git so it diffs and merges.
+Assets/_Game/Art/Textures/** filter=lfs diff=lfs merge=lfs -text
+Assets/_Game/Art/HDRI/** filter=lfs diff=lfs merge=lfs -text
+*.meta -filter -diff -merge text
+*.txt -filter -diff -merge text
+# Models (commit .blend sources at milestones only: every saved version is a new LFS object)
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+# Audio
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
