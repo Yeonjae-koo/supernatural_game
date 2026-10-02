@@ -5,6 +5,8 @@ namespace BeforeJericho
     {
         public HunterMotor player; public HuntSession session; public Camera lens;
         public float sensitivity = .11f; public float Yaw { get; private set; }
+        // Player options (SettingsApplier); defaults are the original tuning.
+        public float aimSensitivityScale = .65f, fieldOfView = 68, aimFieldOfView = 52; public bool invertY;
         float _pitch = 12, _pivotHeight = 1.55f;
         Renderer[] _bodyRenderers; bool _bodyHidden;
         void Start() { if(player && player.body) _bodyRenderers = player.body.GetComponentsInChildren<Renderer>(true); }
@@ -16,8 +18,8 @@ namespace BeforeJericho
             bool aiming = session.Playing && player.CanAim && player.Input.Aim;
             if(session.Playing)
             {
-                Vector2 delta = player.Input.Look * sensitivity * (aiming ? .65f : 1);
-                Yaw += delta.x; _pitch = Mathf.Clamp(_pitch - delta.y, -40, 65);
+                Vector2 delta = player.Input.Look * sensitivity * (aiming ? aimSensitivityScale : 1);
+                Yaw += delta.x; _pitch = Mathf.Clamp(_pitch - (invertY ? -delta.y : delta.y), -40, 65);
             }
             Quaternion rotation = Quaternion.Euler(_pitch, Yaw, 0);
             _pivotHeight = Mathf.Lerp(_pivotHeight, player.CameraHeight, 12 * Time.unscaledDeltaTime);
@@ -32,7 +34,7 @@ namespace BeforeJericho
             bool hideBody = distance < (_bodyHidden ? 1.15f : .95f);
             if(hideBody != _bodyHidden && _bodyRenderers != null)
             { _bodyHidden = hideBody; foreach(var renderer in _bodyRenderers) if(renderer) renderer.forceRenderingOff = hideBody; }
-            lens.fieldOfView = Mathf.Lerp(lens.fieldOfView, aiming ? 52 : 68, 12 * Time.unscaledDeltaTime);
+            lens.fieldOfView = Mathf.Lerp(lens.fieldOfView, aiming ? aimFieldOfView : fieldOfView, 12 * Time.unscaledDeltaTime);
         }
     }
 }

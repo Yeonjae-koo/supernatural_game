@@ -14,5 +14,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Game/Scenes/SCN_EastTexas_Slice.unity
     guid: 8f43b56e1e5f34f9a81132f2ab42d16a
+  - enabled: 1
+    path: Assets/_Game/Scenes/SCN_GrantsNM_Slice.unity
+    guid: 0fd13ab33729e4a9eb3712a257489ac1
+  - enabled: 1
+    path: Assets/_Game/Scenes/SCN_Winslow_Slice.unity
+    guid: d1c152f53d32e4349982bda7c022c1ad
+  - enabled: 1
+    path: Assets/_Game/Scenes/SCN_Stanford_Slice.unity
+    guid: 5ab2143bd30154c4796f3b1196b47a98
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

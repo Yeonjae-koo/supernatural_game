@@ -52,7 +52,9 @@ namespace BeforeJericho
         public void SetLighter(bool on) { if(lighter) lighter.enabled = on && !(motor.CanAim && motor.Input.Aim); }
         public void Equip(int index)
         {
-            if(index == 2 && !session.Has(HuntItem.Iron)) { session.Notify("Find the iron poker in the antique shop."); return; }
+            bool kit = session.HasSpiritKit;
+            if(index == 2 && !session.Has(HuntItem.Iron) && !kit) { if(session.Haunt) session.Notify("Take the iron rod from the Impala trunk."); else if(session.ghost) session.Notify("Find the iron poker in the antique shop."); return; }
+            if(index == 3 && !kit) { if(session.Haunt) session.Notify("Take the salt from the Impala trunk."); return; }
             Weapon = index; _reload = 0;
             if(handgun) handgun.SetActive(index == 0); if(knife) knife.SetActive(index == 1); if(iron) iron.SetActive(index == 2);
         }
@@ -60,6 +62,8 @@ namespace BeforeJericho
         public void Attack()
         {
             if(!session.Playing || motor.IsCrawling || _cooldown > 0 || Reloading) return;
+            if(session.stanford) { session.Notify("No hunting here. Not tonight."); return; }
+            if(Weapon == 3) { _cooldown = .8f; session.Haunt.PourSalt(transform.position, Quaternion.Euler(0, view.Yaw, 0) * Vector3.forward); return; }
             if(Weapon == 0)
             {
                 if(!motor.Input.Aim) { session.Notify("Hold RMB to aim."); return; }
@@ -70,11 +74,12 @@ namespace BeforeJericho
                 if(Physics.Raycast(ray, out RaycastHit aimHit, 70, ~4, QueryTriggerInteraction.Ignore)) target = aimHit.point;
                 Vector3 path = target - muzzle.position;
                 if(Physics.Raycast(muzzle.position, path.normalized, out RaycastHit hit, path.magnitude + .1f, ~4, QueryTriggerInteraction.Ignore))
-                { var ghoul = hit.collider.GetComponentInParent<GhoulHunt>(); var hitbox = hit.collider.GetComponent<GhoulHitbox>(); if(ghoul) ghoul.Hit(hitbox && hitbox.head, false); var ghost = hit.collider.GetComponentInParent<GhostHunt>(); if(ghost) ghost.Hit(false); var rawhead = hit.collider.GetComponentInParent<RawheadHunt>(); if(rawhead) rawhead.Hit(false); }
+                { var ghoul = hit.collider.GetComponentInParent<GhoulHunt>(); var hitbox = hit.collider.GetComponent<GhoulHitbox>(); if(ghoul) ghoul.Hit(hitbox && hitbox.head, false); var ghost = hit.collider.GetComponentInParent<GhostHunt>(); if(ghost) ghost.Hit(false); var rawhead = hit.collider.GetComponentInParent<RawheadHunt>(); if(rawhead) rawhead.Hit(false); var manifestation = hit.collider.GetComponentInParent<ManifestationHunt>(); if(manifestation) manifestation.Hit(false); }
             }
             else
             {
                 _cooldown = .65f; if(session.sound) session.sound.PlayCue(85, .12f, .12f);
+                if(session.Haunt) { session.Haunt.Melee(transform.position + Vector3.up * motor.InteractionHeight, transform.forward, Weapon == 2); return; }
                 if(session.eastTexas) { session.eastTexas.Director.KnifeAttack(transform.position + Vector3.up * motor.InteractionHeight, transform.forward); return; }
                 if(session.chapter && session.chapter.Rawhead)
                 {

@@ -1,0 +1,193 @@
+key	ko	en
+# UI_Common/System/Journal/Items/Captions/Settings rows converted from Before Jericho UI.html (L table)
+UI_Common/menu.continue	계속하기	CONTINUE
+UI_Common/menu.new	새 게임	NEW GAME
+UI_Common/menu.load	불러오기	LOAD GAME
+UI_Common/menu.options	설정	OPTIONS
+UI_Common/menu.credits	크레딧	CREDITS
+UI_Common/menu.quit	게임 종료	QUIT GAME
+UI_Common/menu.disclaimer	개인 비배포 팬게임 프로토타입 · 오리지널 플레이스홀더 아트/사운드	Personal, non-distributed fan-game prototype · Original placeholder art & audio
+UI_Common/hint.select	확인	Confirm
+UI_Common/hint.back	뒤로	Back
+UI_Common/hint.tab	탭 변경	Change tab
+UI_Common/hint.close	닫기	Close
+UI_Common/hint.skip	건너뛰기	Skip
+UI_Common/pause.title	일시 정지	PAUSED
+UI_Common/pause.flavor	길은 기다려 준다.	The road can wait.
+UI_Common/pause.resume	계속하기	Resume
+UI_Common/pause.journal	저널	Journal
+UI_Common/pause.map	지도	Map
+UI_Common/pause.options	옵션	Options
+UI_Common/pause.retry	체크포인트 재시작	Restart from checkpoint
+UI_Common/pause.main	메인 메뉴로 돌아가기	Quit to main menu
+UI_Common/pause.checkpoint	마지막 체크포인트	Last checkpoint
+UI_Common/pause.playtime	플레이 시간	Play time
+UI_Common/prompt.investigate	조사하기	Examine
+UI_Common/prompt.hold_burn	태우기	Burn
+UI_Common/prompt.lighter_on	길게 누르기 · 라이터 켜짐	Hold · Lighter lit
+UI_Common/prompt.lighter_needed	라이터를 켜야 한다	Light your lighter first
+UI_Common/hud.reloading	재장전	Reloading
+UI_Common/hud.lines	줄	lines
+UI_Common/hud.lighter	라이터	Lighter
+UI_Common/hud.health	체력	Health
+UI_Common/hud.burn	의식 진행	Ritual
+UI_Common/inspect.translate	번역	Transcript
+UI_Common/inspect.flip	뒤집기	Turn over
+UI_Common/inspect.zoom	확대	Zoom
+UI_Common/dead.retry	계속하기	Continue
+UI_Common/dead.main	메인 메뉴로 돌아가기	Quit to main menu
+UI_Common/complete.continue	계속하기	Continue
+UI_Common/map.here	현재 위치	You are here
+UI_Common/map.objective	목표	Objective
+UI_Common/map.clue	단서	Clue
+UI_Common/map.unexplored	미탐색 구역	Unexplored
+UI_Common/map.locked	잠김	Locked
+UI_Common/map.danger	위험	Danger
+UI_Common/map.legend	범례	Legend
+System/saving	저장 중	Saving
+System/boot.title	시작하기 전에	BEFORE YOU START
+System/boot.body	언어와 자막을 먼저 설정하세요. 나중에 옵션 › 언어 · 자막에서 변경할 수 있습니다.	Set language and subtitles first. You can change them later in Options › Language & Subtitles.
+System/boot.start	확인	Confirm
+System/boot.preview	자막 미리보기	Subtitle preview
+System/dead.title	사냥은 여기서 끝난다.	THE HUNT ENDS HERE.
+System/complete.clues	단서	Clues
+System/complete.time	시간	Time
+System/complete.deaths	사망	Deaths
+System/credits.title	크레딧	CREDITS
+System/credits.thanks	플레이해 주셔서 감사합니다	THANK YOU FOR PLAYING
+System/credits.design	디자인 · 코드 · 그레이박스	Design · Code · Greybox
+System/credits.audio	오디오	Audio
+System/credits.audio.v	합성 플레이스홀더 사운드 · 라이선스 음악 없음	Synthesized placeholder sound · No licensed music
+Objectives/new	새 목표	New objective
+Items/acquired	입수	Acquired
+Items/weapon.1911	1911	1911
+Items/weapon.knife	사냥칼	Hunting knife
+Items/weapon.iron	쇠막대	Iron rod
+Items/weapon.salt	굵은 소금	Rock salt
+Items/lighter	라이터	Lighter
+Items/1911.desc	아버지에게 물려받은 권총. 사람과 구울에게는 통한다. 유령에게는 아니다.	Dad's old sidearm. Works on people and ghouls. Not on spirits.
+Items/knife.desc	경직된 대상을 마무리한다.	Finishes staggered targets.
+Items/iron.desc	영체를 7초간 흩어낸다. 임팔라 트렁크에서 꺼냈다.	Disperses a spirit for 7 seconds. From the Impala trunk.
+Items/salt.desc	선 하나당 14초. 영체는 넘어오지 못한다.	Each line holds for 14 seconds. Spirits cannot cross.
+Items/lighter.desc	흔적을 비추고 앵커에 불을 붙인다.	Reveals traces and ignites anchors.
+Journal/added	저널에 추가됨	Added to journal
+Journal/title	저널	JOURNAL
+Journal/tab.case	사건	Case
+Journal/tab.clues	단서	Clues
+Journal/tab.people	인물	People
+Journal/tab.files	파일	Files
+Journal/tab.items	아이템	Items
+Journal/tab.map	지도	Map
+Journal/case.current	목표	Objective
+Journal/case.location	위치	Location
+Journal/case.theory	가설	Working theory
+Journal/case.rules	약점	Weakness
+Journal/case.john	존의 흔적	John's trail
+Journal/note.title	딘의 메모	Dean's notes
+Captions/scratch	벽 안에서 긁는 소리	Scratching inside the wall
+Captions/door_slam	문이 쾅 닫힌다	Door slams shut
+Captions/whisper	낮게 속삭이는 목소리	Low whispering
+Captions/fire	불길이 치솟는다	Flames roar
+Captions/tv	TV 잡음	TV static
+Tutorial/label	사냥 수칙	Rule of the hunt
+Settings/title	옵션	OPTIONS
+Settings/tab.gameplay	게임플레이	Gameplay
+Settings/tab.controls	조작	Controls
+Settings/tab.camera	카메라	Camera
+Settings/tab.display	화면	Display
+Settings/tab.audio	사운드	Audio
+Settings/tab.lang	언어 · 자막	Language & Subtitles
+Settings/tab.access	접근성	Accessibility
+Settings/lang	표시 언어	Display language
+Settings/voice	음성 언어	Voice language
+Settings/subs	자막	Subtitles
+Settings/subSize	자막 크기	Subtitle size
+Settings/subBg	자막 배경 표시	Subtitle background
+Settings/speaker	화자 이름 표시	Show speaker names
+Settings/captions	효과음 자막	Sound captions
+Settings/direction	화자 방향 표시	Speaker direction
+Settings/hud	HUD 표시	HUD display
+Settings/hudop	HUD 불투명도	HUD opacity
+Settings/prompts	상호작용 표시	Interaction prompts
+Settings/tutorial	튜토리얼 표시	Tutorials
+Settings/crosshair	조준선	Reticle
+Settings/sens	마우스 감도	Mouse sensitivity
+Settings/aimsens	조준 감도	Aim sensitivity
+Settings/invert	상하 반전	Invert vertical
+Settings/shake	카메라 흔들림	Camera shake
+Settings/blur	모션 블러	Motion blur
+Settings/fov	시야각	Field of view
+Settings/bright	밝기	Brightness
+Settings/mode	화면 모드	Display mode
+Settings/master	마스터 볼륨	Master volume
+Settings/dialogue	대사	Dialogue
+Settings/music	음악	Music
+Settings/sfx	효과음	Effects
+Settings/ambient	환경음	Ambience
+Settings/hold	조준 입력 방식	Aim input
+Settings/aimassist	조준 보조	Aim assist
+Settings/flash	화면 번쩍임 줄이기	Reduce flashing
+Settings/contrast	고대비 표시	High-contrast prompts
+Settings/v.on	켜짐	On
+Settings/v.off	꺼짐	Off
+Settings/v.dynamic	자동	Contextual
+Settings/v.always	항상 표시	Always
+Settings/v.s	작게	Small
+Settings/v.m	보통	Standard
+Settings/v.l	크게	Large
+Settings/v.dot	점	Dot
+Settings/v.cross	십자	Cross
+Settings/v.ko	한국어	한국어
+Settings/v.en	English	English
+Settings/v.en_fixed	English (고정)	English (fixed)
+Settings/v.hold	누르고 있기	Hold
+Settings/v.toggle	전환	Toggle
+Settings/v.full	전체 화면	Fullscreen
+Settings/v.win	창 모드	Windowed
+Settings/act.move	이동	Move
+Settings/act.interact	조사 · 상호작용	Investigate / Interact
+Settings/act.lighter	라이터	Lighter
+Settings/act.aim	조준	Aim
+Settings/act.attack	공격	Attack
+Settings/act.reload	재장전	Reload
+Settings/act.crouch	앉기	Crouch
+Settings/act.crawl	기기	Crawl
+Settings/act.journal	저널	Journal
+Settings/act.map	지도	Map
+Settings/act.pause	일시정지	Pause
+Settings/remap.press	키 입력…	Press key…
+Settings/desc.lang	메뉴, 자막, 저널 텍스트의 언어입니다. 로고와 도로 표지판 같은 세계 속 영어 표기는 그대로 유지됩니다.	Language for menus, subtitles and journal text. In-world English like the logo and road signs stays as is.
+Settings/desc.voice	현재 음성은 영어만 제공됩니다.	Voice is English only.
+Settings/desc.subs	대사를 화면 하단 가운데에 표시합니다.	Shows dialogue at the bottom centre.
+Settings/desc.subSize	작게 / 보통 / 크게. 오른쪽 미리보기에 바로 반영됩니다.	Small / Standard / Large. The preview updates live.
+Settings/desc.subBg	자막 뒤에 반투명 배경을 깔아 어두운·밝은 장면 모두에서 읽기 쉽게 합니다.	Adds a translucent box behind subtitles for readability on any scene.
+Settings/desc.speaker	대사 앞에 말하는 인물의 이름을 표시합니다.	Shows who is speaking before each line.
+Settings/desc.captions	화면 밖의 중요한 소리를 [대괄호] 자막으로 표시합니다. 공포 게임에서 소리는 게임 정보입니다.	Shows important off-screen sounds in [brackets]. In horror, sound is gameplay information.
+Settings/desc.direction	화면 밖 화자나 소리가 어느 쪽에서 오는지 화살표로 표시합니다.	Shows an arrow toward off-screen speakers and sounds.
+Settings/desc.hud	자동: 평소에는 숨기고 조준·피격·재장전할 때만 표시한 뒤 서서히 사라집니다.	Contextual: hidden when quiet; appears when aiming, hurt or reloading, then fades.
+Settings/desc.bright	왼쪽 표식이 겨우 보일 때까지 조절하세요.	Adjust until the left mark is barely visible.
+Settings/desc.default	항목을 선택하면 설명이 표시됩니다.	Select an option to see what it does.
+Settings/desc.controls	항목을 클릭한 뒤 새 키를 누르면 바뀝니다.	Click an action, then press a new key.
+Dialogue/speaker.dean	딘	DEAN
+Dialogue/speaker.lorna	로나	LORNA
+Dialogue_Sample/lorna.wall	늘 그 방들이에요. 번호가 아니라… 그 벽 쪽 방들.	Always those rooms. Not the numbers... the ones on that wall.
+Dialogue_Sample/dean.wall	벽이 숨을 쉬어… 이 건물이 뭔가를 감추고 있어.	The wall is breathing... this place is hiding something.
+Journal/clue.unknown	미확인	Not found
+Journal/clue.unknown.d	아직 찾지 못한 단서가 있다.	There is still something to find.
+Journal/deduction.locked	결론은 단서를 모두 모은 뒤에.	The conclusion waits until every clue is in.
+Journal/people.none	아직 만난 사람이 없다.	Nobody met yet.
+Journal/files.none	아직 존의 흔적이 없다.	No trace of John yet.
+Journal/inspect	조사	Inspect
+Items/weapon.poker	부지깽이	Iron poker
+Items/weapon.none	맨손	Unarmed
+Items/poker.desc	영체를 잠시 흩어낸다. 골동품 가게에서 찾았다.	Disperses a spirit for a moment. Found in the antique shop.
+Captions/growl	낮게 으르렁거리는 소리	Low growling
+Captions/snarl	짐승 같은 숨소리	Ragged breathing
+UI_Common/time.min	{0}분 전	{0} min ago
+UI_Common/time.hour	{0}시간 전	{0} h ago
+UI_Common/time.day	{0}일 전	{0} d ago
+UI_Common/time.now	방금	just now
+UI_Common/menu.no_save	저장된 체크포인트 없음	No saved checkpoint
+System/credits.engine	엔진	ENGINE
+Settings/v.fixed	고정	Fixed
+System/card.skip	건너뛰기	Skip
