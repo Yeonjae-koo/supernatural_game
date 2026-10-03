@@ -17,7 +17,7 @@ namespace BeforeJericho.Editor
             ("Rain dark asphalt", "asphalt_02", 4, true), ("Wet limestone", "cobblestone_floor_04", 2.5f, true), ("Trim limestone", "concrete_floor_worn_001", 2, false), ("Aged stucco", "worn_cracked_plaster", 3, false),
             ("Tomb marble", "marble_01", 2, false), ("Walnut", "dark_wooden_planks", 2, false), ("Wrought iron", "rusty_metal_02", 2, false),
             ("Atchafalaya/CH02 Concrete", "concrete_floor_worn_001", 3, true), ("Atchafalaya/CH02 Cypress", "weathered_planks", 2, false),
-            ("Atchafalaya/CH02 Iron", "rusty_metal_02", 2, false), ("Atchafalaya/CH02 Mud", "brown_mud_03", 3, true),
+            ("Atchafalaya/CH02 Iron", "rusty_metal_02", 2, false), ("Atchafalaya/CH02 Mud", "brown_mud_03", 3, true), ("Atchafalaya/Cypress foliage", "leafy_grass", 1.5f, false),
             ("EastTexas/CH03 Asphalt", "asphalt_02", 4, true), ("EastTexas/CH03 Brick", "brick_wall_10", 2.5f, false), ("EastTexas/CH03 Coffin wood", "dark_wooden_planks", 2, false),
             ("EastTexas/CH03 Cold steel", "rusty_metal_02", 2, false), ("EastTexas/CH03 Mortuary tile", "dirty_tiles", 1.5f, false), ("EastTexas/CH03 Wet grass", "leafy_grass", 3, false),
             ("GrantsNM/CH04 Asphalt", "asphalt_02", 4, false), ("GrantsNM/CH04 Desert sand", "dry_ground_01", 4, false), ("GrantsNM/CH04 Faded stucco", "clay_plaster", 3, false),
