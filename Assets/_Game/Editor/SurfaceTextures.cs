@@ -26,6 +26,7 @@ namespace BeforeJericho.Editor
             ("Winslow/CH05 Steel", "rusty_metal_02", 2, false), ("Winslow/CH05 Sunbaked stucco", "clay_plaster", 3, false), ("Winslow/CH05 Weathered wood", "weathered_planks", 2, false),
             ("Stanford/CH06 Apartment brick", "brick_wall_10", 2.5f, false), ("Stanford/CH06 Lawn", "leafy_grass", 3, false), ("Stanford/CH06 Motel stucco", "worn_cracked_plaster", 3, false),
             ("Stanford/CH06 Steel", "concrete_floor_worn_001", 3, false), ("Stanford/CH06 Street asphalt", "asphalt_02", 4, false), ("Stanford/CH06 Wood", "dark_wooden_planks", 2, false),
+            ("Old brick", "brick_wall_10", 2.5f, false), ("Cellar stone", "concrete_floor_worn_001", 3, false),
         };
 
         [MenuItem("Before Jericho/Art/Apply Surface Textures")]
