@@ -15,7 +15,7 @@ namespace BeforeJericho.Editor
             importer.materialImportMode = ModelImporterMaterialImportMode.ImportStandard;
             importer.materialLocation = ModelImporterMaterialLocation.External;
             importer.materialName = ModelImporterMaterialName.BasedOnMaterialName;
-            importer.materialSearch = ModelImporterMaterialSearch.RecursiveUp; // finds Art/Materials/<name>.mat
+            importer.materialSearch = ModelImporterMaterialSearch.Everywhere; // chapter materials live in Art/Materials/<Chapter>/ subfolders; kit material names are unique project-wide
         }
     }
 }
