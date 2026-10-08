@@ -219,7 +219,7 @@ namespace BeforeJericho.Editor
 
         static float XZ(Transform a, Transform b) => Vector2.Distance(new Vector2(a.position.x, a.position.z), new Vector2(b.position.x, b.position.z));
 
-        static GameObject Place(GameObject prefab, Vector3 pos, Quaternion rot, string name, Transform parent)
+        internal static GameObject Place(GameObject prefab, Vector3 pos, Quaternion rot, string name, Transform parent)
         {
             var g = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             g.name = name; g.transform.SetParent(parent, false); g.transform.SetPositionAndRotation(pos, rot);
