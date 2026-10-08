@@ -141,8 +141,30 @@ namespace BeforeJericho.Editor
             foreach(var cx in new[] { -5.55f, 5.55f }) foreach(var dx in new[] { -1.725f, 1.725f }) Pipe(cx + dx, 2.8f, 52.53f, 180, 3.45f);
             foreach(var z in new[] { 86f, 102f }) { KitSwap.Place(valve, new Vector3(-11.73f, .095f, z), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(11.73f, .095f, z), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2; }
             KitSwap.Place(valve, new Vector3(-8.73f, .225f, 49), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(8.73f, .225f, 49), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2;
+            // Gas station set: canopy (greybox canopy + posts + pump lose their renderers, keep colliders) with two warm underside lights, a pump facing the road (-X), then collidable barrels and sandbags (yaw varied).
+            GameObject canopy = Load("SM_AT_GasCanopy"), pump = Load("SM_AT_FuelPump"), barrel = Load("SM_AT_Barrel"), sandbags = Load("SM_AT_Sandbags");
+            if(!canopy || !pump || !barrel || !sandbags) throw new System.InvalidOperationException("Atchafalaya gas station prop models missing in " + Models);
+            foreach(var n in new[] { "Gas canopy", "Canopy post", "Fuel pump" }) foreach(var t in Named(n)) Hide(t);
+            var canopyGo = KitSwap.Place(canopy, new Vector3(7, 0, 10), Quaternion.identity, "Kit - Gas canopy", root); int canopyLights = 0;
+            foreach(var z in new[] { 7f, 13f })
+            {
+                var l = new GameObject("Canopy light").AddComponent<Light>(); l.transform.SetParent(canopyGo.transform, false); l.transform.position = new Vector3(7, 3.85f, z);
+                l.type = LightType.Point; l.color = new Color(1f, .78f, .5f); l.intensity = 2.5f; l.range = 9f; HdrpAuthoring.Light(l); canopyLights++;
+            }
+            KitSwap.Place(pump, new Vector3(7, .1f, 9), Quaternion.Euler(0, -90, 0), "Kit - Fuel pump", root);
+            int barrels = 0, bags = 0;
+            void Solid(GameObject prefab, Vector3 pos, float yaw, string name)
+            {
+                var g = KitSwap.Place(prefab, pos, Quaternion.Euler(0, yaw, 0), name, root);
+                foreach(var mf in g.GetComponentsInChildren<MeshFilter>()) { var c = mf.gameObject.AddComponent<BoxCollider>(); c.center = mf.sharedMesh.bounds.center; c.size = mf.sharedMesh.bounds.size; }
+            }
+            foreach(var (x, y, z, yaw) in new[] { (11.3f, .1f, 4.6f, 10f), (11.9f, .1f, 5.5f, 40f), (-7.6f, .225f, 46.3f, 0f), (-6.9f, .225f, 46.8f, 25f), (-10.6f, .095f, 78.4f, 5f), (-10f, .095f, 79.3f, 60f), (-10.9f, .095f, 80.2f, 30f) })
+            { Solid(barrel, new Vector3(x, y, z), yaw, "Kit - Barrel"); barrels++; }
+            // Sandbag walls: outside the pump west shell on the Belle Rive ground (top -0.05), and along the generator north wall.
+            foreach(var (x, y, z, yaw) in new[] { (-9.6f, -.05f, 46.6f, 90f), (-9.6f, -.05f, 48.4f, 90f), (-6f, .095f, 114.4f, 0f), (-4.35f, .095f, 114.4f, 0f), (5f, .095f, 114.4f, 0f) })
+            { Solid(sandbags, new Vector3(x, y, z), yaw, "Kit - Sandbags"); bags++; }
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
-            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, " + probes + " reflection probes, " + hidden.Count + " renderers disabled";
+            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, 1 gas canopy (" + canopyLights + " lights), 1 fuel pump, " + barrels + " barrels, " + bags + " sandbag walls, " + probes + " reflection probes, " + hidden.Count + " renderers disabled";
             Debug.Log(log);
             return log;
         }
