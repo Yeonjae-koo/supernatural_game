@@ -56,8 +56,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: {r: 0.43, g: 0.44, b: 0.45, a: 1}
   globalLightProbeDimmer:
-    m_OverrideState: 0
-    m_Value: 1
+    m_OverrideState: 1
+    m_Value: 0.25
   depthExtent:
     m_OverrideState: 1
     m_Value: 48
@@ -423,13 +423,13 @@ MonoBehaviour:
     m_Value: 0
   top:
     m_OverrideState: 1
-    m_Value: {r: 0.022281691, g: 0.035014085, b: 0.03183099, a: 0.31830987}
+    m_Value: {r: 0.05570423, g: 0.08753522, b: 0.07957747, a: 0.31830987}
   middle:
     m_OverrideState: 1
-    m_Value: {r: 0.022281691, g: 0.035014085, b: 0.03183099, a: 0.31830987}
+    m_Value: {r: 0.05570423, g: 0.08753522, b: 0.07957747, a: 0.31830987}
   bottom:
     m_OverrideState: 1
-    m_Value: {r: 0.017825354, g: 0.028011268, b: 0.025464792, a: 0.2546479}
+    m_Value: {r: 0.044563383, g: 0.07002818, b: 0.06366198, a: 0.2546479}
   gradientDiffusion:
     m_OverrideState: 0
     m_Value: 1
@@ -651,7 +651,7 @@ MonoBehaviour:
     m_Value: 0
   multiplier:
     m_OverrideState: 1
-    m_Value: 0.11922064
+    m_Value: 0.29805163
   upperHemisphereLuxValue:
     m_OverrideState: 1
     m_Value: 1

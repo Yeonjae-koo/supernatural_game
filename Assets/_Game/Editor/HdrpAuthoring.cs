@@ -88,6 +88,8 @@ namespace BeforeJericho.Editor
             // albedo .5 keeps the fog near surface brightness (higher washes brighter-ambient chapters grey), lights scatter ×3 to compensate.
             f.meanFreePath.Override(fogDensity > 0 ? .45f / fogDensity : 400); f.maximumHeight.Override(400); f.maxFogDistance.Override(1);
             f.enableVolumetricFog.Override(true); f.albedo.Override(new Color(.43f, .44f, .45f)); f.depthExtent.Override(48); f.anisotropy.Override(.55f);
+            // How much ambient light the fog scatters; a boosted-ambient chapter turns its fog white unless this is cut.
+            f.globalLightProbeDimmer.Override(FogAmbient.TryGetValue(sceneName, out float dim) ? dim : 1);
             if(!tonemap) Get<Tonemapping>(profile).mode.Override(TonemappingMode.None);
             if(!tonemap) Get<Bloom>(profile).intensity.Override(0);
             Get<MotionBlur>(profile).intensity.Override(0);
@@ -112,6 +114,8 @@ namespace BeforeJericho.Editor
         }
 
         // Poly Haven CC0 night HDRIs in Art/HDRI (licences in Art/Textures/POLYHAVEN_LICENSE.txt). Cool-toned on purpose: warmth comes from the lamps. Moon-dominated ones (narrow_moonlit_road, rogland) suit open ground only: matching their irradiance leaves walls dark.
+        static readonly System.Collections.Generic.Dictionary<string, float> FogAmbient = new() { { "SCN_Atchafalaya_Slice", .25f } };
+
         static readonly System.Collections.Generic.Dictionary<string, string> Hdri = new()
         {
             { "SCN_NewOrleans_Slice", "kloppenheim_07" }, { "SCN_Atchafalaya_Slice", "kloppenheim_04" }, { "SCN_EastTexas_Slice", "kloppenheim_07" },
