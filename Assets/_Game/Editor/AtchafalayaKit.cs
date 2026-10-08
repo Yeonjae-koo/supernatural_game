@@ -101,8 +101,30 @@ namespace BeforeJericho.Editor
             // Concrete floors take a darker copy of CH02 Concrete: under the raised ambient the shared material reads white on the ground.
             var floorMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Atchafalaya/CH02 Concrete floor.mat");
             foreach(var n in new[] { "Gas station slab", "Roadside", "Pump Station Exterior", "Pipe Crawl floor", "Generator Chamber floor" }) foreach(var t in Named(n)) t.GetComponent<MeshRenderer>().sharedMaterial = floorMat;
+            // Props (no colliders): tin roofs over the diner/house (ridge along world Z), caged work lamps with a warm point light, pipe runs on the generator/pump walls, vertical valve pipes.
+            GameObject roof = Load("SM_AT_TinRoof_Gable"), lamp = Load("SM_AT_CageLamp"), pipeRun = Load("SM_AT_PipeRun_4m"), valve = Load("SM_AT_PipeValve");
+            if(!roof || !lamp || !pipeRun || !valve) throw new System.InvalidOperationException("Atchafalaya prop models missing in " + Models);
+            int roofs = 0, lamps = 0, lampLights = 0, pipeRuns = 0, valves = 0;
+            foreach(var (pos, ridge, span) in new[] { (new Vector3(-7.1f, 4.0f, 15), 13.4f, 12.2f), (new Vector3(-8.05f, 4.2f, 29), 10.2f, 9.1f) })
+            { KitSwap.Place(roof, pos, Quaternion.Euler(0, 90, 0), "Kit - Tin roof", root).transform.localScale = new Vector3(ridge / 4, 1, span / 4); roofs++; }
+            void Lamp(float x, float y, float z, float yaw)
+            {
+                var g = KitSwap.Place(lamp, new Vector3(x, y, z), Quaternion.Euler(0, yaw, 0), "Kit - Cage lamp", root); lamps++;
+                // The light sits inside the cage, so a shadow-casting lamp would print its bars across the wall.
+                foreach(var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                var l = new GameObject("Cage lamp light").AddComponent<Light>(); l.transform.SetParent(g.transform, false); l.transform.localPosition = new Vector3(0, -.1f, .55f);
+                l.type = LightType.Point; l.color = new Color(1f, .72f, .38f); l.intensity = 2f; l.range = 7f; HdrpAuthoring.Light(l); lampLights++;
+            }
+            foreach(var z in new[] { 47f, 51f }) { Lamp(-8.73f, 3.2f, z, 90); Lamp(8.73f, 3.2f, z, -90); }
+            foreach(var z in new[] { 80f, 94f, 108f }) { Lamp(-11.73f, 3.1f, z, 90); Lamp(11.73f, 3.1f, z, -90); }
+            void Pipe(float x, float y, float z, float yaw, float len)
+            { KitSwap.Place(pipeRun, new Vector3(x, y, z), Quaternion.Euler(0, yaw, 0), "Kit - Pipe run", root).transform.localScale = new Vector3(len / 4, 1, 1); pipeRuns++; }
+            for(int i = 0; i < 10; i++) { float z = 73 + (i + .5f) * 4.2f; Pipe(-11.73f, 4.0f, z, 90, 4.2f); Pipe(11.73f, 4.0f, z, -90, 4.2f); }
+            foreach(var cx in new[] { -5.55f, 5.55f }) foreach(var dx in new[] { -1.725f, 1.725f }) Pipe(cx + dx, 2.8f, 52.53f, 180, 3.45f);
+            foreach(var z in new[] { 86f, 102f }) { KitSwap.Place(valve, new Vector3(-11.73f, .095f, z), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(11.73f, .095f, z), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2; }
+            KitSwap.Place(valve, new Vector3(-8.73f, .225f, 49), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(8.73f, .225f, 49), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2;
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
-            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + hidden.Count + " renderers disabled";
+            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, " + hidden.Count + " renderers disabled";
             Debug.Log(log);
             return log;
         }
