@@ -101,22 +101,40 @@ namespace BeforeJericho.Editor
             // Concrete floors take a darker copy of CH02 Concrete: under the raised ambient the shared material reads white on the ground.
             var floorMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Atchafalaya/CH02 Concrete floor.mat");
             foreach(var n in new[] { "Gas station slab", "Roadside", "Pump Station Exterior", "Pipe Crawl floor", "Generator Chamber floor" }) foreach(var t in Named(n)) t.GetComponent<MeshRenderer>().sharedMaterial = floorMat;
+            // The indoor generator water takes an SSR-off copy of CH02 Water: SSR streaks off the walls/pipes, so it falls back to the room probe below.
+            var waterIndoor = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Atchafalaya/CH02 Water indoor.mat");
+            if(!waterIndoor) throw new System.InvalidOperationException("CH02 Water indoor.mat missing");
+            foreach(var t in Named("Marked shallow-water kill zone")) t.GetComponent<MeshRenderer>().sharedMaterial = waterIndoor;
+            // Realtime (OnEnable) HDRP box probes, nothing baked (PrepareCulling syncs the legacy probe box that drives culling). HDRP centres the influence box on the transform, so the transform sits at the box centre and the capture point is offset down to probe height. No blend: the box faces sit on the floor and walls, and blend weight fades toward each face, so any blend leaves floor-level surfaces (water) mostly on the sky reflection.
+            int probes = 0;
+            void Probe(string name, Vector3 capture, Vector3 center, Vector3 size, float blend)
+            {
+                var g = new GameObject(name); g.transform.SetParent(root, false); g.transform.position = center;
+                g.AddComponent<ReflectionProbe>(); var hd = g.AddComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalReflectionData>();
+                hd.mode = UnityEngine.Rendering.HighDefinition.ProbeSettings.Mode.Realtime; hd.realtimeMode = UnityEngine.Rendering.HighDefinition.ProbeSettings.RealtimeMode.OnEnable;
+                hd.settingsRaw.cubeResolution.useOverride = true; hd.settingsRaw.cubeResolution.@override = UnityEngine.Rendering.HighDefinition.CubeReflectionResolution.CubeReflectionResolution256;
+                hd.settingsRaw.proxySettings.capturePositionProxySpace = capture - center;
+                var v = hd.influenceVolume; v.shape = UnityEngine.Rendering.HighDefinition.InfluenceShape.Box; v.boxSize = size; v.boxBlendDistancePositive = v.boxBlendDistanceNegative = Vector3.one * blend; hd.PrepareCulling(); probes++;
+            }
+            Probe("Kit - Reflection probe generator", new Vector3(0, 1.5f, 94), new Vector3(0, 2.5f, 94), new Vector3(24, 5, 42), 0f);
+            Probe("Kit - Reflection probe pump", new Vector3(0, 1.5f, 49), new Vector3(0, 2.05f, 49), new Vector3(18, 4.1f, 8), 0f);
             // Props (no colliders): tin roofs over the diner/house (ridge along world Z), caged work lamps with a warm point light, pipe runs on the generator/pump walls, vertical valve pipes.
             GameObject roof = Load("SM_AT_TinRoof_Gable"), lamp = Load("SM_AT_CageLamp"), pipeRun = Load("SM_AT_PipeRun_4m"), valve = Load("SM_AT_PipeValve");
             if(!roof || !lamp || !pipeRun || !valve) throw new System.InvalidOperationException("Atchafalaya prop models missing in " + Models);
             int roofs = 0, lamps = 0, lampLights = 0, pipeRuns = 0, valves = 0;
             foreach(var (pos, ridge, span) in new[] { (new Vector3(-7.1f, 4.0f, 15), 13.4f, 12.2f), (new Vector3(-8.05f, 4.2f, 29), 10.2f, 9.1f) })
             { KitSwap.Place(roof, pos, Quaternion.Euler(0, 90, 0), "Kit - Tin roof", root).transform.localScale = new Vector3(ridge / 4, 1, span / 4); roofs++; }
-            void Lamp(float x, float y, float z, float yaw)
+            void Lamp(float x, float y, float z, float yaw, float intensity = 2f)
             {
                 var g = KitSwap.Place(lamp, new Vector3(x, y, z), Quaternion.Euler(0, yaw, 0), "Kit - Cage lamp", root); lamps++;
                 // The light sits inside the cage, so a shadow-casting lamp would print its bars across the wall.
                 foreach(var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 var l = new GameObject("Cage lamp light").AddComponent<Light>(); l.transform.SetParent(g.transform, false); l.transform.localPosition = new Vector3(0, -.1f, .55f);
-                l.type = LightType.Point; l.color = new Color(1f, .72f, .38f); l.intensity = 2f; l.range = 7f; HdrpAuthoring.Light(l); lampLights++;
+                l.type = LightType.Point; l.color = new Color(1f, .72f, .38f); l.intensity = intensity; l.range = 7f; HdrpAuthoring.Light(l); lampLights++;
             }
             foreach(var z in new[] { 47f, 51f }) { Lamp(-8.73f, 3.2f, z, 90); Lamp(8.73f, 3.2f, z, -90); }
-            foreach(var z in new[] { 80f, 94f, 108f }) { Lamp(-11.73f, 3.1f, z, 90); Lamp(11.73f, 3.1f, z, -90); }
+            // The generator hall reflects its own dark room now (probe blend 0), so its lamps run brighter.
+            foreach(var z in new[] { 80f, 94f, 108f }) { Lamp(-11.73f, 3.1f, z, 90, 3.5f); Lamp(11.73f, 3.1f, z, -90, 3.5f); }
             void Pipe(float x, float y, float z, float yaw, float len)
             { KitSwap.Place(pipeRun, new Vector3(x, y, z), Quaternion.Euler(0, yaw, 0), "Kit - Pipe run", root).transform.localScale = new Vector3(len / 4, 1, 1); pipeRuns++; }
             for(int i = 0; i < 10; i++) { float z = 73 + (i + .5f) * 4.2f; Pipe(-11.73f, 4.0f, z, 90, 4.2f); Pipe(11.73f, 4.0f, z, -90, 4.2f); }
@@ -124,7 +142,7 @@ namespace BeforeJericho.Editor
             foreach(var z in new[] { 86f, 102f }) { KitSwap.Place(valve, new Vector3(-11.73f, .095f, z), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(11.73f, .095f, z), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2; }
             KitSwap.Place(valve, new Vector3(-8.73f, .225f, 49), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(8.73f, .225f, 49), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2;
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
-            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, " + hidden.Count + " renderers disabled";
+            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, " + probes + " reflection probes, " + hidden.Count + " renderers disabled";
             Debug.Log(log);
             return log;
         }
