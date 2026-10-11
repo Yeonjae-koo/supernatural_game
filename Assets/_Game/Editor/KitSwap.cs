@@ -95,6 +95,33 @@ namespace BeforeJericho.Editor
                     if(o.GetComponent<MeshRenderer>() is MeshRenderer r) { r.enabled = false; hidden.Add(r); }
                 facades++; b++;
             }
+            // Decals (HDRP/Decal projectors, Decals.cs): leaks hang from under each facade cornice, stains under the sills, wet stains and manholes on the street; deterministic, all under the Kit Art root.
+            var rng = new System.Random(11);
+            int leaks = 0, stains = 0, wets = 0, manholes = 0;
+            string[] leakIds = { "Leaking001", "Leaking003", "Leaking009" }; // 010A/011A are pipe-outlet drips: too thin to read on a facade
+            float R(float a, float c) => a + (c - a) * (float)rng.NextDouble();
+            foreach(var f in root.Cast<Transform>().Where(f => f.name.StartsWith("Kit - Facade")).ToList())
+            {
+                float baseY = f.position.y;
+                if(rng.NextDouble() < .6)
+                {
+                    var id = leakIds[rng.Next(leakIds.Length)]; float w = R(1.6f, 2.4f), h = R(2.6f, 3.4f), off = R(-1.1f, 1.1f);
+                    Decals.Place(Decals.Get(id), root, "Kit - Decal leak", new Vector3(f.position.x, baseY + 3.65f - h / 2, f.position.z) + f.right * off, -f.forward, Vector3.up, new Vector2(w, h), .6f); leaks++;
+                }
+                if(f.name.Contains("window") && rng.NextDouble() < .5)
+                {
+                    Decals.Place(Decals.Get("Leaking006"), root, "Kit - Decal stain", new Vector3(f.position.x, baseY + .93f - .7f, f.position.z), -f.forward, Vector3.up, new Vector2(1.2f, 1.4f), .5f); stains++;
+                }
+            }
+            var wet = Decals.Get("AsphaltDamage001");
+            for(int i = 0; i < 7; i++)
+            {
+                float x = R(-6, 6), z = R(6, 66), s = R(2.5f, 4f);
+                Decals.Place(wet, root, "Kit - Decal wet", new Vector3(x, 0, z), Vector3.down, Quaternion.Euler(0, R(0, 360), 0) * Vector3.forward, new Vector2(s, s), .3f); wets++;
+            }
+            var manhole = Decals.Get("ManholeCover008");
+            foreach(var (x, z) in new[] { (0f, 18f), (-2.5f, 40f), (2f, 62f) })
+            { Decals.Place(manhole, root, "Kit - Decal manhole", new Vector3(x, 0, z), Vector3.down, Vector3.forward, new Vector2(1.1f, 1.1f), .3f); manholes++; }
             // Shop: fascia + iron columns over the open storefront (x = -7, z 14..30); the header box keeps its collider, the sign is flipped to face the street
             var fascia = AssetDatabase.LoadAssetAtPath<GameObject>(Models + "SM_NO_ShopFascia_4m.fbx");
             var column = AssetDatabase.LoadAssetAtPath<GameObject>(Models + "SM_NO_ShopColumn.fbx");
@@ -193,7 +220,7 @@ namespace BeforeJericho.Editor
             // candle on the top crate of the entrance stack (crate top = 0.795 + 0.72)
             Candle(Place(candleCluster, new Vector3(-5.5f, .795f + .72f, 57.3f), Quaternion.Euler(0, 0, 0), "Kit - Crate candle", root), "Crate candle light", new Vector3(0, .3f, 0), .9f, 3.5f); crateCandles++;
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
-            string log = "Kit swap: " + lamps + " lamps, " + tombs + " tombs, " + facades + " facades (" + mods + " modules, " + balconies + " balconies, " + lit + " lit windows) placed, " + hidden.Count + " renderers disabled; shop " + fascias + " fascia + " + columns + " columns; cemetery " + segs + " fence segments + " + piers + " piers + " + gates + " gate; " + boundary + " boundary + " + cellar + " cellar wall modules, " + cellarPiers + " cellar piers; props " + niches + " niches, " + chains + " chains, " + candelabras + " candelabras, " + crates + " crates, " + crateCandles + " crate candle, " + lights + " lights";
+            string log = "Kit swap: " + lamps + " lamps, " + tombs + " tombs, " + facades + " facades (" + mods + " modules, " + balconies + " balconies, " + lit + " lit windows) placed, " + hidden.Count + " renderers disabled; shop " + fascias + " fascia + " + columns + " columns; cemetery " + segs + " fence segments + " + piers + " piers + " + gates + " gate; " + boundary + " boundary + " + cellar + " cellar wall modules, " + cellarPiers + " cellar piers; props " + niches + " niches, " + chains + " chains, " + candelabras + " candelabras, " + crates + " crates, " + crateCandles + " crate candle, " + lights + " lights; decals " + leaks + " leaks + " + stains + " stains + " + wets + " wet stains + " + manholes + " manholes";
             Debug.Log(log);
             return log;
         }

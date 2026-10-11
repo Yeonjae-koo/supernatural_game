@@ -163,8 +163,28 @@ namespace BeforeJericho.Editor
             // Sandbag walls: outside the pump west shell on the Belle Rive ground (top -0.05), and along the generator north wall.
             foreach(var (x, y, z, yaw) in new[] { (-9.6f, -.05f, 46.6f, 90f), (-9.6f, -.05f, 48.4f, 90f), (-6f, .095f, 114.4f, 0f), (-4.35f, .095f, 114.4f, 0f), (5f, .095f, 114.4f, 0f) })
             { Solid(sandbags, new Vector3(x, y, z), yaw, "Kit - Sandbags"); bags++; }
+            // Decals (HDRP/Decal projectors, Decals.cs; deterministic): leaks hang from the top of the concrete modules (Y-scaled, so H = 4 * localScale.y), dark wet stains on the floors, tyre tracks on the road.
+            var drng = new System.Random(12);
+            int leaks = 0, wets = 0, tracks = 0;
+            float R(float a, float c) => a + (c - a) * (float)drng.NextDouble();
+            foreach(var f in root.Cast<Transform>().Where(f => f.name == "Kit - Concrete wall").ToList())
+            {
+                if(drng.NextDouble() >= (Mathf.Abs(f.position.x) > 11 ? .5 : .35)) continue;
+                float H = 4 * f.localScale.y, w = R(1.5f, 2.5f), h = R(2.5f, 3.5f), off = R(-1.2f, 1.2f) * f.localScale.x;
+                Decals.Place(Decals.Get(drng.Next(2) == 0 ? "Leaking001" : "Leaking003"), root, "Kit - Decal leak", new Vector3(f.position.x, f.position.y + H - .3f - h / 2, f.position.z) + f.right * off, -f.forward, Vector3.up, new Vector2(w, h), .7f); leaks++;
+            }
+            var wet = Decals.Get("AsphaltDamage001");
+            // generator ones stay 3 m so they clear the kill-zone water (centre 0,96; 9x8)
+            foreach(var (x, y, z, cap) in new[] { (4f, .1f, 7f, 4f), (10f, .1f, 13f, 4f), (-2f, .1f, 0f, 4f), (3f, .1f, 17f, 4f), (-4f, .225f, 47f, 4f), (4f, .225f, 50f, 4f), (-6f, .095f, 90f, 3f), (6f, .095f, 104f, 3f), (-3f, .095f, 110f, 3f) })
+            {
+                float s = Mathf.Min(R(3, 4), cap);
+                Decals.Place(wet, root, "Kit - Decal wet", new Vector3(x, y, z), Vector3.down, Quaternion.Euler(0, R(0, 360), 0) * Vector3.forward, new Vector2(s, s), .3f); wets++;
+            }
+            var tyre = Decals.Get("TireTracks001"); // image is 4:1, long axis along U (projector local X): up = right so the track runs along world Z
+            foreach(var (x, z, yaw) in new[] { (1.5f, 6f, 0f), (4.5f, 9f, 15f) })
+            { Decals.Place(tyre, root, "Kit - Decal tracks", new Vector3(x, .1f, z), Vector3.down, Quaternion.Euler(0, yaw, 0) * Vector3.right, new Vector2(6, 1.6f), .3f); tracks++; }
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
-            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, 1 gas canopy (" + canopyLights + " lights), 1 fuel pump, " + barrels + " barrels, " + bags + " sandbag walls, " + probes + " reflection probes, " + hidden.Count + " renderers disabled";
+            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, 1 gas canopy (" + canopyLights + " lights), 1 fuel pump, " + barrels + " barrels, " + bags + " sandbag walls, " + probes + " reflection probes, " + hidden.Count + " renderers disabled; decals " + leaks + " leaks + " + wets + " wet stains + " + tracks + " tyre tracks";
             Debug.Log(log);
             return log;
         }
