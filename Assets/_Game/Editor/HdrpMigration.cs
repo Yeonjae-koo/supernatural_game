@@ -34,7 +34,7 @@ namespace BeforeJericho.Editor
                 // Features the slices do not use are off: fewer shader variants, shorter builds. Volumetrics + SSR carry the night look (lamp halos, wet streets).
                 var so = new SerializedObject(asset);
                 void Set(string name, bool value) { var p = so.FindProperty("m_RenderPipelineSettings." + name); if(p != null) p.boolValue = value; else log.AppendLine("missing setting " + name); }
-                Set("supportSSR", true); Set("supportSSGI", false); Set("supportVolumetrics", true); Set("supportDecals", false);
+                Set("supportSSR", true); Set("supportSSGI", false); Set("supportVolumetrics", true); Set("supportDecals", true);
                 Set("supportSubsurfaceScattering", false); Set("supportRayTracing", false); Set("supportWater", false); Set("supportTransparentBackface", false);
                 var mode = so.FindProperty("m_RenderPipelineSettings.supportedLitShaderMode"); if(mode != null) mode.intValue = (int)RenderPipelineSettings.SupportedLitShaderMode.DeferredOnly;
                 so.ApplyModifiedPropertiesWithoutUndo();

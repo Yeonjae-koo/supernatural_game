@@ -101,30 +101,90 @@ namespace BeforeJericho.Editor
             // Concrete floors take a darker copy of CH02 Concrete: under the raised ambient the shared material reads white on the ground.
             var floorMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Atchafalaya/CH02 Concrete floor.mat");
             foreach(var n in new[] { "Gas station slab", "Roadside", "Pump Station Exterior", "Pipe Crawl floor", "Generator Chamber floor" }) foreach(var t in Named(n)) t.GetComponent<MeshRenderer>().sharedMaterial = floorMat;
+            // The indoor generator water takes an SSR-off copy of CH02 Water: SSR streaks off the walls/pipes, so it falls back to the room probe below.
+            var waterIndoor = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Atchafalaya/CH02 Water indoor.mat");
+            if(!waterIndoor) throw new System.InvalidOperationException("CH02 Water indoor.mat missing");
+            foreach(var t in Named("Marked shallow-water kill zone")) t.GetComponent<MeshRenderer>().sharedMaterial = waterIndoor;
+            // Realtime (OnEnable) HDRP box probes, nothing baked (PrepareCulling syncs the legacy probe box that drives culling). HDRP centres the influence box on the transform, so the transform sits at the box centre and the capture point is offset down to probe height. No blend: the box faces sit on the floor and walls, and blend weight fades toward each face, so any blend leaves floor-level surfaces (water) mostly on the sky reflection.
+            int probes = 0;
+            void Probe(string name, Vector3 capture, Vector3 center, Vector3 size, float blend)
+            {
+                var g = new GameObject(name); g.transform.SetParent(root, false); g.transform.position = center;
+                g.AddComponent<ReflectionProbe>(); var hd = g.AddComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalReflectionData>();
+                hd.mode = UnityEngine.Rendering.HighDefinition.ProbeSettings.Mode.Realtime; hd.realtimeMode = UnityEngine.Rendering.HighDefinition.ProbeSettings.RealtimeMode.OnEnable;
+                hd.settingsRaw.cubeResolution.useOverride = true; hd.settingsRaw.cubeResolution.@override = UnityEngine.Rendering.HighDefinition.CubeReflectionResolution.CubeReflectionResolution256;
+                hd.settingsRaw.proxySettings.capturePositionProxySpace = capture - center;
+                var v = hd.influenceVolume; v.shape = UnityEngine.Rendering.HighDefinition.InfluenceShape.Box; v.boxSize = size; v.boxBlendDistancePositive = v.boxBlendDistanceNegative = Vector3.one * blend; hd.PrepareCulling(); probes++;
+            }
+            Probe("Kit - Reflection probe generator", new Vector3(0, 1.5f, 94), new Vector3(0, 2.5f, 94), new Vector3(24, 5, 42), 0f);
+            Probe("Kit - Reflection probe pump", new Vector3(0, 1.5f, 49), new Vector3(0, 2.05f, 49), new Vector3(18, 4.1f, 8), 0f);
             // Props (no colliders): tin roofs over the diner/house (ridge along world Z), caged work lamps with a warm point light, pipe runs on the generator/pump walls, vertical valve pipes.
             GameObject roof = Load("SM_AT_TinRoof_Gable"), lamp = Load("SM_AT_CageLamp"), pipeRun = Load("SM_AT_PipeRun_4m"), valve = Load("SM_AT_PipeValve");
             if(!roof || !lamp || !pipeRun || !valve) throw new System.InvalidOperationException("Atchafalaya prop models missing in " + Models);
             int roofs = 0, lamps = 0, lampLights = 0, pipeRuns = 0, valves = 0;
             foreach(var (pos, ridge, span) in new[] { (new Vector3(-7.1f, 4.0f, 15), 13.4f, 12.2f), (new Vector3(-8.05f, 4.2f, 29), 10.2f, 9.1f) })
             { KitSwap.Place(roof, pos, Quaternion.Euler(0, 90, 0), "Kit - Tin roof", root).transform.localScale = new Vector3(ridge / 4, 1, span / 4); roofs++; }
-            void Lamp(float x, float y, float z, float yaw)
+            void Lamp(float x, float y, float z, float yaw, float intensity = 2f)
             {
                 var g = KitSwap.Place(lamp, new Vector3(x, y, z), Quaternion.Euler(0, yaw, 0), "Kit - Cage lamp", root); lamps++;
                 // The light sits inside the cage, so a shadow-casting lamp would print its bars across the wall.
                 foreach(var r in g.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 var l = new GameObject("Cage lamp light").AddComponent<Light>(); l.transform.SetParent(g.transform, false); l.transform.localPosition = new Vector3(0, -.1f, .55f);
-                l.type = LightType.Point; l.color = new Color(1f, .72f, .38f); l.intensity = 2f; l.range = 7f; HdrpAuthoring.Light(l); lampLights++;
+                l.type = LightType.Point; l.color = new Color(1f, .72f, .38f); l.intensity = intensity; l.range = 7f; HdrpAuthoring.Light(l); lampLights++;
             }
             foreach(var z in new[] { 47f, 51f }) { Lamp(-8.73f, 3.2f, z, 90); Lamp(8.73f, 3.2f, z, -90); }
-            foreach(var z in new[] { 80f, 94f, 108f }) { Lamp(-11.73f, 3.1f, z, 90); Lamp(11.73f, 3.1f, z, -90); }
+            // The generator hall reflects its own dark room now (probe blend 0), so its lamps run brighter.
+            foreach(var z in new[] { 80f, 94f, 108f }) { Lamp(-11.73f, 3.1f, z, 90, 3.5f); Lamp(11.73f, 3.1f, z, -90, 3.5f); }
             void Pipe(float x, float y, float z, float yaw, float len)
             { KitSwap.Place(pipeRun, new Vector3(x, y, z), Quaternion.Euler(0, yaw, 0), "Kit - Pipe run", root).transform.localScale = new Vector3(len / 4, 1, 1); pipeRuns++; }
             for(int i = 0; i < 10; i++) { float z = 73 + (i + .5f) * 4.2f; Pipe(-11.73f, 4.0f, z, 90, 4.2f); Pipe(11.73f, 4.0f, z, -90, 4.2f); }
             foreach(var cx in new[] { -5.55f, 5.55f }) foreach(var dx in new[] { -1.725f, 1.725f }) Pipe(cx + dx, 2.8f, 52.53f, 180, 3.45f);
             foreach(var z in new[] { 86f, 102f }) { KitSwap.Place(valve, new Vector3(-11.73f, .095f, z), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(11.73f, .095f, z), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2; }
             KitSwap.Place(valve, new Vector3(-8.73f, .225f, 49), Quaternion.Euler(0, 90, 0), "Kit - Pipe valve", root); KitSwap.Place(valve, new Vector3(8.73f, .225f, 49), Quaternion.Euler(0, -90, 0), "Kit - Pipe valve", root); valves += 2;
+            // Gas station set: canopy (greybox canopy + posts + pump lose their renderers, keep colliders) with two warm underside lights, a pump facing the road (-X), then collidable barrels and sandbags (yaw varied).
+            GameObject canopy = Load("SM_AT_GasCanopy"), pump = Load("SM_AT_FuelPump"), barrel = Load("SM_AT_Barrel"), sandbags = Load("SM_AT_Sandbags");
+            if(!canopy || !pump || !barrel || !sandbags) throw new System.InvalidOperationException("Atchafalaya gas station prop models missing in " + Models);
+            foreach(var n in new[] { "Gas canopy", "Canopy post", "Fuel pump" }) foreach(var t in Named(n)) Hide(t);
+            var canopyGo = KitSwap.Place(canopy, new Vector3(7, 0, 10), Quaternion.identity, "Kit - Gas canopy", root); int canopyLights = 0;
+            foreach(var z in new[] { 7f, 13f })
+            {
+                var l = new GameObject("Canopy light").AddComponent<Light>(); l.transform.SetParent(canopyGo.transform, false); l.transform.position = new Vector3(7, 3.85f, z);
+                l.type = LightType.Point; l.color = new Color(1f, .78f, .5f); l.intensity = 2.5f; l.range = 9f; HdrpAuthoring.Light(l); canopyLights++;
+            }
+            KitSwap.Place(pump, new Vector3(7, .1f, 9), Quaternion.Euler(0, -90, 0), "Kit - Fuel pump", root);
+            int barrels = 0, bags = 0;
+            void Solid(GameObject prefab, Vector3 pos, float yaw, string name)
+            {
+                var g = KitSwap.Place(prefab, pos, Quaternion.Euler(0, yaw, 0), name, root);
+                foreach(var mf in g.GetComponentsInChildren<MeshFilter>()) { var c = mf.gameObject.AddComponent<BoxCollider>(); c.center = mf.sharedMesh.bounds.center; c.size = mf.sharedMesh.bounds.size; }
+            }
+            foreach(var (x, y, z, yaw) in new[] { (11.3f, .1f, 4.6f, 10f), (11.9f, .1f, 5.5f, 40f), (-7.6f, .225f, 46.3f, 0f), (-6.9f, .225f, 46.8f, 25f), (-10.6f, .095f, 78.4f, 5f), (-10f, .095f, 79.3f, 60f), (-10.9f, .095f, 80.2f, 30f) })
+            { Solid(barrel, new Vector3(x, y, z), yaw, "Kit - Barrel"); barrels++; }
+            // Sandbag walls: outside the pump west shell on the Belle Rive ground (top -0.05), and along the generator north wall.
+            foreach(var (x, y, z, yaw) in new[] { (-9.6f, -.05f, 46.6f, 90f), (-9.6f, -.05f, 48.4f, 90f), (-6f, .095f, 114.4f, 0f), (-4.35f, .095f, 114.4f, 0f), (5f, .095f, 114.4f, 0f) })
+            { Solid(sandbags, new Vector3(x, y, z), yaw, "Kit - Sandbags"); bags++; }
+            // Decals (HDRP/Decal projectors, Decals.cs; deterministic): leaks hang from the top of the concrete modules (Y-scaled, so H = 4 * localScale.y), dark wet stains on the floors, tyre tracks on the road.
+            var drng = new System.Random(12);
+            int leaks = 0, wets = 0, tracks = 0;
+            float R(float a, float c) => a + (c - a) * (float)drng.NextDouble();
+            foreach(var f in root.Cast<Transform>().Where(f => f.name == "Kit - Concrete wall").ToList())
+            {
+                if(drng.NextDouble() >= (Mathf.Abs(f.position.x) > 11 ? .5 : .35)) continue;
+                float H = 4 * f.localScale.y, w = R(1.5f, 2.5f), h = R(2.5f, 3.5f), off = R(-1.2f, 1.2f) * f.localScale.x;
+                Decals.Place(Decals.Get(drng.Next(2) == 0 ? "Leaking001" : "Leaking003"), root, "Kit - Decal leak", new Vector3(f.position.x, f.position.y + H - .3f - h / 2, f.position.z) + f.right * off, -f.forward, Vector3.up, new Vector2(w, h), .7f); leaks++;
+            }
+            var wet = Decals.Get("AsphaltDamage001");
+            // generator ones stay 3 m so they clear the kill-zone water (centre 0,96; 9x8)
+            foreach(var (x, y, z, cap) in new[] { (4f, .1f, 7f, 4f), (10f, .1f, 13f, 4f), (-2f, .1f, 0f, 4f), (3f, .1f, 17f, 4f), (-4f, .225f, 47f, 4f), (4f, .225f, 50f, 4f), (-6f, .095f, 90f, 3f), (6f, .095f, 104f, 3f), (-3f, .095f, 110f, 3f) })
+            {
+                float s = Mathf.Min(R(3, 4), cap);
+                Decals.Place(wet, root, "Kit - Decal wet", new Vector3(x, y, z), Vector3.down, Quaternion.Euler(0, R(0, 360), 0) * Vector3.forward, new Vector2(s, s), .3f); wets++;
+            }
+            var tyre = Decals.Get("TireTracks001"); // image is 4:1, long axis along U (projector local X): up = right so the track runs along world Z
+            foreach(var (x, z, yaw) in new[] { (1.5f, 6f, 0f), (4.5f, 9f, 15f) })
+            { Decals.Place(tyre, root, "Kit - Decal tracks", new Vector3(x, .1f, z), Vector3.down, Quaternion.Euler(0, yaw, 0) * Vector3.right, new Vector2(6, 1.6f), .3f); tracks++; }
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
-            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, " + hidden.Count + " renderers disabled";
+            string log = "Atchafalaya kit: " + sidingMods + " siding + " + concreteMods + " concrete + " + genMods + " generator concrete wall modules, " + deckTiles + " deck tiles, " + trees + " cypress (" + treeVerts + " verts), " + ground + " swamp ground cubes, " + roofs + " tin roofs, " + lamps + " cage lamps (" + lampLights + " lights), " + pipeRuns + " pipe runs, " + valves + " pipe valves, 1 gas canopy (" + canopyLights + " lights), 1 fuel pump, " + barrels + " barrels, " + bags + " sandbag walls, " + probes + " reflection probes, " + hidden.Count + " renderers disabled; decals " + leaks + " leaks + " + wets + " wet stains + " + tracks + " tyre tracks";
             Debug.Log(log);
             return log;
         }

@@ -63,6 +63,7 @@ crashlytics-build.properties
 /Assets/_Game/Art/Textures/**/*.*
 !/Assets/_Game/Art/Textures/**/*.meta
 !/Assets/_Game/Art/Textures/POLYHAVEN_LICENSE.txt
+!/Assets/_Game/Art/Textures/Decals/AMBIENTCG_LICENSE.txt
 /Assets/_Game/Art/HDRI/*.*
 !/Assets/_Game/Art/HDRI/*.meta
 /ArtSource/

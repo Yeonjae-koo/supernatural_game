@@ -1,4 +1,4 @@
-"""Builds the CH02 Atchafalaya prop kit (pipe run, pipe valve, cage lamp, tin roof gable), exports FBXs to
+"""Builds the CH02 Atchafalaya prop kit (pipe run, pipe valve, cage lamp, tin roof gable, gas canopy, fuel pump, barrel, sandbags), exports FBXs to
 Assets/_Game/Art/Models/Atchafalaya/ and saves ArtSource/Atchafalaya/KIT_Atchafalaya_props.blend.
 
 Run from the project root:
@@ -23,10 +23,11 @@ scene.collection.children.link(kit)
 bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_collection.children["KIT"]
 
 MATS = {}
-for _n, _c in (("CH02 Iron", (.18, .17, .16, 1)), ("Siding boards", (.55, .5, .42, 1)), ("Window glow", (1, .75, .35, 1))):
+for _n, _c in (("CH02 Iron", (.18, .17, .16, 1)), ("Siding boards", (.55, .5, .42, 1)), ("Window glow", (1, .75, .35, 1)),
+                 ("CH02 Concrete", (.55, .55, .52, 1)), ("Pump paint", (.45, .10, .08, 1)), ("Burlap", (.40, .34, .24, 1))):
     MATS[_n] = bpy.data.materials.new(_n)
     MATS[_n].diffuse_color = _c
-I, SID, GLOW = "CH02 Iron", "Siding boards", "Window glow"
+I, SID, GLOW, CON, PAINT, BURLAP = "CH02 Iron", "Siding boards", "Window glow", "CH02 Concrete", "Pump paint", "Burlap"
 
 
 def _finish(o, name, mat):
@@ -35,7 +36,7 @@ def _finish(o, name, mat):
     return o
 
 
-def box(name, mn, mx, mat, bevel=0, xf=None):
+def box(name, mn, mx, mat, bevel=0, xf=None, seg=1):
     mn, mx = Vector(mn), Vector(mx)
     bpy.ops.mesh.primitive_cube_add(size=1, location=(mn + mx) / 2)
     o = bpy.context.object
@@ -43,7 +44,7 @@ def box(name, mn, mx, mat, bevel=0, xf=None):
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
     if bevel:
         m = o.modifiers.new("Bevel", "BEVEL")
-        m.width, m.segments = bevel, 1
+        m.width, m.segments = bevel, seg
     if xf is not None:
         o.matrix_world = xf @ o.matrix_world
     return _finish(o, name, mat)
@@ -163,13 +164,57 @@ def tin_roof():
     return join("SM_AT_TinRoof_Gable", p)
 
 
+def gas_canopy():
+    p = []
+    for px in (-5, 5):
+        for py in (-5, 5):
+            p.append(box("post", (px - .15, py - .15, 0), (px + .15, py + .15, 4.0), I))
+            p.append(box("base", (px - .3, py - .3, 0), (px + .3, py + .3, .04), I))
+    p.append(box("deck", (-6, -7, 4.0), (6, 7, 4.4), I))
+    for n, a, b in (("front", (-6.08, -7.08, 3.85), (6.08, -7, 4.55)), ("back", (-6.08, 7, 3.85), (6.08, 7.08, 4.55)),
+                    ("left", (-6.08, -7, 3.85), (-6, 7, 4.55)), ("right", (6, -7, 3.85), (6.08, 7, 4.55))):
+        p.append(box("fascia_" + n, a, b, CON))
+    for lx in (-2.5, 2.5):
+        for ly in (-3, 3):
+            p.append(box("light", (lx - .7, ly - .175, 3.96), (lx + .7, ly + .175, 4.0), GLOW))
+    return join("SM_AT_GasCanopy", p)
+
+
+def fuel_pump():
+    p = [box("island", (-1, -.6, 0), (1, .6, .2), CON, bevel=.03), box("body", (-.45, -.25, .2), (.45, .25, 1.75), PAINT, bevel=.03),
+         box("head", (-.5, -.3, 1.75), (.5, .3, 2.05), PAINT),
+         box("display", (-.35, -.31, 1.82), (-.05, -.3, 1.98), GLOW), box("display", (.05, -.31, 1.82), (.35, -.3, 1.98), GLOW),
+         box("holster", (.45, -.12, 1.1), (.55, .12, 1.3), I), box("nozzle", (.5, -.08, 1.15), (.62, .08, 1.25), I),
+         box("spout", (.6, -.02, 1.1), (.7, .02, 1.15), I),
+         torus("hose", .35, .025, (.6, 0, .85), (math.pi / 2, 0, math.pi / 2), I)]
+    return join("SM_AT_FuelPump", p)
+
+
+def barrel():
+    p = [cyl("drum", .29, (0, 0, 0), (0, 0, .88), I, 20)]
+    for a, b in ((.28, .31), (.58, .61)):
+        p.append(cyl("hoop", .3, (0, 0, a), (0, 0, b), I, 20))
+    p.append(cyl("rim", .295, (0, 0, .86), (0, 0, .9), I, 20))
+    p.append(cyl("bung", .03, (.15, .05, .88), (.15, .05, .92), I, 20))
+    return join("SM_AT_Barrel", p)
+
+
+def sandbags():
+    p = []
+    for row, xs in enumerate(((-.6, -.2, .2, .6), (-.4, 0, .4), (-.2, .2))):
+        z = row * .2
+        for x in xs:
+            p.append(box("bag", (x - .19, -.225, z), (x + .19, .225, z + .2), BURLAP, bevel=.06, seg=3))
+    return join("SM_AT_Sandbags", p)
+
+
 def bounds(o):
     v = [o.matrix_world @ Vector(c) for c in o.bound_box]
     return tuple((round(min(c[i] for c in v), 3), round(max(c[i] for c in v), 3)) for i in range(3))
 
 
 OUT.mkdir(parents=True, exist_ok=True)
-pieces = [pipe_run(), pipe_valve(), cage_lamp(), tin_roof()]
+pieces = [pipe_run(), pipe_valve(), cage_lamp(), tin_roof(), gas_canopy(), fuel_pump(), barrel(), sandbags()]
 for i, o in enumerate(pieces):
     print(o.name, "bounds x,y,z:", bounds(o), "verts", len(o.data.vertices))
     bpy.ops.object.select_all(action="DESELECT")

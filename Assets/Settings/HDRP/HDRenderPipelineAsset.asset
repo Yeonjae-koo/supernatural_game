@@ -262,7 +262,7 @@ MonoBehaviour:
       m_Values: 800000000001000000020000i
       m_SchemaId:
         m_Id: With3Levels
-    supportDecals: 0
+    supportDecals: 1
     supportDecalLayers: 0
     supportSurfaceGradient: 1
     decalNormalBufferHP: 0
