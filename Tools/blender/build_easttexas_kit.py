@@ -19,7 +19,24 @@ Special pivots:
 Kit plan (append pieces to PIECES below):
   Phase 1 funeral home shell: Wall_Clapboard_4x4 (done), Wall_Clapboard_Upper_4x4 (done; no plinth/water table, mirrors SM_NO_Wall_Upper_4x4),
     Wall_Clapboard_Window_4x4 + Window_Upper_4x4 (done; double-hung + shutters), Wall_Clapboard_Door_4x4 + Door_6Panel leaf (done; transom),
-    Corner_Clapboard + _Upper (done), Wall_Clapboard_Damaged_4x4, Cornice_4m, Portico, Roof_Gable_Shingle.
+    Corner_Clapboard + _Upper (done), Wall_Clapboard_Damaged_4x4, and (phase 3b, done) Cornice_4m, Cornice_Corner, Roof_Shingle_4m,
+    Roof_Shingle_GableEnd_4m, Gable_Clapboard_8m, Portico - stacking rules below.
+
+Funeral-home stacking (building front wall plane y=0, x -6..6, depth 8 -> y 0..8, centre-line y=4; upper wall top z=8). The "front reference" of a
+wall tile is its y=0 plane: boards are proud to y=.02 (tucked .06), corner trim/plinth sit at y=-.02, rear plane y=.20.
+  SM_ET_Cornice_4m: pivot x centre, y=0 (wall front plane), z=0 = top of an Upper wall. Place at (cx, 0, 8) for the front tiles (cx -4,0,4); back run =
+    same tiles rotated 180 deg about Z at y=8. Frieze z -.30..0 (front y=-.03), corona to y=-.38, cap top z=+.22 (roof bearing line), rear y=.19. Not on side walls.
+  SM_ET_Cornice_Corner: origin = outside corner point (same convention as Corner_Clapboard): arm A along -X (to x=-.6), arm B along +Y (to y=+.6), mitred on
+    x+y=0, profile 4 mm oversize so it never z-fights the 4 m cornices it overlaps. Place with the Corner_Clapboard transforms: (6,0,8) rot 0, (6,8,8) rot 90,
+    (-6,8,8) rot 180, (-6,0,8) rot 270. The side arm is a .6 m return; side eaves are bare (rake + roof overhang).
+  SM_ET_Roof_Shingle_4m / _GableEnd_4m: pivot x centre, y = building centre-line (4), z = top of upper wall (8). 35 deg pitch, eave fascia outer face at +-4.46 from
+    centre-line (fascia back .02 inside the corona), soffit z=+.22 (= cornice bearing line) from y=+-4.36 to +-4.0, then rafter underside rises at 35 deg to the ridge
+    (underside apex z=3.021, ridge cap apex z~3.43). Slices at x -4, 0, 4: GableEnd at x=-4 as-is (rake end outer face x=-6.30), middle at 0, GableEnd at x=+4
+    rotated 180 deg about Z (symmetric front/back so it also lands correctly; rake end at x=+6.30). Unity X-mirror: pieces are X-symmetric except the GableEnd
+    rake, which lands on the +X side after mirror - rotate it 180 to compensate (or use rot 0 at +4 when mirrored).
+  SM_ET_Gable_Clapboard_8m: own frame like a wall tile (x -4..4, front -Y, z=0 = top of Upper wall, rear y=.20). Place on the side Upper wall run: east wall at (6,4,8) rot +90,
+    west wall at (-6,4,8) rot -90. Apex z=3.051 (roof underside + .03 tuck), ends z=.25.
+  SM_ET_Portico: pivot x centre of door tile, y=0 front plane, z=0 ground; slab y -2.6..+.10, x +-2.2; columns at (+-2.0,-2.4); everything below z 4.9 (top 4.81).
   Phase 2 cemetery: reuse SM_NO_IronFence_4m / FencePier / CemeteryGate / Tomb first; add SM_ET_Mausoleum only if reuse falls short.
   Phase 3 Main Street: Wall_Block_4x4, Wall_Block_Door_4x4, Wall_Block_Utility_4x4, Wall_RollUpDoor_4x4, Diner_Front_4m, Diner_Corner,
     Parapet_Band_4m (gas canopy/pump: reuse SM_AT_GasCanopy / FuelPump).
@@ -43,10 +60,12 @@ bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_co
 
 MATS = {}
 for _n, _c in (("CH03 Clapboard", (.78, .76, .70, 1)), ("Trim limestone", (.62, .60, .54, 1)), ("Aged stucco", (.66, .62, .55, 1)),
-               ("Window pane", (.30, .40, .45, 1)), ("Walnut", (.25, .15, .08, 1)), ("CH03 Shutter", (.16, .24, .19, 1))):
+               ("Window pane", (.30, .40, .45, 1)), ("Walnut", (.25, .15, .08, 1)), ("CH03 Shutter", (.16, .24, .19, 1)),
+               ("CH03 Shingle", (.20, .20, .22, 1)), ("Window glow", (1, .9, .7, 1))):
     MATS[_n] = bpy.data.materials.new(_n)
     MATS[_n].diffuse_color = _c
 CLAP, STONE, STUCCO, PANE, WALNUT, SHUT = "CH03 Clapboard", "Trim limestone", "Aged stucco", "Window pane", "Walnut", "CH03 Shutter"
+SHING, GLOW = "CH03 Shingle", "Window glow"
 
 
 def _tri_caps(bm, caps):
@@ -316,9 +335,257 @@ def bounds(o):
     return tuple((round(min(c[i] for c in v), 3), round(max(c[i] for c in v), 3)) for i in range(3))
 
 
+# ================================================================ phase 3b: cornice / roof / gable / portico
+import math
+
+T35, T28 = math.tan(math.radians(35)), math.tan(math.radians(28))
+
+
+def pe(name, plane, a0, a1, pts, edge_mats, cap_mat):
+    """Like profile_extrude but plane 'yz' (along X) or 'xz' (along Y)."""
+    slots = [m for m in MATS if m in set(edge_mats) | {cap_mat}]
+    bm = bmesh.new()
+
+    def v(p, a):
+        return bm.verts.new((a, p[0], p[1]) if plane == "yz" else (p[0], a, p[1]))
+
+    A = [v(p, a0) for p in pts]
+    B = [v(p, a1) for p in pts]
+    caps = [bm.faces.new(A[::-1]), bm.faces.new(B)]
+    for c in caps:
+        c.material_index = slots.index(cap_mat)
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts)
+        bm.faces.new((A[i], A[j], B[j], B[i])).material_index = slots.index(edge_mats[i])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    _tri_caps(bm, caps)
+    o = _to_obj(bm, name, slots)
+    assert open_edges(o) == 0, name
+    return o
+
+
+def loft(name, rings, mat, smooth=()):
+    """Closed solid through rings of equal vertex count; gaps listed in `smooth` get smooth-shaded side faces; end caps flat."""
+    bm = bmesh.new()
+    R = [[bm.verts.new(p) for p in r] for r in rings]
+    caps = [bm.faces.new(R[0][::-1]), bm.faces.new(R[-1])]
+    for k in range(len(R) - 1):
+        n = len(R[k])
+        for i in range(n):
+            j = (i + 1) % n
+            bm.faces.new((R[k][i], R[k][j], R[k + 1][j], R[k + 1][i])).smooth = k in smooth
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    _tri_caps(bm, caps)
+    o = _to_obj(bm, name, [mat])
+    assert open_edges(o) == 0, name
+    return o
+
+
+def rect(x0, x1, y0, y1, z):
+    return [(x0, y0, z), (x1, y0, z), (x1, y1, z), (x0, y1, z)]
+
+
+def circ(cx, cy, r, z, n=24):
+    return [(cx + r * math.cos(2 * math.pi * i / n), cy + r * math.sin(2 * math.pi * i / n), z) for i in range(n)]
+
+
+def shear(name, pts, xa, xb, L, mat):
+    """Prism whose (y, dz) profile rides a sloped line z=L(x) between x=xa and xb (sheared extrusion, plumb end cuts)."""
+    bm = bmesh.new()
+    A = [bm.verts.new((xa, y, L(xa) + d)) for y, d in pts]
+    B = [bm.verts.new((xb, y, L(xb) + d)) for y, d in pts]
+    caps = [bm.faces.new(A[::-1]), bm.faces.new(B)]
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts)
+        bm.faces.new((A[i], A[j], B[j], B[i]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    _tri_caps(bm, caps)
+    o = _to_obj(bm, name, [mat])
+    assert open_edges(o) == 0, name
+    return o
+
+
+# ---------------------------------------------------------------- cornice
+CORN = [(.19, -.30), (-.03, -.30), (-.03, -.06), (-.07, -.02), (-.07, .04), (-.38, .04), (-.38, .09), (-.34, .13), (-.10, .22), (.19, .22)]
+CORN_EM = [CLAP] * 9 + [STUCCO]  # last edge = rear plane
+
+
+def cornice_4m():
+    return pe("SM_ET_Cornice_4m", "yz", -2.0, 2.0, CORN, CORN_EM, CLAP)
+
+
+def cornice_corner():
+    g = .004  # oversize so the arms never z-fight the 4 m cornices
+    prof = [(y - g if y < 0 else y, z + g if z > .2 else z) for y, z in CORN]
+    L = .6
+    bm = bmesh.new()
+    n = len(prof)
+    a = [bm.verts.new((-L, y, z)) for y, z in prof]
+    m = [bm.verts.new((-y, y, z)) for y, z in prof]  # mitre line x+y=0, shared by both arms
+    c = [bm.verts.new((-y, L, z)) for y, z in prof]  # arm B = arm A reflected across x+y=0
+    caps = [bm.faces.new(a[::-1]), bm.faces.new(c)]
+    for i in range(n):
+        j = (i + 1) % n
+        mi = 1 if CORN_EM[i] == STUCCO else 0
+        bm.faces.new((a[i], a[j], m[j], m[i])).material_index = mi
+        bm.faces.new((m[i], m[j], c[j], c[i])).material_index = mi
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    _tri_caps(bm, caps)
+    o = _to_obj(bm, "SM_ET_Cornice_Corner", [CLAP, STUCCO])
+    assert open_edges(o) == 0
+    return o
+
+
+# ---------------------------------------------------------------- shingled roofs
+def courses(b0, theta, sx, e0, d, h_end):
+    """Sawtooth shingle courses from butt point b0=(h,z) toward the ridge (sx=+1 rising in +h, -1 in -h) until h_end. Returns points B0,T0,B1,T1..T_last."""
+    t = (sx * math.cos(theta), math.sin(theta))
+    nr = (-sx * math.sin(theta), math.cos(theta))
+    O = (b0[0] - nr[0] * d, b0[1] - nr[1] * d)
+    stot = (h_end - O[0]) / t[0]
+    N = max(1, round(stot / e0))
+    e = stot / N
+    P = []
+    for i in range(N):
+        P.append((O[0] + t[0] * i * e + nr[0] * d, O[1] + t[1] * i * e + nr[1] * d))
+        P.append((O[0] + t[0] * (i + 1) * e, O[1] + t[1] * (i + 1) * e))
+    return P, O, t, N, e
+
+
+def roof_profile():
+    th = math.radians(35)
+    pf, O, t, N, e = courses((-4.42, .26), th, 1, .14, .02, -.18)
+    zp = lambda y: O[1] + T35 * (y - O[0])  # shingle base plane
+    yc = pf[-1][0]
+    apex = (0, zp(0) + .07)
+    front = [(-4.46, .08), (-4.46, .22)] + pf + [(yc, pf[-1][1] + .07), apex]
+    # edge i is pts[i]->pts[i+1]: fascia face, chamfer to B0 (CLAP); courses, T_last->riser, riser->apex (SHING)
+    mats = [CLAP, CLAP] + [SHING] * (len(pf) - 1) + [SHING, SHING]
+    mir = [(-y, z) for y, z in reversed(front[:-1])]
+    pts = front + mir + [(4.36, .08), (4.36, .22), (4.0, .22), (0, .22 + T35 * 4), (-4.0, .22), (-4.36, .22), (-4.36, .08)]
+    nf = len(front)
+    em = []
+    for i in range(len(pts)):
+        if i < nf - 1:
+            em.append(mats[i])
+        elif i < nf + len(mir) - 1:  # apex->riser(m) ... through mirrored courses
+            k = i - (nf - 1)  # 0: apex->riser, then riser->T_last ... ending at B0->chamfer pts
+            em.append(SHING if k < len(mir) - 3 else CLAP)
+        else:
+            em.append(CLAP)
+    return pts, em, (O, zp, N, e, apex)
+
+
+def roof_slice(name, x0, x1, rake=False):
+    pts, em, info = roof_profile()
+    o = pe(name, "yz", x0, x1, pts, em, CLAP)
+    return o, info
+
+
+def roof_4m():
+    return roof_slice("SM_ET_Roof_Shingle_4m", -2.0, 2.0)[0]
+
+
+def roof_gable_end():
+    name = "SM_ET_Roof_Shingle_GableEnd_4m"
+    body, (O, zp, N, e, apex) = roof_slice(name, -2.26, 2.0)
+    print(name, "courses", N, "exposure", round(e, 4), "ridge cap apex z", round(apex[1], 3), "underside apex z", round(.22 + T35 * 4, 3))
+    # rake board: ~.18 m perpendicular band along both slopes, 10 cm thick, overlapping the slab end
+    zt, hb = zp(-4.44), .18 / math.cos(math.radians(35))
+    y1 = -4.44 + (.08 - (zt - hb)) / T35  # bottom edge clamped to the fascia bottom (z .08)
+    rk = [(-4.44, .08), (-4.44, zt + .045), (0, zp(0) + .045), (4.44, zt + .045), (4.44, .08), (-y1, .08), (0, zp(0) - hb), (y1, .08)]
+    r = ext("rake", "yz", rk, -2.30, -2.20, CLAP)
+    return join(name, [body, r])
+
+
+# ---------------------------------------------------------------- gable wall
+def gable_clapboard():
+    name = "SM_ET_Gable_Clapboard_8m"
+    exp, N = .1818, 17
+    pts, em = [(YP, 0)], []
+    for i in range(N):
+        top = (i + 1) * exp
+        pts.append((YT, top))
+        em.append(CLAP)
+        if i < N - 1:
+            pts.append((YP, top))
+            em.append(CLAP)
+    pts += [(BACK, top), (BACK, 0)]
+    em += [CLAP, STUCCO, CLAP]
+    o = profile_extrude(name, -4.0, 4.0, pts, em, CLAP)
+    za = .22 + T35 * 4 + .03  # roof underside at the centre + 3 cm tuck
+    print(name, "boards", N, "exposure", exp, "apex z", round(za, 3))
+    c = ext("cut", "xz", [(-4.5, za - T35 * 4.5), (0, za), (4.5, za - T35 * 4.5), (4.5, 5), (-4.5, 5)], -1, 1, CLAP)
+    m = o.modifiers.new("cut", "BOOLEAN")
+    m.operation, m.solver, m.object = "DIFFERENCE", "EXACT", c
+    bpy.context.view_layer.objects.active = o
+    bpy.ops.object.modifier_apply(modifier=m.name)
+    bpy.data.objects.remove(c)
+    assert open_edges(o) == 0
+    return o
+
+
+# ---------------------------------------------------------------- portico
+def portico():
+    name = "SM_ET_Portico"
+    Lr = lambda x: 3.45 + T28 * (2.2 - abs(x))  # pediment base line (top of entablature at the eaves)
+    P = []
+    # stone floor slab with 45 deg chamfered front/side top edges
+    c = .04
+    P.append(loft("slab", [rect(-2.2, 2.2, -2.6, .10, 0), rect(-2.2, 2.2, -2.6, .10, .06), rect(-2.2 + c, 2.2 - c, -2.6 + c, .10, .10)], STONE))
+    for sx in (-1, 1):
+        cx, cy = sx * 2.0, -2.4
+        P.append(loft("plinth", [rect(cx - .2, cx + .2, cy - .2, cy + .2, .05), rect(cx - .2, cx + .2, cy - .2, cy + .2, .16),
+                                 rect(cx - .15, cx + .15, cy - .15, cy + .15, .22)], STONE))
+        col = [(.20, .15), (.22, .15), (.24, .165), (.265, .165), (.285, .15), (2.85, .13), (2.89, .16), (2.93, .18), (2.95, .18)]
+        P.append(loft("column", [circ(cx, cy, r, z) for z, r in col], CLAP, smooth=range(len(col) - 1)))
+        P.append(loft("abacus", [rect(cx - .19, cx + .19, cy - .19, cy + .19, 2.93), rect(cx - .19, cx + .19, cy - .19, cy + .19, 3.0),
+                                 rect(cx - .16, cx + .16, cy - .16, cy + .16, 3.06)], CLAP))
+        P.append(box("pilaster", (cx - .15, -.14, .05), (cx + .15, .10, 2.98), CLAP))
+        P.append(box("pilasterCap", (cx - .19, -.18, 2.98), (cx + .19, .10, 3.06), CLAP))
+        # side entablature beam (x 1.8..2.2), runs front->wall; mirrored profile for the left side
+        pr = [(sx * 1.8, 3.05), (sx * 2.2, 3.05), (sx * 2.2, 3.40), (sx * 2.15, 3.45), (sx * 1.8, 3.45)]
+        P.append(ext("beamSide", "xz", pr, -2.2, .10, CLAP))
+    # front entablature beam (full width, small chamfered cap)
+    P.append(ext("beamFront", "yz", [(-2.6, 3.05), (-2.2, 3.05), (-2.2, 3.45), (-2.55, 3.45), (-2.6, 3.40)], -2.2, 2.2, CLAP))
+    # soffit ceiling + two downlight panels
+    P.append(box("ceiling", (-2.1, -2.5, 3.06), (2.1, .10, 3.30), CLAP))
+    for gx in (-.7, .7):
+        P.append(box("downlight", (gx - .125, -1.425, 3.04), (gx + .125, -1.175, 3.07), GLOW))
+    # pediment: recessed flat tympanum + raking cornice along both slopes
+    P.append(ext("tympanum", "xz", [(-2.2, 3.30), (2.2, 3.30), (2.2, Lr(2.2) - .08), (0, Lr(0) - .08), (-2.2, Lr(2.2) - .08)], -2.55, -2.38, CLAP))
+    rk = [(-2.60, -.14), (-2.60, .14), (-2.55, .19), (-2.42, .19), (-2.42, -.14)]
+    P.append(shear("rakeR", rk, 0, 2.26, lambda x: 3.45 + T28 * (2.2 - x), CLAP))
+    P.append(shear("rakeL", rk, -2.26, 0, lambda x: 3.45 + T28 * (2.2 + x), CLAP))
+    # small gable roof behind the pediment, ridge along Y, shingled
+    th = math.radians(28)
+    xe = 2.26
+    b0 = (xe, Lr(xe) + .16)
+    pf, O, t, N, e = courses(b0, th, -1, .14, .02, .15)
+    zp = lambda x: O[1] + T28 * (O[0] - x)
+    xc = pf[-1][0]
+    # polygon: bottom-right -> eave face -> shingles -> apex -> mirrored shingles -> bottom-left
+    pts = [(xe, 3.43)] + [(x, z) for x, z in pf] + [(xc, pf[-1][1] + .05), (0, zp(0) + .05)]
+    pts += [(-x, z) for x, z in reversed(pts[1:-1])] + [(-xe, 3.43)]
+    # edges: (xe,3.43)->B0 eave face CLAP, everything on the top SHINGLE, left eave face CLAP, bottom CLAP
+    em = []
+    for i in range(len(pts)):
+        j = (i + 1) % len(pts)
+        if i == 0 or j == len(pts) - 1 or i == len(pts) - 1:
+            em.append(CLAP)
+        else:
+            em.append(SHING)
+    em[0] = CLAP
+    P.append(pe("roof", "xz", -2.45, .12, pts, em, CLAP))
+    print(name, "roof courses", N, "exposure", round(e, 4), "ridge apex z", round(zp(0) + .05, 3))
+    return join(name, P)
+
+
+
 OUT.mkdir(parents=True, exist_ok=True)
 PIECES = [wall_clapboard, wall_clapboard_upper, lambda: wall_window(False), lambda: wall_window(True), wall_door, door_leaf,
-          lambda: corner(False), lambda: corner(True)]
+          lambda: corner(False), lambda: corner(True),
+          cornice_4m, cornice_corner, roof_4m, roof_gable_end, gable_clapboard, portico]
 pieces = [f() for f in PIECES]
 for i, o in enumerate(pieces):
     bb = bounds(o)
@@ -327,6 +594,13 @@ for i, o in enumerate(pieces):
         assert bb[2] == (0.0, 4.0), bb
     if o.name.startswith("SM_ET_Wall"):
         assert bb[0] == (-2.0, 2.0), bb
+    exp_x = {"SM_ET_Cornice_4m": (-2.0, 2.0), "SM_ET_Roof_Shingle_4m": (-2.0, 2.0), "SM_ET_Roof_Shingle_GableEnd_4m": (-2.3, 2.0),
+             "SM_ET_Gable_Clapboard_8m": (-4.0, 4.0), "SM_ET_Portico": (-2.26, 2.26)}
+    if o.name in exp_x:
+        assert bb[0] == exp_x[o.name], bb
+    if o.name == "SM_ET_Portico":
+        assert bb[2][1] < 4.9 and bb[1][0] == -2.6, bb
+    print(o.name, "open edges:", open_edges(o))
     bpy.ops.object.select_all(action="DESELECT")
     o.select_set(True)
     bpy.context.view_layer.objects.active = o
