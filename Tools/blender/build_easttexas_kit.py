@@ -44,7 +44,12 @@ wall tile is its y=0 plane: boards are proud to y=.02 (tucked .06), corner trim/
     wall planes at y=+-8 from the centre-line, fascia outer face at +-8.46, soffit z=+.22 from +-8.36 to +-8.0, underside apex z=5.82. Same 35 deg pitch/placement/rotation rules.
   SM_ET_Gable_Clapboard_16m: as Gable_Clapboard_8m but x -8..8 (4 tiles of siding UV), apex z=5.852; place on the side Upper wall run at the centre-line of the 16 m side.
   SM_ET_Portico: pivot x centre of door tile, y=0 front plane, z=0 ground; slab y -2.6..+.10, x +-2.2; columns at (+-2.0,-2.4); everything below z 4.9 (top 4.81).
-  Phase 2 cemetery: reuse SM_NO_IronFence_4m / FencePier / CemeteryGate / Tomb first; add SM_ET_Mausoleum only if reuse falls short.
+  Phase 2 cemetery: reuses Prologue pieces SM_NO_IronFence_4m / FencePier / CemeteryGate / Tomb_Raised (placed by EastTexasKit) plus one new piece, SM_ET_Mausoleum:
+    Greek-revival family mausoleum, 3.24 m wide (cornice x +-1.62) x 4.20 m deep (y 0..4.20), eaves z~3.0, apex z~3.7, cupola finial z~4.75. Pivot (0,0,0) = bottom-centre of the front
+    edge of the lower plinth step; front = -Y (door, steps, columns face -Y), depth toward +Y. Two plinth steps (floor z .34), two columns in antis (x +-.58, y .72) between antae (x +-.93..1.25),
+    recessed door opening x +-.40 with a wrought-iron grille (bars as geometry) in front of a dark panel, entablature with a blank name plaque (x +-.95, front y .36) on the frieze (front y .42),
+    pediment (20 deg raking cornice, plain tympanum) front + back, stone gable roof, square cupola on the ridge at y~2.2. Stone = "Tomb marble", grille/dark panel/louvres = "Wrought iron".
+    Place facing the cemetery gate (south = Unity -Z): the Blender front -Y is Unity +Z after import, so give the instance yaw 180.
   Phase 3 Main Street (painted CMU + 1950s diner; "CH03 Block" is world-space triplanar, no UVs; all faces/ribs/louvers are geometry or material only):
     Wall_Block_4x4 / Wall_Block_Door_4x4 / Wall_Block_Utility_4x4 / Wall_RollUpDoor_4x4: same frame as the clapboard walls (x -2..2, z 0..4, front plane y=0, rear
       y=.20, tile-local Blender coordinates) with a concrete plinth z 0..0.3 proud 4 cm (chamfered, "Trim limestone"). Door: opening x -1.2..-.25 (steel frame, recessed
@@ -104,6 +109,10 @@ CLAP, STONE, STUCCO, PANE, WALNUT, SHUT = "CH03 Clapboard", "Trim limestone", "A
 SHING, GLOW, SIDE = "CH03 Shingle", "Window glow", "CH03 Siding"
 BLK, DRED, SS, STL, YEL = "CH03 Block", "CH03 Diner red", "CH03 Stainless", "CH03 Cold steel", "CH03 Safety yellow"
 CONC, CELLAR = "CH03 Concrete", "CH03 Cellar red"
+for _n, _c in (("Tomb marble", (.8, .85, .85, 1)), ("Wet limestone", (.5, .6, .7, 1)), ("Wrought iron", (.1, .13, .2, 1))):
+    MATS[_n] = bpy.data.materials.new(_n)
+    MATS[_n].diffuse_color = _c
+MAUS, IRON = "Tomb marble", "Wrought iron"  # mausoleum stone / grille
 
 
 def _tri_caps(bm, caps):
@@ -995,6 +1004,78 @@ def bollard():
     return join("SM_ET_Bollard", [body, band, collar])
 
 
+# ---------------------------------------------------------------- phase 2: mausoleum
+def ring_loft(name, x0, x1, y0, y1, prof, mat):
+    """Closed solid from rect rings; prof = [(outset, z)] (outset grows the rect on all four sides)."""
+    return loft(name, [rect(x0 - d, x1 + d, y0 - d, y1 + d, z) for d, z in prof], mat)
+
+
+def mausoleum():
+    P = []
+    S = MAUS
+    # plinth steps (chamfered top edges); floor top z=.34
+    P.append(ring_loft("step1", -1.6, 1.6, 0, 4.2, [(0, -.05), (0, .13), (-.04, .17)], S))
+    P.append(ring_loft("step2", -1.45, 1.45, .32, 4.0, [(0, .10), (0, .30), (-.04, .34)], S))
+    # core + front wall pieces (door opening x +-.40, z .34..2.05, recess floor at y=1.45)
+    P.append(box("core", (-1.20, 1.45, .34), (1.20, 3.78, 2.50), S))
+    P.append(box("wallL", (-1.22, 1.20, .34), (-.40, 1.50, 2.50), S))
+    P.append(box("wallR", (.40, 1.20, .34), (1.22, 1.50, 2.50), S))
+    P.append(box("lintel", (-.41, 1.20, 2.05), (.41, 1.50, 2.50), S))
+    P.append(box("dark", (-.39, 1.46, .30), (.39, 1.52, 2.06), IRON))
+    # antae (pilasters at the wall ends) with base + capital in one profile
+    for sx in (-1, 1):
+        x0, x1 = (.93, 1.25) if sx > 0 else (-1.25, -.93)
+        P.append(ring_loft("anta", x0, x1, .45, 1.32, [(.03, .34), (.03, .44), (0, .47), (0, 2.40), (.03, 2.43), (.03, 2.50)], S))
+        cx, cy = sx * .58, .72
+        P.append(loft("colbase", [rect(cx - .17, cx + .17, cy - .17, cy + .17, .30), rect(cx - .17, cx + .17, cy - .17, cy + .17, .38), rect(cx - .135, cx + .135, cy - .135, cy + .135, .42)], S))
+        col = [(.40, .13), (.46, .115), (2.30, .105), (2.38, .12), (2.42, .15)]
+        P.append(loft("col", [circ(cx, cy, r, z, 16) for z, r in col], S, smooth=range(len(col) - 1)))
+        P.append(loft("abacus", [rect(cx - .17, cx + .17, cy - .17, cy + .17, 2.42), rect(cx - .17, cx + .17, cy - .17, cy + .17, 2.48), rect(cx - .14, cx + .14, cy - .14, cy + .14, 2.54)], S))
+    # entablature: one mitred rectangular loft; rect = x +-1.40, y .40..3.98, outset d
+    ent = [(0, 2.50), (0, 2.66), (.03, 2.69), (-.02, 2.72), (-.02, 2.93), (.06, 2.97), (.06, 3.03), (.22, 3.03), (.22, 3.10), (.14, 3.16)]
+    P.append(ring_loft("entab", -1.40, 1.40, .40, 3.98, ent, S))
+    # blank name plaque: plain panel proud of the frieze (frieze front y .42, plaque front y .36)
+    P.append(box("namepanel", (-.95, .36, 2.74), (.95, .50, 2.90), S))
+    # stone roof (prism along Y) with plain tympanum ends, raking cornices front + back
+    th = math.radians(20)
+    T = math.tan(th)
+    xr = 1.54
+    zb = 3.16
+    apex = zb + T * xr
+    P.append(ext("roof", "xz", [(-xr, zb - .06), (xr, zb - .06), (xr, zb), (0, apex), (-xr, zb)], .32, 4.08, S))
+    L = lambda x: zb + T * (xr - abs(x)) + .0
+    rk = [(.20, -.12), (.20, .10), (.25, .14), (.42, .14), (.42, -.12)]
+    for sgn in (1, -1):
+        xa, xb = (0, sgn * 1.60) if sgn > 0 else (sgn * 1.60, 0)
+        P.append(shear("rakeF", rk, xa, xb, L, S))
+        P.append(shear("rakeB", [(4.40 - y, d) for y, d in reversed(rk)], xa, xb, L, S))
+    # cupola on the ridge (y centre 2.2)
+    cy0, cy1 = 1.75, 2.65
+    P.append(ring_loft("cup_base", -.45, .45, cy0, cy1, [(0, 3.40), (0, 3.78), (-.05, 3.84)], S))
+    P.append(box("cup_body", (-.30, 1.90, 3.80), (.30, 2.50, 4.30), S))
+    for sx, a, b in ((1, (.29, 2.10, 3.98), (.32, 2.30, 4.20)), (-1, (-.32, 2.10, 3.98), (-.29, 2.30, 4.20))):
+        P.append(box("louver", a, b, IRON))
+    for fy, (a, b) in ((0, ((-.12, 1.885, 3.98), (.12, 1.915, 4.20))), (1, ((-.12, 2.485, 3.98), (.12, 2.515, 4.20)))):
+        P.append(box("louver", a, b, IRON))
+    P.append(ring_loft("cup_cap", -.30, .30, 1.90, 2.50, [(.07, 4.30), (.07, 4.36), (-.285, 4.74)], S))
+    P.append(knob("finial", (0, 2.2, 4.77), .035, S))
+    # iron grille door in front of the dark panel: frame, rails, bars with spear tips
+    y0, y1 = 1.27, 1.32
+    for sx in (-1, 1):
+        a, b = sorted((sx * .385, sx * .335))
+        P.append(box("stile", (a, y0, .36), (b, y1, 2.00), IRON))
+    P.append(hbar("railT", -.385, .385, 1.92, 2.02, y0, y1, IRON))
+    P.append(hbar("railM", -.385, .385, 1.10, 1.17, y0, y1, IRON))
+    P.append(hbar("railB", -.385, .385, .36, .46, y0, y1, IRON))
+    ym = (y0 + y1) / 2
+    for i in range(9):
+        bx = -.30 + .075 * i
+        P.append(box("bar", (bx - .01, ym - .01, .46), (bx + .01, ym + .01, 1.95), IRON))
+        P.append(loft("tip", [rect(bx - .012, bx + .012, ym - .012, ym + .012, 1.95), rect(bx - .012, bx + .012, ym - .012, ym + .012, 2.04), rect(bx - .002, bx + .002, ym - .002, ym + .002, 2.10)], IRON))
+    P.append(knob("pull", (.30, y0 - .02, 1.10), .022, IRON))
+    return join("SM_ET_Mausoleum", P)
+
+
 # ---------------------------------------------------------------- UVs (siding + shingle only; all other faces (0,0))
 def set_uvs(o, fn):
     """fn(material_name, face, loop) -> (u, v) or None for (0,0). Writes the single UV layer 'UVMap'."""
@@ -1056,7 +1137,7 @@ PIECES = [wall_clapboard, wall_clapboard_upper, lambda: wall_window(False), lamb
           lambda: roof_4m(8.0, "SM_ET_Roof_Shingle_Span16_4m"), lambda: roof_gable_end(8.0, "SM_ET_Roof_Shingle_Span16_GableEnd_4m"),
           lambda: gable_clapboard(8.0), wall_block, wall_block_door, wall_block_utility, wall_rollup, block_pilaster, block_pilaster_parapet, parapet_band,
           lambda: diner(False), lambda: diner(True),
-          lambda: wall_door(True), stair_concrete, bulkhead, pipe_manifold, bollard]
+          lambda: wall_door(True), stair_concrete, bulkhead, pipe_manifold, bollard, mausoleum]
 pieces = [f() for f in PIECES]
 for o in pieces:
     if o.name in SHINGLE_INFO:
@@ -1087,6 +1168,8 @@ for i, o in enumerate(pieces):
         assert bb[0][0] < 0 and abs(bb[0][1] - 8.162) < .003 and bb[1] == (-1.202, .05) and abs(bb[2][1] - 4.92) < .003, bb
     if o.name == "SM_ET_Bulkhead_CellarDoor":
         assert bb[0] == (-.85, .85) and bb[1][0] == -1.6 and abs(bb[1][1] - .05) < .001, bb
+    if o.name == "SM_ET_Mausoleum":
+        assert bb[1][0] == 0.0 or abs(bb[1][0]) < .001, bb
     if o.name == "SM_ET_Bollard":
         assert bb[2] == (-.05, 1.0), bb
     print(o.name, "open edges:", open_edges(o))

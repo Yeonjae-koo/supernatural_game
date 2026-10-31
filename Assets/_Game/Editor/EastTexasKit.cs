@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -110,6 +111,88 @@ namespace BeforeJericho.Editor
             return "Main Street " + pieces + " pieces";
         }
 
+
+        /// <summary>Phase 2 cemetery under "Kit Art/Cemetery": Prologue iron fence (south line z=36 with SM_NO_CemeteryGate at x=0, west/east lines x=+-18, short north runs to x=+-13), SM_ET_Mausoleum
+        /// (back east, facing the gate), two Prologue raised tombs (west back) and tomb-marble headstones. Fence/pier/gate colliders sit on layer 2 (Ignore Raycast): they stop CharacterControllers
+        /// but not combat raycasts (mask ~4) or the walkthrough Linecast (mask 1). Greybox graves overlapping a landmark are deactivated (mound + headstone). Re-runnable (graves are re-enabled first).</summary>
+        static string Cemetery(Transform root, int layer, List<Transform> all)
+        {
+            const string P = "Assets/_Game/Art/Models/Prologue/";
+            GameObject Ld(string path) => AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            GameObject fence = Ld(P + "SM_NO_IronFence_4m.fbx"), pier = Ld(P + "SM_NO_FencePier.fbx"), gate = Ld(P + "SM_NO_CemeteryGate.fbx"), tomb = Ld(P + "SM_NO_Tomb_Raised.fbx"), maus = Ld(Models + "SM_ET_Mausoleum.fbx");
+            var marble = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Tomb marble.mat");
+            if(!fence || !pier || !gate || !tomb || !maus || !marble) throw new System.InvalidOperationException("Cemetery models/materials missing (fence/pier/gate/tomb/SM_ET_Mausoleum/Tomb marble)");
+            const int Pass = 2; // Ignore Raycast
+            var cem = new GameObject("Cemetery").transform; cem.SetParent(root, false);
+            int segs = 0, piers = 0;
+            void Solid(GameObject g, int l) { var mf = g.GetComponentInChildren<MeshFilter>().gameObject; mf.layer = l; mf.AddComponent<BoxCollider>(); }
+            // gate: the model's own leaves are swung open; two pier boxes keep the opening passable (yaw 180 swings the leaves into the cemetery)
+            const float GateZ = 36f, GateHalf = 2.25f;
+            var gg = KitSwap.Place(gate, new Vector3(0, 0, GateZ), Quaternion.Euler(0, 180, 0), "Kit - Cemetery gate", cem);
+            var gm = gg.GetComponentInChildren<MeshFilter>().gameObject; gm.layer = Pass;
+            foreach(var sx in new[] { -1f, 1f }) { var bc = gm.AddComponent<BoxCollider>(); bc.center = new Vector3(sx * 1.95f, 1.5f, 0); bc.size = new Vector3(.5f, 3f, .7f); }
+            var pierPos = new List<Vector3>();
+            var runs = new (Vector3, Vector3)[]
+            {
+                (new Vector3(-18, 0, GateZ), new Vector3(-GateHalf, 0, GateZ)), (new Vector3(GateHalf, 0, GateZ), new Vector3(18, 0, GateZ)),
+                (new Vector3(-18, 0, GateZ), new Vector3(-18, 0, 53)), (new Vector3(18, 0, GateZ), new Vector3(18, 0, 53)),
+                (new Vector3(-18, 0, 53), new Vector3(-13, 0, 53)), (new Vector3(18, 0, 53), new Vector3(13, 0, 53)),
+            };
+            foreach(var (a, c) in runs)
+            {
+                var d = c - a; float len = d.magnitude; int n = Mathf.Max(1, Mathf.RoundToInt(len / 4));
+                for(int i = 0; i < n; i++)
+                {
+                    var g = KitSwap.Place(fence, a + (i + .5f) / n * d, Quaternion.Euler(0, Mathf.Atan2(-d.z, d.x) * Mathf.Rad2Deg, 0), "Kit - Cemetery fence", cem);
+                    g.transform.localScale = new Vector3(len / n / 4, 1, 1); Solid(g, Pass); segs++;
+                }
+                for(int k = 0; k <= n; k++)
+                {
+                    var q = a + (float)k / n * d;
+                    if(pierPos.Any(o => (o - q).magnitude < .1f)) continue;
+                    if(Mathf.Abs(q.z - GateZ) < .6f && Mathf.Abs(q.x) < GateHalf + .6f) continue; // the gate's own piers end the opening
+                    pierPos.Add(q); Solid(KitSwap.Place(pier, q, Quaternion.identity, "Kit - Fence pier", cem), Pass); piers++;
+                }
+            }
+            // cemetery sign onto the gate arch (as in the Prologue: a root RectTransform saves anchoredPosition); z clears the gate piers' faces
+            var cemSign = all.FirstOrDefault(t => t.name.StartsWith("Sign - MERCY CREEK CEMETERY"));
+            if(cemSign)
+            {
+                var rt = (RectTransform)cemSign; rt.anchoredPosition3D = new Vector3(0, 3.42f, GateZ - .45f); rt.rotation = Quaternion.identity; EditorUtility.SetDirty(rt);
+                if(cemSign.GetComponent<TMPro.TMP_Text>() is TMPro.TMP_Text tmp) tmp.fontSize = 4;
+            }
+            // landmarks (ordinary layer-0 colliders)
+            var kit = new List<Bounds>();
+            Bounds Rb(GameObject g) { var rs = g.GetComponentsInChildren<Renderer>(); var b = rs[0].bounds; foreach(var r in rs) b.Encapsulate(r.bounds); return b; }
+            void Box(GameObject g, string n, Bounds b, float h)
+            {
+                var c = new GameObject(n); c.layer = layer; c.transform.SetParent(cem, false); c.transform.position = new Vector3(b.center.x, h / 2, b.center.z);
+                c.AddComponent<BoxCollider>().size = new Vector3(b.size.x, h, b.size.z); kit.Add(b);
+            }
+            var mg = KitSwap.Place(maus, new Vector3(MausX, 0, MausZ), Quaternion.Euler(0, 180, 0), "Kit - Mausoleum", cem);
+            Physics.SyncTransforms(); Box(mg, "Kit - Mausoleum collider", Rb(mg), 3.2f);
+            int tombs = 0;
+            foreach(var tz in new[] { 44f, 50f })
+            {
+                var tg = KitSwap.Place(tomb, new Vector3(-15.5f, 0, tz), Quaternion.Euler(0, TombYaw, 0), "Kit - Family tomb", cem);
+                Physics.SyncTransforms(); Box(tg, "Kit - Family tomb collider", Rb(tg), 2.2f); tombs++;
+            }
+            // greybox graves: re-enable all, deactivate mound + headstone where they overlap a landmark (XZ, .3 m margin); remaining headstones become tomb marble
+            var off = new List<string>(); int stones = 0;
+            foreach(var m in all.Where(t => t.name == "Grave mound"))
+            {
+                m.gameObject.SetActive(true);
+                var hs = all.FirstOrDefault(t => t.name == "Headstone" && Mathf.Abs(t.position.x - m.position.x) < .1f && Mathf.Abs(t.position.z - m.position.z + 1) < .1f);
+                if(hs) hs.gameObject.SetActive(true);
+                bool hit = false;
+                foreach(var o in new[] { m, hs }) if(o && o.GetComponent<Collider>() is Collider col) { var b = col.bounds; b.Expand(.6f); foreach(var k in kit) if(b.Intersects(new Bounds(k.center, new Vector3(k.size.x, 100, k.size.z)))) hit = true; }
+                if(hit) { m.gameObject.SetActive(false); if(hs) hs.gameObject.SetActive(false); off.Add("(" + m.position.x + "," + m.position.z + ")"); }
+                else if(hs && hs.GetComponent<MeshRenderer>() is MeshRenderer r) { r.sharedMaterial = marble; EditorUtility.SetDirty(r); stones++; }
+            }
+            return "Cemetery " + segs + " fence segments, " + piers + " piers, gate, mausoleum, " + tombs + " tombs, " + stones + " headstones re-materialed, graves off " + string.Join(" ", off);
+        }
+        const float MausX = 15f, MausZ = 47.8f, TombYaw = 90f;
+
         [MenuItem("Before Jericho/Art/Swap East Texas Kit")]
         public static string Run()
         {
@@ -221,7 +304,7 @@ namespace BeforeJericho.Editor
             sign.localScale = Vector3.one * .09f * fit; rt.anchoredPosition3D = new Vector3(0, 3.225f, frontZ - 2.61f); EditorUtility.SetDirty(rt);
             // The builder's porch light sat inside the portico ceiling slab (3.06..3.30); hang it just under the ceiling, mid-portico.
             var porch = Need("Funeral porch light"); porch.position = new Vector3(0, 2.85f, frontZ - 1.3f); EditorUtility.SetDirty(porch);
-            string street = MainStreet(root, layer);
+            string street = MainStreet(root, layer) + "; " + Cemetery(root, layer, all);
             EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
             string log = "East Texas kit: " + street + "; " + pieces + " pieces under Funeral Home (frontZ " + frontZ + ", rear " + rearZ + "), " + boxes + " colliders, 1 ceiling, " + hidden + " renderers disabled, sign scale x" + fit.ToString("0.###") + " (text " + (b.size.x * .09f).ToString("0.##") + " x " + (b.size.y * .09f).ToString("0.##") + " m)";
             Debug.Log(log);
