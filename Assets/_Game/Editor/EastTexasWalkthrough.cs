@@ -136,7 +136,7 @@ namespace BeforeJericho.Editor
                     int ammo=combat.Ammo; Queue(CombatMovement(enemy),default,true,true); await Task.Delay(65);
                     for(int f=0;f<12 && !knife && combat.Ammo==ammo;f++) await Task.Delay(20);
                     Queue(CombatMovement(enemy),default,true); await Task.Delay(45);
-                    report.AppendLine((knife?"KNIFE: ":"SHOT: ")+enemy.Id+" hp "+before+" -> "+enemy.HP+" ammo="+combat.Ammo+" playerHP="+session.HP);
+                    report.AppendLine((knife?"KNIFE: ":"SHOT: ")+enemy.Id+" hp "+before+" -> "+enemy.HP+" ammo="+combat.Ammo+" playerHP="+session.HP+(combat.Ammo==ammo&&!knife?" NOFIRE aim="+session.player.Input.Aim+" playing="+session.Playing+" weapon="+combat.Weapon+" reloading="+combat.Reloading+" crawl="+session.player.IsCrawling:""));
                 }
                 if(Time.realtimeSinceStartup-lastTrace>2)
                 {
