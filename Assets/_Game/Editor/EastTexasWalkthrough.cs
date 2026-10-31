@@ -40,11 +40,7 @@ namespace BeforeJericho.Editor
                 Vector3 delta=new Vector3(x,session.player.transform.position.y,z)-session.player.transform.position;
                 if(delta.magnitude<tolerance) break;
                 if(Time.realtimeSinceStartup-start>100) throw new Exception("Walk timeout "+Stage+" at "+session.player.transform.position);
-                Vector3 local=Quaternion.Euler(0,-session.player.view.Yaw,0)*delta.normalized;
-                var keys=new KeyboardState();
-                if(local.z>.38f)keys.Set(Key.W,true); if(local.z<-.38f)keys.Set(Key.S,true);
-                if(local.x>.38f)keys.Set(Key.D,true); if(local.x<-.38f)keys.Set(Key.A,true);
-                Queue(keys);
+                Queue(Toward(delta));
                 await Task.Delay(90);
                 float moved=Vector3.Distance(previous,session.player.transform.position);
                 stuck=moved<.004f?stuck+.09f:0; previous=session.player.transform.position;
@@ -52,6 +48,14 @@ namespace BeforeJericho.Editor
             }
             Queue(new KeyboardState()); await Task.Delay(100);
             report.AppendLine("WALK: "+x+","+z+" actual="+session.player.transform.position+" HP="+session.HP);
+        }
+        static KeyboardState Toward(Vector3 delta)
+        {
+            Vector3 local=Quaternion.Euler(0,-session.player.view.Yaw,0)*delta.normalized;
+            var keys=new KeyboardState();
+            if(local.z>.38f)keys.Set(Key.W,true); if(local.z<-.38f)keys.Set(Key.S,true);
+            if(local.x>.38f)keys.Set(Key.D,true); if(local.x<-.38f)keys.Set(Key.A,true);
+            return keys;
         }
         static GhoulHunt VisibleEnemy()
         {
@@ -94,7 +98,7 @@ namespace BeforeJericho.Editor
             if(session.player.IsCrawling) return;
             var enemy=VisibleEnemy(); if(!enemy) return;
             string previousStage=Stage; Stage="Combat "+enemy.name;
-            float start=Time.realtimeSinceStartup, lastShot=-10, lastTrace=-10;
+            float start=Time.realtimeSinceStartup, lastShot=-10, lastTrace=-10; bool blocked=false;
             Queue(new KeyboardState(),default,true); await Task.Delay(100);
             while(enemy && !enemy.Dead)
             {
@@ -110,7 +114,7 @@ namespace BeforeJericho.Editor
                 Vector3 current=session.player.view.lens.transform.eulerAngles;
                 float yaw=Mathf.DeltaAngle(current.y,desired.eulerAngles.y),pitch=Mathf.DeltaAngle(current.x,desired.eulerAngles.x);
                 Vector2 correction=new Vector2(Mathf.Clamp(yaw*.65f,-30,30),Mathf.Clamp(-pitch*.65f,-20,20))/(session.player.view.sensitivity*.65f);
-                var keys=CombatMovement(enemy);
+                var keys=blocked && distance>2.5f ? Toward(enemy.transform.position-session.player.transform.position) : CombatMovement(enemy);
                 bool knife=enemy.Staggered && distance<2.5f && Mathf.Abs(yaw)<20;
                 if(knife) keys.Set(Key.Digit2,true); else if(combat.Weapon!=0) keys.Set(Key.Digit1,true);
                 if(!knife && combat.Ammo==0 && !combat.Reloading)
@@ -122,13 +126,15 @@ namespace BeforeJericho.Editor
                 Queue(keys,correction,true); await Task.Delay(60);
                 Ray ray=session.player.view.lens.ViewportPointToRay(new Vector3(.5f,.5f));
                 bool hitActor=Physics.Raycast(ray,out var hit,70,~4,QueryTriggerInteraction.Ignore) && hit.collider.GetComponentInParent<GhoulHunt>()==enemy;
+                blocked=!hitActor && Mathf.Abs(yaw)<5 && Mathf.Abs(pitch)<5;
                 bool hitHead=hitActor && hit.collider.GetComponent<GhoulHitbox>()?.head==true;
                 bool fire=knife ? combat.Weapon==1 : combat.Weapon==0 && !combat.Reloading && combat.Ammo>0 && (hitHead || (hitActor && distance<5));
                 float cooldown=knife ? .7f : .34f;
                 if(fire && Time.realtimeSinceStartup-lastShot>cooldown)
                 {
                     int before=enemy.HP; lastShot=Time.realtimeSinceStartup;
-                    Queue(CombatMovement(enemy),default,true,true); await Task.Delay(65);
+                    int ammo=combat.Ammo; Queue(CombatMovement(enemy),default,true,true); await Task.Delay(65);
+                    for(int f=0;f<12 && !knife && combat.Ammo==ammo;f++) await Task.Delay(20);
                     Queue(CombatMovement(enemy),default,true); await Task.Delay(45);
                     report.AppendLine((knife?"KNIFE: ":"SHOT: ")+enemy.Id+" hp "+before+" -> "+enemy.HP+" ammo="+combat.Ammo+" playerHP="+session.HP);
                 }
@@ -166,7 +172,7 @@ namespace BeforeJericho.Editor
                 await Walk(-5,20); await Walk(-10,22); await Walk(-10,26.5f); await Use(HuntItem.MissingBodyParts);
                 await Walk(-5.5f,26.5f); await Use(HuntItem.OldFuneralPhoto);
                 await Walk(-5.5f,22); await Walk(0,22); await Walk(0,41.5f); await Use(HuntItem.EmptyGrave);
-                await Walk(0,51); await FightVisible();
+                await Walk(0,51); await FightVisible(); await Walk(0,52.6f,.3f);
                 await Walk(0,69); await Walk(-11,69); await Walk(-11,80.5f); await Use(HuntItem.StolenPersonalItem);
                 await Walk(-11,69); await Walk(1,69); await Walk(1,77); await Walk(5,77); await Walk(5,88.5f);
                 if(!combat.LighterOn) await Press(Key.F); await Use(HuntItem.FeedingArea);

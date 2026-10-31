@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image
 
 N = 1024
+PEEL = float(os.environ.get("PEEL", .04))  # fraction of the surface with bare wood showing
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "Assets", "_Game", "Art", "Textures", "Generated")
 rng = np.random.default_rng(11)
 fy = np.fft.fftfreq(N)[:, None]; fx = np.fft.fftfreq(N)[None, :]
@@ -33,7 +34,7 @@ paint = np.array([214, 208, 192]) / 255 * (paint_grain * grime)[..., None]
 
 field = noise(70, 14) + .5 * noise(25, 6)
 field = (field - field.mean()) / field.std()
-thr = np.quantile(field, 1 - .12)
+thr = np.quantile(field, 1 - PEEL)
 peel = smooth(field, thr - .03, thr + .03)
 rim = smooth(field, thr - .35, thr - .03) * (1 - peel)
 wood = np.array([118, 110, 98]) / 255 * (1 + .12 * np.clip(noise(150, 3), -2, 2) / 2 + .06 * noise(30, 4) / 2)[..., None]

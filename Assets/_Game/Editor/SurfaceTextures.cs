@@ -19,7 +19,7 @@ namespace BeforeJericho.Editor
             ("Atchafalaya/CH02 Concrete", "concrete_floor_worn_001", 3, true), ("Atchafalaya/CH02 Cypress", "weathered_planks", 2, false),
             ("Atchafalaya/CH02 Iron", "rusty_metal_02", 2, false), ("Atchafalaya/CH02 Mud", "brown_mud_03", 3, true), ("Atchafalaya/Cypress foliage", "leafy_grass", 1.5f, false),
             ("EastTexas/CH03 Asphalt", "asphalt_02", 4, true), ("EastTexas/CH03 Brick", "brick_wall_10", 2.5f, false), ("EastTexas/CH03 Coffin wood", "dark_wooden_planks", 2, false),
-            ("EastTexas/CH03 Cold steel", "rusty_metal_02", 2, false), ("EastTexas/CH03 Mortuary tile", "dirty_tiles", 1.5f, false), ("EastTexas/CH03 Wet grass", "leafy_grass", 3, false), ("EastTexas/CH03 Shingle", "asphalt_02", 1.5f, false),
+            ("EastTexas/CH03 Cold steel", "rusty_metal_02", 2, false), ("EastTexas/CH03 Mortuary tile", "dirty_tiles", 1.5f, false), ("EastTexas/CH03 Wet grass", "leafy_grass", 3, false),
             ("GrantsNM/CH04 Asphalt", "asphalt_02", 4, false), ("GrantsNM/CH04 Desert sand", "dry_ground_01", 4, false), ("GrantsNM/CH04 Faded stucco", "clay_plaster", 3, false),
             ("GrantsNM/CH04 Laundry tile", "dirty_tiles", 1.5f, false), ("GrantsNM/CH04 Motel wood", "dark_wooden_planks", 2, false), ("GrantsNM/CH04 Utility steel", "rusty_metal_02", 2, false),
             ("Winslow/CH05 Desert", "dry_ground_01", 4, false), ("Winslow/CH05 Route 66 asphalt", "asphalt_02", 4, false), ("Winslow/CH05 Rusted wreck", "rusty_metal_02", 2, false),
