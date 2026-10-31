@@ -13,7 +13,7 @@ namespace BeforeJericho.Editor
     {
         public static string Result="Not run";
         public static string Stage="Idle";
-        static Keyboard keyboard; static Mouse mouse; static HuntSession session; static HunterCombat combat;
+        static Keyboard keyboard; static Mouse mouse; static HuntSession session; static HunterCombat combat; static readonly System.Collections.Generic.List<InputDevice> foreign=new();
         static StringBuilder report; static bool cancelled;
         static KeyboardState heldKeys; static Vector2 pendingLook; static bool heldAim, heldFire;
         static void Check(bool condition,string message) { if(!condition) throw new Exception(message); report.AppendLine("PASS: "+message); }
@@ -71,6 +71,16 @@ namespace BeforeJericho.Editor
         }
         static Transform Head(GhoulHunt enemy)
         { foreach(var hitbox in enemy.GetComponentsInChildren<GhoulHitbox>()) if(hitbox.head) return hitbox.transform; throw new Exception("No head hitbox: "+enemy.name); }
+        // Why a queued shot didn't register: game-side gates (aim, playing, cooldown, timeScale) vs input-side (action state, devices).
+        static string NoFire()
+        {
+            var f=System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance;
+            var fire=typeof(HunterInput).GetField("_fire",f)?.GetValue(session.player.Input) as InputAction;
+            int mice=0; foreach(var d in InputSystem.devices) if(d is Mouse) mice++;
+            return " NOFIRE aim="+session.player.Input.Aim+" playing="+session.Playing+" weapon="+combat.Weapon+" reloading="+combat.Reloading+" crawl="+session.player.IsCrawling
+                +" cooldown="+typeof(HunterCombat).GetField("_cooldown",f)?.GetValue(combat)+" timeScale="+Time.timeScale+" combatEnabled="+combat.isActiveAndEnabled
+                +" action="+fire?.phase+" active="+(fire?.activeControl!=null?fire.activeControl.device.name:"none")+" mice="+mice+" botLeft="+mouse.leftButton.isPressed;
+        }
         static KeyboardState CombatMovement(GhoulHunt target)
         {
             Vector3 position=session.player.transform.position;
@@ -136,7 +146,7 @@ namespace BeforeJericho.Editor
                     int ammo=combat.Ammo; Queue(CombatMovement(enemy),default,true,true); await Task.Delay(65);
                     for(int f=0;f<12 && !knife && combat.Ammo==ammo;f++) await Task.Delay(20);
                     Queue(CombatMovement(enemy),default,true); await Task.Delay(45);
-                    report.AppendLine((knife?"KNIFE: ":"SHOT: ")+enemy.Id+" hp "+before+" -> "+enemy.HP+" ammo="+combat.Ammo+" playerHP="+session.HP+(combat.Ammo==ammo&&!knife?" NOFIRE aim="+session.player.Input.Aim+" playing="+session.Playing+" weapon="+combat.Weapon+" reloading="+combat.Reloading+" crawl="+session.player.IsCrawling:""));
+                    report.AppendLine((knife?"KNIFE: ":"SHOT: ")+enemy.Id+" hp "+before+" -> "+enemy.HP+" ammo="+combat.Ammo+" playerHP="+session.HP+(combat.Ammo==ammo&&!knife?NoFire():""));
                 }
                 if(Time.realtimeSinceStartup-lastTrace>2)
                 {
@@ -167,7 +177,10 @@ namespace BeforeJericho.Editor
             try
             {
                 Application.runInBackground=true; InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus; InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
-                keyboard=InputSystem.AddDevice<Keyboard>(); mouse=InputSystem.AddDevice<Mouse>(); EditorApplication.playModeStateChanged+=OnMode; InputSystem.onBeforeUpdate+=InputTick; Queue(new KeyboardState());
+                keyboard=InputSystem.AddDevice<Keyboard>(); mouse=InputSystem.AddDevice<Mouse>();
+                // IgnoreFocus feeds every device to the game: a real mouse button whose release was lost while unfocused holds Attack "performed" and swallows every bot click.
+                foreach(var d in InputSystem.devices) if(d!=keyboard && d!=mouse && d.enabled) { InputSystem.DisableDevice(d); foreign.Add(d); }
+                EditorApplication.playModeStateChanged+=OnMode; InputSystem.onBeforeUpdate+=InputTick; Queue(new KeyboardState());
                 session.saveSlot=slot; session.NewGame(); combat=session.player.GetComponent<HunterCombat>(); await Task.Delay(250);
                 await Walk(-5,20); await Walk(-10,22); await Walk(-10,26.5f); await Use(HuntItem.MissingBodyParts);
                 await Walk(-5.5f,26.5f); await Use(HuntItem.OldFuneralPhoto);
@@ -197,7 +210,7 @@ namespace BeforeJericho.Editor
             catch(Exception e) { Result="FAIL at "+Stage+": "+e+"\n"+report; Debug.LogError(Result); }
             finally
             {
-                InputSystem.onBeforeUpdate-=InputTick; if(keyboard!=null) InputSystem.RemoveDevice(keyboard); if(mouse!=null) InputSystem.RemoveDevice(mouse); keyboard=null; mouse=null;
+                InputSystem.onBeforeUpdate-=InputTick; foreach(var d in foreign) if(d.added) InputSystem.EnableDevice(d); foreign.Clear(); if(keyboard!=null) InputSystem.RemoveDevice(keyboard); if(mouse!=null) InputSystem.RemoveDevice(mouse); keyboard=null; mouse=null;
                 EditorApplication.playModeStateChanged-=OnMode; Application.runInBackground=oldRun; InputSystem.settings.backgroundBehavior=oldBg; InputSystem.settings.editorInputBehaviorInPlayMode=oldEditor;
                 if(session) session.saveSlot=prior;
                 foreach(string suffix in new[]{"",".bak",".tmp"}) { string path=HuntSave.PathFor(slot)+suffix; if(File.Exists(path)) File.Delete(path); }
