@@ -45,8 +45,22 @@ wall tile is its y=0 plane: boards are proud to y=.02 (tucked .06), corner trim/
   SM_ET_Gable_Clapboard_16m: as Gable_Clapboard_8m but x -8..8 (4 tiles of siding UV), apex z=5.852; place on the side Upper wall run at the centre-line of the 16 m side.
   SM_ET_Portico: pivot x centre of door tile, y=0 front plane, z=0 ground; slab y -2.6..+.10, x +-2.2; columns at (+-2.0,-2.4); everything below z 4.9 (top 4.81).
   Phase 2 cemetery: reuse SM_NO_IronFence_4m / FencePier / CemeteryGate / Tomb first; add SM_ET_Mausoleum only if reuse falls short.
-  Phase 3 Main Street: Wall_Block_4x4, Wall_Block_Door_4x4, Wall_Block_Utility_4x4, Wall_RollUpDoor_4x4, Diner_Front_4m, Diner_Corner,
-    Parapet_Band_4m (gas canopy/pump: reuse SM_AT_GasCanopy / FuelPump).
+  Phase 3 Main Street (painted CMU + 1950s diner; "CH03 Block" is world-space triplanar, no UVs; all faces/ribs/louvers are geometry or material only):
+    Wall_Block_4x4 / Wall_Block_Door_4x4 / Wall_Block_Utility_4x4 / Wall_RollUpDoor_4x4: same frame as the clapboard walls (x -2..2, z 0..4, front plane y=0, rear
+      y=.20, tile-local Blender coordinates) with a concrete plinth z 0..0.3 proud 4 cm (chamfered, "Trim limestone"). Door: opening x -1.2..-.25 (steel frame, recessed
+      leaf with wired-glass window, gooseneck lamp with "Window glow" bulb at x -.725, meter + conduit at x .7, concrete step y -.5..0 top z .15). Utility: louvered vent at
+      x -1.0 z 2.6..3.2, two electrical boxes + vertical conduits at x .4..1.4. RollUpDoor: opening x +-1.5 z 0..3.2, corrugated door recessed to y .105..0.17, hood box above
+      inside the head, steel jamb angles, two yellow bollards at (+-1.4, -0.35) 1 m tall (tile y min -0.44).
+    Block_Pilaster: corner cover, origin = outside corner point (Corner_Clapboard convention: wall A along -X, wall B = tile rotated +90 about Z along +Y). Footprint x -.26..+.06,
+      y -.06..+.26 (0.32 square, chamfered), z 0..4.0, concrete base z 0..0.3. Also caps an open run end. Block_Pilaster_Parapet: same footprint, red enamel + stainless, z 0..0.62,
+      place at the same (x, y) at z = 4 (same rotation).
+    Parapet_Band_4m: pivot x centre, y=0 = wall front plane, z=0 = top of a 4 m block wall (place at (cx, 0, 4); other sides: same rotations as the walls). Red enamel z 0..0.58
+      front y -.04, stainless strips (front y -.06), coping to y .24 at the back, top z .62; square ends. Total top z 4.62 ~ Diner cap 4.6.
+    Diner_Front_4m: pivot x centre, y=0 reference plane, z 0..4.6, depth to y=.25 (closed back). Kick panel front y -.04, glass recessed (front y .02), stainless mullions (front
+      y -.02) at x -2(half), -1, 0, 1, 2(half), red band front y -.04, cornice proud to y -.25, top z 4.6. Half mullions at both ends join into full ones across tiles.
+    Diner_Corner: the same section swept 90 deg around radius 2 (16 segments, glass in 4 flat facets with mullions). Origin = virtual outside corner (Corner_Clapboard convention);
+      curve centre (-2, 2): runs from (-2, 0) (joins a Diner_Front tile ending at x=-2 along -X) to (0, 2) (joins a wall running along +Y, e.g. a rotated +90 tile).
+    (gas canopy/pump: reuse SM_AT_GasCanopy / FuelPump).
   Phase 4 service/basement: Bulkhead_CellarDoor, Stair_Concrete, PipeManifold_Meter, Bollard.
 """
 from pathlib import Path
@@ -68,11 +82,14 @@ bpy.context.view_layer.active_layer_collection = bpy.context.view_layer.layer_co
 MATS = {}
 for _n, _c in (("CH03 Clapboard", (.78, .76, .70, 1)), ("CH03 Siding", (.78, .76, .70, 1)), ("Trim limestone", (.62, .60, .54, 1)), ("Aged stucco", (.66, .62, .55, 1)),
                ("Window pane", (.30, .40, .45, 1)), ("Walnut", (.25, .15, .08, 1)), ("CH03 Shutter", (.16, .24, .19, 1)),
-               ("CH03 Shingle", (.20, .20, .22, 1)), ("Window glow", (1, .9, .7, 1))):
+               ("CH03 Shingle", (.20, .20, .22, 1)), ("Window glow", (1, .9, .7, 1)),
+               ("CH03 Block", (.85, .83, .78, 1)), ("CH03 Diner red", (.55, .08, .07, 1)), ("CH03 Stainless", (.7, .7, .72, 1)),
+               ("CH03 Cold steel", (.28, .38, .33, 1)), ("CH03 Safety yellow", (.95, .75, .05, 1))):
     MATS[_n] = bpy.data.materials.new(_n)
     MATS[_n].diffuse_color = _c
 CLAP, STONE, STUCCO, PANE, WALNUT, SHUT = "CH03 Clapboard", "Trim limestone", "Aged stucco", "Window pane", "Walnut", "CH03 Shutter"
 SHING, GLOW, SIDE = "CH03 Shingle", "Window glow", "CH03 Siding"
+BLK, DRED, SS, STL, YEL = "CH03 Block", "CH03 Diner red", "CH03 Stainless", "CH03 Cold steel", "CH03 Safety yellow"
 
 
 def _tri_caps(bm, caps):
@@ -177,9 +194,9 @@ def open_edges(o):
 BACK, YP, YT = .20, .02, .06  # back plane; board proud bottom edge / tucked top edge
 
 
-def profile_extrude(name, x0, x1, pts, edge_mats, cap_mat):
+def profile_extrude(name, x0, x1, pts, edge_mats, cap_mat, slots=None):
     """Extrude ONE closed (y, z) profile along X. edge_mats[i] = material of the side face on edge pts[i]->pts[i+1]. Caps are concave -> triangulated."""
-    slots = [m for m in MATS if m in set(edge_mats) | {cap_mat}]
+    slots = slots or [m for m in MATS if m in set(edge_mats) | {cap_mat}]
     bm = bmesh.new()
     a = [bm.verts.new((x0, y, z)) for y, z in pts]
     b = [bm.verts.new((x1, y, z)) for y, z in pts]
@@ -598,6 +615,249 @@ def portico():
     return join(name, P)
 
 
+# ================================================================ phase 3: Main Street (CMU block buildings + diner)
+def poly_ring(x0, x1, y0, y1, c, z):
+    """Octagon (square with chamfered vertical corners) at height z."""
+    return [(x0 + c, y0, z), (x1 - c, y0, z), (x1, y0 + c, z), (x1, y1 - c, z), (x1 - c, y1, z), (x0 + c, y1, z), (x0, y1 - c, z), (x0, y0 + c, z)]
+
+
+def rings_axis(name, axis, c, prof, mat, n=12):
+    """Solid of revolution about an axis-aligned line through c (the other two coords); prof = [(a along the axis, radius)]."""
+    rings = []
+    for a, r in prof:
+        pts = []
+        for i in range(n):
+            t = 2 * math.pi * i / n
+            p, q = c[0] + r * math.cos(t), c[1] + r * math.sin(t)
+            pts.append({"x": (a, p, q), "y": (p, a, q), "z": (p, q, a)}[axis])
+        rings.append(pts)
+    return loft(name, rings, mat)
+
+
+def cyl(name, axis, c, a0, a1, r, mat, n=10, end0=False, end1=True):
+    """Conduit/pipe. Ends taper to a small cap so no flat face is left (end1 = the a1 end tapers; end0 likewise)."""
+    prof = ([(a0, r * .35), (a0 + .012 * (1 if a1 > a0 else -1), r)] if end0 else [(a0, r)]) + ([(a1 - .012 * (1 if a1 > a0 else -1), r), (a1, r * .35)] if end1 else [(a1, r)])
+    return rings_axis(name, axis, c, prof, mat, n)
+
+
+def cut_box(o, x0, x1, z0, z1):
+    c = box("cut", (x0, -1, z0), (x1, 1, z1), BLK)  # cutter faces take slot 0 (= CH03 Block)
+    m = o.modifiers.new("cut", "BOOLEAN")
+    m.operation, m.solver, m.object = "DIFFERENCE", "EXACT", c
+    bpy.context.view_layer.objects.active = o
+    bpy.ops.object.modifier_apply(modifier=m.name)
+    bpy.data.objects.remove(c)
+
+
+def block_body(name, cuts=()):
+    """Painted CMU wall: one closed profile; concrete plinth z 0..0.3 proud 4 cm with a 45 deg chamfer. Openings are boolean cuts."""
+    pts = [(BACK, 0), (-.04, 0), (-.04, .26), (0, .30), (0, 4), (BACK, 4)]
+    em = [STONE, STONE, STONE, BLK, BLK, BLK]
+    o = profile_extrude(name, -2.0, 2.0, pts, em, BLK, slots=[BLK, STONE])
+    for c in cuts:
+        cut_box(o, *c)
+    assert open_edges(o) == 0, name
+    return o
+
+
+def conduit_run(x, z0, z1, y=-.01, r=.02):
+    p = [cyl("conduit", "z", (x, y), z0, z1, r, STL, end0=z0 > .5)]
+    for zc in (z0 + (z1 - z0) * k for k in (.3, .7)):  # standoff clips
+        p.append(box("clip", (x - .03, y - .025, zc - .012), (x + .03, .005, zc + .012), STL))
+    return p
+
+
+def wall_block():
+    return block_body("SM_ET_Wall_Block_4x4")
+
+
+# ---- door wall
+DX0, DX1 = -1.2, -.25  # steel door opening (x) z 0..2.15
+
+
+def wall_block_door():
+    name = "SM_ET_Wall_Block_Door_4x4"
+    cx = (DX0 + DX1) / 2
+    p = [block_body(name, [(DX0, DX1, -1, 2.15)])]
+    # concrete step with threshold inside the opening, chamfered front edge
+    p.append(ext("step", "yz", [(.14, 0), (-.5, 0), (-.5, .11), (-.46, .15), (.14, .15)], cx - .7, cx + .7, STONE))
+    # steel frame (jambs + head overlap the wall by 7 cm and the opening by 3 cm)
+    for x0, x1 in ((DX0 - .07, DX0 + .03), (DX1 - .03, DX1 + .07)):
+        p.append(box("jamb", (x0, -.03, 0), (x1, .14, 2.22), STL))
+    p.append(hbar("head", DX0 - .07, DX1 + .07, 2.12, 2.24, -.03, .14, STL, d=.03))
+    # recessed leaf with wired-glass window, lever handle, hinges
+    lx0, lx1 = DX0 + .03, DX1 - .03
+    p.append(box("leaf", (lx0, .06, .17), (lx1, .11, 2.12), STL))
+    p.append(box("glass", (cx - .13, .05, 1.30), (cx + .13, .09, 1.76), PANE))
+    for s in (-1, 1):
+        a, b = sorted((cx + s * .12, cx + s * .17))
+        p.append(box("winStile", (a, .045, 1.26), (b, .09, 1.80), STL))
+    p.append(hbar("winTop", cx - .17, cx + .17, 1.74, 1.80, .045, .09, STL, d=.03))
+    p.append(hbar("winBot", cx - .17, cx + .17, 1.26, 1.32, .045, .09, STL, d=.03))
+    p.append(box("rosette", (lx1 - .12, .045, .95), (lx1 - .06, .065, 1.10), STL))
+    p.append(hbar("lever", lx1 - .22, lx1 - .07, 1.00, 1.04, .02, .05, STL, d=.015))
+    for zh in (.35, 1.15, 1.95):
+        p.append(box("hinge", (lx0 - .01, .03, zh - .06), (lx0 + .05, .07, zh + .06), STL))
+    # gooseneck lamp above the door: wall plate, arm, domed shade, glowing bulb face under it
+    ly = -.30
+    p.append(box("lampPlate", (cx - .06, -.02, 2.50), (cx + .06, .02, 2.80), STL))
+    p.append(cyl("lampArm", "y", (cx, 2.66), .0, ly, .018, STL, end1=False))
+    p.append(rings_axis("lampShade", "z", (cx, ly), [(2.74, .03), (2.72, .05), (2.66, .12), (2.60, .18), (2.56, .205), (2.555, .205)], STL, n=16))
+    p.append(rings_axis("bulb", "z", (cx, ly), [(2.52, .05), (2.54, .09), (2.57, .09)], GLOW, n=12))
+    # electric meter box + dome, conduits
+    mx = .70
+    p.append(ext("meterBox", "yz", [(.02, 1.25), (-.13, 1.25), (-.13, 1.71), (.02, 1.75)], mx - .15, mx + .15, STL))
+    p.append(rings_axis("meterFlange", "y", (mx, 1.52), [(-.12, .115), (-.14, .115)], STL, n=16))
+    p.append(rings_axis("meterDome", "y", (mx, 1.52), [(-.13, .10), (-.15, .095), (-.17, .065), (-.18, .03)], PANE, n=16))
+    p += conduit_run(mx, 1.74, 3.9) + conduit_run(mx, .15, 1.26)
+    return join(name, p)
+
+
+# ---- utility wall
+def wall_block_utility():
+    name = "SM_ET_Wall_Block_Utility_4x4"
+    vx0, vx1, vz0, vz1 = -1.45, -.55, 2.55, 3.20  # vent opening
+    p = [block_body(name, [(vx0, vx1, vz0, vz1)])]
+    p.append(box("ventBack", (vx0 - .01, .12, vz0 - .01), (vx1 + .01, .16, vz1 + .01), PANE))  # dark void behind the louvers
+    n = 9
+    pitch = (vz1 - vz0) / n
+    for k in range(n):
+        zc = vz0 + (k + .5) * pitch
+        # louver slats slope down toward the front; 1 cm thick
+        p.append(ext("louver", "yz", [(.11, zc + .022), (.03, zc - .012), (.03, zc - .022), (.11, zc + .012)], vx0 - .01, vx1 + .01, STL))
+    for s in (-1, 1):
+        a, b = sorted((vx0 if s < 0 else vx1, (vx0 - .08) if s < 0 else (vx1 + .08)))
+        p.append(box("ventFrameSide", (a - .02, -.025, vz0 - .07), (b + .0, .02, vz1 + .07), STL))
+    p.append(hbar("ventFrameTop", vx0 - .08, vx1 + .08, vz1 - .02, vz1 + .07, -.025, .02, STL, d=.025))
+    p.append(hbar("ventFrameBot", vx0 - .08, vx1 + .08, vz0 - .07, vz0 + .02, -.025, .02, STL, d=.025))
+    # electrical boxes with sloped rain-hood tops
+    p.append(ext("panelBox", "yz", [(.02, 1.50), (-.14, 1.50), (-.14, 2.06), (.02, 2.12)], .45, .85, STL))
+    p.append(ext("junctionBox", "yz", [(.02, .90), (-.10, .90), (-.10, 1.12), (.02, 1.16)], 1.15, 1.40, STL))
+    p.append(box("panelLatch", (.62, -.16, 1.74), (.68, -.12, 1.84), STL))
+    p += conduit_run(.65, 2.11, 3.9) + conduit_run(.55, .15, 1.51) + conduit_run(1.275, 1.15, 3.9) + conduit_run(1.275, .15, .91)
+    p.append(cyl("conduitH", "x", (-.01, 1.80), .84, 1.275, .02, STL, end1=False))
+    return join(name, p)
+
+
+# ---- roll-up door wall
+def wall_rollup():
+    name = "SM_ET_Wall_RollUpDoor_4x4"
+    p = [block_body(name, [(-1.5, 1.5, -1, 3.2)])]
+    p.append(ext("hood", "yz", [(.08, 3.00), (.12, 2.92), (.22, 2.92), (.22, 3.25), (.08, 3.25)], -1.46, 1.46, STL))
+    # corrugated door: horizontal ribs (trapezoid profile, 7.5 cm pitch) recessed to y .105..0.13, back plane .17
+    z1, per = 2.95, .075
+    n = 38
+    pts = [(.17, z1 - n * per), (.17, z1)]
+    for k in range(n):
+        zt = z1 - k * per
+        pts += [(.13, zt), (.13, zt - .015), (.105, zt - .0375), (.105, zt - .0525)]
+    pts.append((.13, z1 - n * per))
+    p.append(ext("door", "yz", pts, -1.48, 1.48, STL))
+    p.append(hbar("bottomRail", -1.48, 1.48, .02, .13, .07, .17, STL, d=.03))
+    for s in (-1, 1):
+        a, b = sorted((s * 1.45, s * 1.51))
+        p.append(box("guide", (a, -.03, 0), (b, .18, 3.25), STL))
+        a, b = sorted((s * 1.48, s * 1.62))
+        p.append(box("jambAngle", (a, -.03, 0), (b, .02, 3.20), STL))
+        p.append(rings_axis("bollard", "z", (s * 1.4, -.35),
+                            [(0, .095), (.03, .095), (.045, .078), (.92, .078), (.955, .07), (.985, .05), (1.0, .022), (1.0, .012)], YEL, n=16))
+        p.append(rings_axis("bollardBand", "z", (s * 1.4, -.35), [(.72, .079), (.88, .079)], STL, n=16))
+    p.append(hbar("headAngle", -1.64, 1.64, 3.15, 3.27, -.03, .02, STL, d=.03))
+    return join(name, p)
+
+
+# ---- pilasters
+PIL = (-.26, .06, -.06, .26)  # footprint x0, x1, y0, y1 (outside corner at x .06 / y -.06 side)
+
+
+def block_pilaster():
+    x0, x1, y0, y1 = PIL
+    body = loft("body", [poly_ring(x0, x1, y0, y1, .03, .26), poly_ring(x0, x1, y0, y1, .03, 4.0)], BLK)
+    g = .03
+    base = loft("base", [poly_ring(x0 - g, x1 + g, y0 - g, y1 + g, .03, 0), poly_ring(x0 - g, x1 + g, y0 - g, y1 + g, .03, .26),
+                         poly_ring(x0, x1, y0, y1, .03, .30)], STONE)
+    return join("SM_ET_Block_Pilaster", [body, base])
+
+
+def block_pilaster_parapet():
+    x0, x1, y0, y1 = PIL
+    red = loft("red", [poly_ring(x0, x1, y0, y1, .03, 0), poly_ring(x0, x1, y0, y1, .03, .56)], DRED)
+    g = .012
+    strips = [loft("strip", [poly_ring(x0 + .01, x1 - .01, y0 + .01, y1 - .01, .03, z0), poly_ring(x0 - g, x1 + g, y0 - g, y1 + g, .03, z0 + .015),
+                             poly_ring(x0 - g, x1 + g, y0 - g, y1 + g, .03, z1 - .015), poly_ring(x0 + .01, x1 - .01, y0 + .01, y1 - .01, .03, z1)], SS)
+              for z0, z1 in ((0, .06), (.50, .56))]
+    cap = loft("cap", [poly_ring(x0 - .02, x1 + .02, y0 - .02, y1 + .02, .03, .54), poly_ring(x0 + .02, x1 - .02, y0 + .02, y1 - .02, .03, .62)], SS)
+    return join("SM_ET_Block_Pilaster_Parapet", [red, cap] + strips)
+
+
+# ---- parapet band
+def strip_prof(d0, z0, z1, proud=.02, tilt=.015):
+    """Stainless trim strip hugging a plane at depth d0 (front = negative d): chamfered both edges, protrudes `proud`, back overlaps `tilt*2` into the body."""
+    return [(d0 + .02, z0), (d0 - proud, z0 + tilt), (d0 - proud, z1 - tilt), (d0 + .02, z1)]
+
+
+def parapet_band():
+    prof = lambda pts: pts
+    p = [ext("band", "yz", [(.20, 0), (-.04, 0), (-.04, .56), (.20, .56)], -2, 2, DRED),
+         ext("stripLow", "yz", strip_prof(-.04, 0, .06), -2, 2, SS), ext("stripHigh", "yz", strip_prof(-.04, .50, .56), -2, 2, SS),
+         ext("coping", "yz", [(-.05, .56), (-.05, .60), (.02, .62), (.24, .58), (.24, .54)], -2, 2, SS)]
+    return join("SM_ET_Parapet_Band_4m", p)
+
+
+# ---- diner
+DN = 24  # arc segments for the corner
+ARC = [-math.pi / 2 + k * (math.pi / 2) / DN for k in range(DN + 1)]
+FACETS = [-math.pi / 2 + k * (math.pi / 8) for k in range(5)]  # 4 glass facets of 22.5 deg
+
+
+def frame(corner):
+    """pt(s, a, d, z): s = x of the section (tile) or angle (corner); a = along the run, d = depth (front negative), z up."""
+    if not corner:
+        return lambda s, a, d, z: (s + a, d, z)
+
+    def f(th, a, d, z):
+        r = 2 - d
+        return (-2 + r * math.cos(th) - a * math.sin(th), 2 + r * math.sin(th) + a * math.cos(th), z)
+    return f
+
+
+# (d, z) sections; back plane d=.25 (closed shell)
+KICK = [(.25, 0), (-.03, 0), (-.04, .04), (-.04, .78), (-.03, .82), (.25, .82)]
+BAND = [(.25, 2.55), (-.04, 2.55), (-.04, 4.12), (.25, 4.12)]
+RUB = [(-.02, .36), (-.055, .372), (-.055, .408), (-.02, .42)]
+KICKPLATE = [(-.02, 0), (-.05, .015), (-.05, .095), (-.02, .10)]
+SILL = [(.06, .78), (-.075, .78), (-.075, .83), (.05, .885), (.06, .885)]
+HEADER = [(.25, 2.46), (-.05, 2.46), (-.08, 2.49), (-.08, 2.60), (-.05, 2.64), (.25, 2.64)]
+CAP = [(.25, 4.02), (-.075, 4.02), (-.095, 4.05), (-.095, 4.12), (-.25, 4.30), (-.25, 4.40)] + \
+      [(-.05 - .2 * math.cos(math.pi / 2 * k / 6), 4.40 + .2 * math.sin(math.pi / 2 * k / 6)) for k in range(1, 7)] + [(.25, 4.58)]
+
+
+def diner(corner):
+    name = "SM_ET_Diner_Corner" if corner else "SM_ET_Diner_Front_4m"
+    f = frame(corner)
+    stations = ARC if corner else [-2.0, 2.0]
+
+    def sweep(nm, prof, mat):
+        return loft(nm, [[f(s, 0, d, z) for d, z in prof] for s in stations], mat)
+
+    def mull(nm, s, half, z0=.80, z1=2.55):
+        prof = {0: [(-.03, .04), (-.03, -.005), (-.015, -.02), (.015, -.02), (.03, -.005), (.03, .04)],
+                -1: [(-.03, .04), (-.03, -.005), (-.015, -.02), (0, -.02), (0, .04)],   # half on the +a end of a run
+                1: [(0, .04), (0, -.02), (.015, -.02), (.03, -.005), (.03, .04)]}[half]  # half on the -a end
+        return loft(nm, [[f(s, a, d, z) for a, d in prof] for z in (z0, z1)], SS)
+
+    p = [sweep("kick", KICK, DRED), sweep("band", BAND, DRED), sweep("rub", RUB, SS), sweep("kickplate", KICKPLATE, SS),
+         sweep("sill", SILL, SS), sweep("header", HEADER, SS), sweep("cap", CAP, SS)]
+    if corner:
+        for k in range(4):  # flat glass facets, front (d=.02) to the closed back (d=.25)
+            ring = lambda th: [f(th, 0, d, z) for d, z in ((.02, .80), (.25, .80), (.25, 2.52), (.02, 2.52))]
+            p.append(loft("glass", [ring(FACETS[k]), ring(FACETS[k + 1])], PANE))
+        p += [mull("mullion", th, 0) for th in FACETS[1:4]] + [mull("mullionEnd", FACETS[0], 1), mull("mullionEnd", FACETS[4], -1)]
+    else:
+        p.append(box("glass", (-2, .02, .80), (2, .25, 2.52), PANE))
+        p += [mull("mullion", x, 0) for x in (-1, 0, 1)] + [mull("mullionEnd", -2, 1), mull("mullionEnd", 2, -1)]
+    return join(name, p)
+
 
 # ---------------------------------------------------------------- UVs (siding + shingle only; all other faces (0,0))
 def set_uvs(o, fn):
@@ -658,7 +918,8 @@ PIECES = [wall_clapboard, wall_clapboard_upper, lambda: wall_window(False), lamb
           lambda: corner(False), lambda: corner(True),
           cornice_4m, cornice_corner, roof_4m, roof_gable_end, gable_clapboard, portico,
           lambda: roof_4m(8.0, "SM_ET_Roof_Shingle_Span16_4m"), lambda: roof_gable_end(8.0, "SM_ET_Roof_Shingle_Span16_GableEnd_4m"),
-          lambda: gable_clapboard(8.0)]
+          lambda: gable_clapboard(8.0), wall_block, wall_block_door, wall_block_utility, wall_rollup, block_pilaster, block_pilaster_parapet, parapet_band,
+          lambda: diner(False), lambda: diner(True)]
 pieces = [f() for f in PIECES]
 for o in pieces:
     if o.name in SHINGLE_INFO:
@@ -683,6 +944,8 @@ for i, o in enumerate(pieces):
         assert bb[2][0] == 0.0 and abs(bb[2][1] - 5.852) < .002 and bb[1] == (.02, .2), bb
     if o.name == "SM_ET_Portico":
         assert bb[2][1] < 4.9 and bb[1][0] == -2.6, bb
+    if o.name == "SM_ET_Diner_Front_4m":
+        assert bb[0] == (-2.0, 2.0) and bb[1] == (-.25, .25) and abs(bb[2][1] - 4.6) < .002, bb
     print(o.name, "open edges:", open_edges(o))
     bpy.ops.object.select_all(action="DESELECT")
     o.select_set(True)
