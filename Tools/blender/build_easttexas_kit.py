@@ -61,7 +61,19 @@ wall tile is its y=0 plane: boards are proud to y=.02 (tucked .06), corner trim/
     Diner_Corner: the same section swept 90 deg around radius 2 (16 segments, glass in 4 flat facets with mullions). Origin = virtual outside corner (Corner_Clapboard convention);
       curve centre (-2, 2): runs from (-2, 0) (joins a Diner_Front tile ending at x=-2 along -X) to (0, 2) (joins a wall running along +Y, e.g. a rotated +90 tile).
     (gas canopy/pump: reuse SM_AT_GasCanopy / FuelPump).
-  Phase 4 service/basement: Bulkhead_CellarDoor, Stair_Concrete, PipeManifold_Meter, Bollard.
+  Phase 4 service/basement (concrete = "CH03 Concrete" (neutral triplanar; Atchafalaya CH02 Concrete is teal-tinted); rusty doors = "CH03 Cellar red"). All of them tuck TUCK=0.05 into
+    the wall (back face at y=+.05, behind the 0.02..0.06 board faces, so no gap) and sit on z=0 with ~5 cm buried below the ground line.
+    Stair_Concrete: pivot (0,0,0) at the foot of the first riser on the wall plane y=0. Occupies y -1.2..+.05: mass y -1.0..+.05 (22 risers of 4/22, treads .28, chamfered nosings) plus a 0.2 thick
+      outer cheek wall y -1.2..-.99 (rises 0.9 above the nosing line, mono-pitch top falling outward) and a 0.2 end wall at x 7.96..8.16 above the landing. The flight rises toward +X and ends at x=5.88; the top tread
+      continues as the landing x 5.88..8.15 (2.0 m beyond the last riser line x=6.16, so landing x 6.16..8.16 is centred on x=7.16), top z=4.0 = upper floor. Guard top z=4.9. For the funeral home west wall (rot -90)
+      the flight must rise toward +Blender y (rear), so place it MIRRORED (scale x -1) at (-hw, door_y - 7.16, 0), rot -90: the landing is then centred on y=door_y.
+    Wall_Clapboard_Door_Upper_4x4: SM_ET_Wall_Clapboard_Door_4x4 with the Upper wall treatment (no plinth/water table, siding V uses z+4). Threshold box z 0..0.10 -> sill top at floor+0.10; the landing top at floor level
+      leaves a 10 cm stone step with a chamfered nose (the leaf SM_ET_Door_6Panel hangs at tile-local (-.5,.095,.10) as for the ground door).
+    Bulkhead_CellarDoor: pivot back-centre on the wall plane (x 0, y 0, z 0), extends to y=-1.6, x +-.85 (cheek walls .12 thick, back beam, front beam, all with sloped tops: back z .85 at y=0 -> front z .30 at y=-1.6),
+      two rusty double leaves x +-.006..+-.80 lying .046 proud of the curb slope, strap hinges on the outer edges, ribs, centre hasp+padlock, two grab handles. Place with the wall's rotation (front = -Y local).
+    PipeManifold_Meter: pivot bottom-centre on the wall plane; concrete pad x +-.85, y -.42..+.05, top z .10; header (steel, z 1.2, y -.20, x +-.78), three risers at x -.62 (water + valve), 0 (gas, yellow, gate valve) and
+      +.62 (regulator), round gas meter (centre (0,-.20,1.62), r .15, dial face at y -.262), wall brackets. Front-most point y=-.42 (pad); steel parts reach y -.28.
+    Bollard: pivot bottom centre, 0.156 dia x 1.0 m, domed top, steel reflector band, concrete collar r .15 z -.05..0.1 (matches the bollards built into Wall_RollUpDoor_4x4).
 """
 from pathlib import Path
 
@@ -84,12 +96,14 @@ for _n, _c in (("CH03 Clapboard", (.78, .76, .70, 1)), ("CH03 Siding", (.78, .76
                ("Window pane", (.30, .40, .45, 1)), ("Walnut", (.25, .15, .08, 1)), ("CH03 Shutter", (.16, .24, .19, 1)),
                ("CH03 Shingle", (.20, .20, .22, 1)), ("Window glow", (1, .9, .7, 1)),
                ("CH03 Block", (.85, .83, .78, 1)), ("CH03 Diner red", (.55, .08, .07, 1)), ("CH03 Stainless", (.7, .7, .72, 1)),
-               ("CH03 Cold steel", (.28, .38, .33, 1)), ("CH03 Safety yellow", (.95, .75, .05, 1))):
+               ("CH03 Cold steel", (.28, .38, .33, 1)), ("CH03 Safety yellow", (.95, .75, .05, 1)),
+               ("CH03 Concrete", (.55, .55, .52, 1)), ("CH03 Cellar red", (.40, .10, .07, 1))):
     MATS[_n] = bpy.data.materials.new(_n)
     MATS[_n].diffuse_color = _c
 CLAP, STONE, STUCCO, PANE, WALNUT, SHUT = "CH03 Clapboard", "Trim limestone", "Aged stucco", "Window pane", "Walnut", "CH03 Shutter"
 SHING, GLOW, SIDE = "CH03 Shingle", "Window glow", "CH03 Siding"
 BLK, DRED, SS, STL, YEL = "CH03 Block", "CH03 Diner red", "CH03 Stainless", "CH03 Cold steel", "CH03 Safety yellow"
+CONC, CELLAR = "CH03 Concrete", "CH03 Cellar red"
 
 
 def _tri_caps(bm, caps):
@@ -311,9 +325,9 @@ def wall_window(upper):
 
 
 # ---------------------------------------------------------------- door
-def wall_door():
-    name = "SM_ET_Wall_Clapboard_Door_4x4"
-    p = [wall_body(name, False, [(-.5, .5, -1, 2.3), (-.5, .5, 2.35, 2.76)])]
+def wall_door(upper=False):
+    name = "SM_ET_Wall_Clapboard_Door_Upper_4x4" if upper else "SM_ET_Wall_Clapboard_Door_4x4"
+    p = [wall_body(name, upper, [(-.5, .5, -1, 2.3), (-.5, .5, 2.35, 2.76)])]
     p.append(hbar("transomBar", -.52, .52, 2.29, 2.37, 0, .07, CLAP, d=.02))
     p.append(ext("threshold", "yz", [(-.07, 0), (.16, 0), (.16, .10), (-.035, .10), (-.07, .065)], -.55, .55, STONE))
     for s in (-1, 1):
@@ -859,6 +873,128 @@ def diner(corner):
     return join(name, p)
 
 
+
+# ================================================================ phase 4: service yard (stair, bulkhead, manifold, bollard)
+TUCK = .05
+
+
+def star(cx, cz, r1, r2, n=8):
+    return [(cx + (r1 if i % 2 == 0 else r2) * math.cos(math.pi * i / n), cz + (r1 if i % 2 == 0 else r2) * math.sin(math.pi * i / n)) for i in range(2 * n)]
+
+
+def stair_concrete():
+    name = "SM_ET_Stair_Concrete"
+    N, TR = 22, .28
+    RS = 4.0 / N
+    c = .025
+    XM, XE = 8.15, 8.16  # mass end / cheek+end wall outer face
+    k = RS / TR
+    T = lambda x: RS + k * x + .86  # cheek body top (guard reference line 0.9 above the nosing line, minus .04)
+    Lref = lambda x: RS + k * x + .9 if x < (N - 1) * TR else 4.9
+    pts = [(0, -.05), (0, RS - c)]
+    for i in range(1, N + 1):
+        x0 = (i - 1) * TR
+        if i > 1:
+            pts.append((x0, i * RS - c))
+        pts.append((x0 + c, i * RS))
+        if i < N:
+            pts.append((i * TR, i * RS))
+    pts += [(XM, 4.0), (XM, -.05)]
+    p = [ext("mass", "xz", pts, -1.0, TUCK, CONC)]
+    xk = (N - 1) * TR  # 5.88: end of the sloped guard
+    body = [(-.01, -.05), (XE, -.05), (XE, 4.86), (xk, 4.86), (-.01, T(-.01))]
+    p.append(ext("cheek", "xz", body, -1.2, -.99, CONC))
+    cap = [(-1.202, -.06), (-.998, -.06), (-.998, .02), (-1.202, -.03)]
+    p.append(shear("capFlight", cap, -.012, xk, lambda x: RS + k * x + .9, CONC))
+    p.append(shear("capLanding", cap, xk, XE + .002, lambda x: 4.9, CONC))
+    p.append(ext("endWall", "xz", [(7.96, 3.9), (XE, 3.9), (XE, 4.86), (7.96, 4.86)], -1.0, TUCK, CONC))
+    p.append(ext("endCap", "xz", [(7.958, 4.84), (XE + .002, 4.84), (XE + .002, 4.87), (7.958, 4.92)], -1.0, TUCK, CONC))
+    return join(name, p)
+
+
+def bulkhead():
+    name = "SM_ET_Bulkhead_CellarDoor"
+    S = lambda y: .30 + (.85 - .30) / 1.6 * (y + 1.6)  # curb top slope
+    T = TUCK
+    p = []
+    for x0, x1 in ((-.85, -.73), (.73, .85)):  # cheek walls
+        p.append(ext("cheek", "yz", [(T, -.05), (-1.6, -.05), (-1.6, .30), (T, S(T))], x0, x1, CONC))
+    d = .004  # beams sit 4 mm under the cheek top plane where they overlap
+    p.append(ext("backBeam", "yz", [(T, -.05), (-.2, -.05), (-.2, S(-.2) - d), (T, S(T) - d)], -.74, .74, CONC))
+    p.append(ext("frontBeam", "yz", [(-1.4, -.05), (-1.6, -.05), (-1.6, .30 - d), (-1.4, S(-1.4) - d)], -.74, .74, CONC))
+    y0, y1 = -1.56, -.07
+    sb = lambda nm, xa, xb, ya, yb, za, zb, m: ext(nm, "yz", [(ya, S(ya) + za), (yb, S(yb) + za), (yb, S(yb) + zb), (ya, S(ya) + zb)], min(xa, xb), max(xa, xb), m)
+    for s in (-1, 1):
+        p.append(sb("leaf", s * .006, s * .80, y0, y1, -.004, .046, CELLAR))
+        for y in (-1.2, -.75, -.3):  # cross ribs
+            p.append(sb("rib", s * .03, s * .78, y - .02, y + .02, .046, .07, CELLAR))
+        for x in (.25, .60):  # long ribs
+            p.append(sb("rib", s * (x - .02), s * (x + .02), y0 + .06, y1 - .06, .046, .066, CELLAR))
+        for y in (-1.30, -.50):  # strap hinges + knuckle on the outer edge
+            p.append(sb("strap", s * .52, s * .80, y - .035, y + .035, .046, .058, STL))
+            p.append(knob("knuckle", (s * .80, y, S(y) + .052), .022, STL))
+        p.append(sb("handlePostA", s * .22, s * .235, -1.412, -1.388, .04, .09, STL))
+        p.append(sb("handlePostB", s * .405, s * .42, -1.412, -1.388, .04, .09, STL))
+        p.append(sb("handle", s * .22, s * .42, -1.412, -1.388, .075, .095, STL))
+    p.append(sb("haspPlate", -.12, .12, -.40, -.34, .074, .09, STL))
+    p.append(sb("haspPostA", -.12, -.09, -.40, -.34, .04, .074, STL))
+    p.append(sb("haspPostB", .09, .12, -.40, -.34, .04, .074, STL))
+    p.append(sb("padlock", -.035, .035, -.385, -.345, .03, .11, STL))
+    return join(name, p)
+
+
+def pipe_manifold():
+    name = "SM_ET_PipeManifold_Meter"
+    T = TUCK
+    yp, zh = -.20, 1.20  # pipe plane / header height
+    p = [ext("pad", "yz", [(T, -.05), (-.42, -.05), (-.42, .07), (-.38, .10), (T, .10)], -.85, .85, CONC)]
+    p.append(cyl("header", "x", (yp, zh), -.78, .78, .04, STL, n=12, end0=True, end1=True))
+    p.append(cyl("gasBand", "x", (yp, zh), -.14, .14, .047, YEL, n=12))
+    for x, mat, r in ((-.62, STL, .038), (0, YEL, .04), (.62, STL, .038)):
+        p.append(cyl("riser", "z", (x, yp), .08, zh, r, mat, n=12, end1=False))
+        p.append(rings_axis("tee", "z", (x, yp), [(zh - .06, .05), (zh + .03, .05), (zh + .06, .036)], mat if mat == YEL else STL, n=12))
+        p.append(rings_axis("foot", "z", (x, yp), [(.07, .055), (.12, .055), (.15, .04)], mat if mat == YEL else STL, n=12))
+    # wall brackets (roofed tops), header + risers
+    for x in (-.40, .40):
+        p.append(hbar("bracket", x - .03, x + .03, zh - .09, zh - .03, T, yp, STL, d=.02))
+    for x, z in ((-.62, .95), (0, .95), (.62, .95)):
+        p.append(hbar("bracket", x - .03, x + .03, z - .03, z + .03, T, yp, STL, d=.02))
+    # water valve (riser -.62) and gas valve (riser 0): body, bonnet, stem, star handwheel on the front
+    for x, z, wheel in ((-.62, .60, STL), (0, .62, YEL)):
+        p.append(rings_axis("valve", "z", (x, yp), [(z - .07, .05), (z - .04, .065), (z + .04, .065), (z + .07, .05)], STL, n=12))
+        p.append(cyl("bonnet", "y", (x, z), yp, yp - .08, .03, STL, n=10, end1=False))
+        p.append(cyl("stem", "y", (x, z), yp - .08, yp - .16, .011, STL, n=8, end1=False))
+        p.append(ext("wheel", "xz", star(x, z, .09, .068), yp - .185, yp - .16, wheel))
+    # regulator on the +.62 riser: domed bell
+    p.append(rings_axis("regulator", "z", (.62, yp), [(.52, .06), (.56, .075), (.72, .075), (.76, .06), (.80, .035), (.82, .012)], STL, n=14))
+    # round gas meter above the gas tee, stub + back bracket
+    mz = 1.62
+    p.append(cyl("meterStub", "z", (0, yp), zh, mz, .035, YEL, n=10, end0=False, end1=False))
+    p.append(hbar("meterBracket", -.05, .05, mz - .06, mz + .06, T, yp + .08, STL, d=.03))
+    p.append(rings_axis("meterBody", "y", (0, mz), [(yp + .07, .13), (yp + .06, .15), (yp - .05, .15), (yp - .06, .16), (yp - .075, .16), (yp - .075, .13)], STL, n=24))
+    p.append(rings_axis("meterBand", "y", (0, mz), [(yp - .01, .153), (yp - .045, .153)], YEL, n=24))
+    p.append(rings_axis("dial", "y", (0, mz), [(yp - .074, .125), (yp - .062, .125)], SS, n=24))
+    for k in range(9):
+        a = math.radians(225 - 33.75 * k)
+        ux, uz = math.cos(a), math.sin(a)
+        r0, r1, w = .092, .115, .005
+        quad = [(r0 * ux - w * uz, mz + r0 * uz + w * ux), (r1 * ux - w * uz, mz + r1 * uz + w * ux), (r1 * ux + w * uz, mz + r1 * uz - w * ux), (r0 * ux + w * uz, mz + r0 * uz - w * ux)]
+        p.append(ext("tick", "xz", quad, yp - .078, yp - .074, STL))
+    a = math.radians(70)
+    ux, uz = math.cos(a), math.sin(a)
+    w = .006
+    p.append(ext("needle", "xz", [(-w * uz, mz + w * ux), (.09 * ux - w * uz * .3, mz + .09 * uz + w * ux * .3), (.09 * ux + w * uz * .3, mz + .09 * uz - w * ux * .3), (w * uz, mz - w * ux)], yp - .082, yp - .078, DRED))
+    p.append(knob("hub", (0, yp - .082, mz), .014, STL))
+    return join(name, p)
+
+
+def bollard():
+    body = rings_axis("body", "z", (0, 0), [(0, .095), (.03, .095), (.045, .078), (.92, .078), (.955, .07), (.985, .05), (1.0, .022), (1.0, .012)], YEL, n=16)
+    band = rings_axis("band", "z", (0, 0), [(.72, .079), (.88, .079)], STL, n=16)
+    collar = rings_axis("collar", "z", (0, 0), [(-.05, .15), (.04, .15), (.07, .115), (.10, .08)], CONC, n=16)
+    return join("SM_ET_Bollard", [body, band, collar])
+
+
 # ---------------------------------------------------------------- UVs (siding + shingle only; all other faces (0,0))
 def set_uvs(o, fn):
     """fn(material_name, face, loop) -> (u, v) or None for (0,0). Writes the single UV layer 'UVMap'."""
@@ -919,7 +1055,8 @@ PIECES = [wall_clapboard, wall_clapboard_upper, lambda: wall_window(False), lamb
           cornice_4m, cornice_corner, roof_4m, roof_gable_end, gable_clapboard, portico,
           lambda: roof_4m(8.0, "SM_ET_Roof_Shingle_Span16_4m"), lambda: roof_gable_end(8.0, "SM_ET_Roof_Shingle_Span16_GableEnd_4m"),
           lambda: gable_clapboard(8.0), wall_block, wall_block_door, wall_block_utility, wall_rollup, block_pilaster, block_pilaster_parapet, parapet_band,
-          lambda: diner(False), lambda: diner(True)]
+          lambda: diner(False), lambda: diner(True),
+          lambda: wall_door(True), stair_concrete, bulkhead, pipe_manifold, bollard]
 pieces = [f() for f in PIECES]
 for o in pieces:
     if o.name in SHINGLE_INFO:
@@ -946,6 +1083,12 @@ for i, o in enumerate(pieces):
         assert bb[2][1] < 4.9 and bb[1][0] == -2.6, bb
     if o.name == "SM_ET_Diner_Front_4m":
         assert bb[0] == (-2.0, 2.0) and bb[1] == (-.25, .25) and abs(bb[2][1] - 4.6) < .002, bb
+    if o.name == "SM_ET_Stair_Concrete":
+        assert bb[0][0] < 0 and abs(bb[0][1] - 8.162) < .003 and bb[1] == (-1.202, .05) and abs(bb[2][1] - 4.92) < .003, bb
+    if o.name == "SM_ET_Bulkhead_CellarDoor":
+        assert bb[0] == (-.85, .85) and bb[1][0] == -1.6 and abs(bb[1][1] - .05) < .001, bb
+    if o.name == "SM_ET_Bollard":
+        assert bb[2] == (-.05, 1.0), bb
     print(o.name, "open edges:", open_edges(o))
     bpy.ops.object.select_all(action="DESELECT")
     o.select_set(True)

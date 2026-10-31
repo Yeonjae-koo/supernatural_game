@@ -49,6 +49,9 @@ namespace BeforeJericho.Editor
             Plain("CH03 Diner red", new Color(.60f, .09f, .08f), 0, .45f);
             Plain("CH03 Stainless", new Color(.80f, .81f, .83f), 1, .55f);
             Plain("CH03 Safety yellow", new Color(.92f, .72f, .04f), 0, .4f);
+            // Rusty cellar-door red: created once as a flat colour; SurfaceTextures.Run then gives it the rusty_metal_02 triplanar texture (tint derived from this colour). Never overwritten afterwards.
+            if(!AssetDatabase.LoadAssetAtPath<Material>(MatDir + "CH03 Cellar red.mat")) { Plain("CH03 Cellar red", new Color(.40f, .10f, .07f), 0, .25f); Debug.Log("Created CH03 Cellar red: run Before Jericho/Art/Apply Surface Textures once"); }
+            if(!AssetDatabase.LoadAssetAtPath<Material>(MatDir + "CH03 Concrete.mat")) Plain("CH03 Concrete", new Color(.50f, .49f, .46f), 0, .2f); // neutral grey for the service-yard concrete (CH02 Concrete is teal-tinted); texture added by SurfaceTextures.Run
             AssetDatabase.SaveAssets();
         }
 
@@ -122,7 +125,7 @@ namespace BeforeJericho.Editor
             var hidden = 0;
             foreach(var t in new[] { west, east }) if(t.GetComponent<MeshRenderer>() is MeshRenderer r) { r.enabled = false; hidden++; }
             GameObject Load(string n) => AssetDatabase.LoadAssetAtPath<GameObject>(Models + "SM_ET_" + n + ".fbx");
-            string[] names = { "Wall_Clapboard_4x4", "Wall_Clapboard_Upper_4x4", "Wall_Clapboard_Window_4x4", "Wall_Clapboard_Window_Upper_4x4", "Wall_Clapboard_Door_4x4", "Corner_Clapboard", "Corner_Clapboard_Upper", "Cornice_4m", "Cornice_Corner", "Roof_Shingle_Span16_4m", "Roof_Shingle_Span16_GableEnd_4m", "Gable_Clapboard_16m", "Portico" };
+            string[] names = { "Wall_Clapboard_4x4", "Wall_Clapboard_Upper_4x4", "Wall_Clapboard_Window_4x4", "Wall_Clapboard_Window_Upper_4x4", "Wall_Clapboard_Door_4x4", "Wall_Clapboard_Door_Upper_4x4", "Door_6Panel", "Stair_Concrete", "Bulkhead_CellarDoor", "PipeManifold_Meter", "Bollard", "Corner_Clapboard", "Corner_Clapboard_Upper", "Cornice_4m", "Cornice_Corner", "Roof_Shingle_Span16_4m", "Roof_Shingle_Span16_GableEnd_4m", "Gable_Clapboard_16m", "Portico" };
             var m = names.ToDictionary(n => n, Load);
             var missing = m.Where(kv => !kv.Value).Select(kv => kv.Key).ToList();
             var stucco = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Art/Materials/Aged stucco.mat");
@@ -131,9 +134,9 @@ namespace BeforeJericho.Editor
             var fh = new GameObject("Funeral Home").transform; fh.SetParent(root, false); fh.SetPositionAndRotation(new Vector3(0, 0, frontZ), Quaternion.Euler(0, 180, 0));
             int pieces = 0;
             // Blender-layout placement: (x,y,z) -> local (-x,z,-y), rotation about Z -> -yaw, X scale on the instance.
-            void P(string n, float x, float y, float z, float rot = 0, float scale = 1)
+            void P(string n, float x, float y, float z, float rot = 0, float scale = 1, Transform parent = null)
             {
-                var g = KitSwap.Place(m[n], Vector3.zero, Quaternion.identity, "Kit - " + n, fh);
+                var g = KitSwap.Place(m[n], Vector3.zero, Quaternion.identity, "Kit - " + n, parent ? parent : fh);
                 g.transform.localPosition = new Vector3(-x, z, -y); g.transform.localRotation = Quaternion.Euler(0, -rot, 0); g.transform.localScale = new Vector3(scale, 1, 1); pieces++;
             }
             float[] xs = { -2 * 4.88f, -4.88f, 0, 4.88f, 2 * 4.88f };
@@ -149,9 +152,15 @@ namespace BeforeJericho.Editor
             {
                 for(int i = 0; i < 4; i++)
                 {
-                    bool win = i % 2 == 0; float y = 2 + 4 * i;
+                    bool westDoor = side < 0 && i == 3, win = i % 2 == 0 && !(side < 0 && i == 2); // west: tile 2 is plain (covered by the stair), upper tile 3 is the side door
+                    float y = 2 + 4 * i;
                     P(win ? "Wall_Clapboard_Window_4x4" : "Wall_Clapboard_4x4", side, y, 0, rot);
-                    P(win ? "Wall_Clapboard_Window_Upper_4x4" : "Wall_Clapboard_Upper_4x4", side, y, 4, rot);
+                    if(westDoor)
+                    {
+                        P("Wall_Clapboard_Door_Upper_4x4", side, y, 4, rot);
+                        P("Door_6Panel", side + .095f, y + .5f, 4.10f, rot); // closed leaf: tile-local (-.5, .095, .10) rotated by -90
+                    }
+                    else P(win ? "Wall_Clapboard_Window_Upper_4x4" : "Wall_Clapboard_Upper_4x4", side, y, 4, rot);
                 }
                 P("Gable_Clapboard_16m", side, D / 2, 8, rot);
             }
@@ -169,6 +178,11 @@ namespace BeforeJericho.Editor
             {
                 var g = new GameObject(n); g.layer = layer; g.transform.SetParent(root, false); g.transform.position = centre; g.AddComponent<BoxCollider>().size = size; boxes++;
             }
+            void Cap(string n, Vector3 basePos)
+            {
+                var g = new GameObject(n); g.layer = layer; g.transform.SetParent(root, false); g.transform.position = basePos + Vector3.up * .5f;
+                var cc = g.AddComponent<CapsuleCollider>(); cc.radius = .1f; cc.height = 1; boxes++;
+            }
             float fw = hw - .61f, fx = .61f + fw / 2;
             foreach(var s in new[] { -1f, 1f })
             {
@@ -176,6 +190,25 @@ namespace BeforeJericho.Editor
                 Col("Kit - Side wall collider", new Vector3(s * (hw - .1f), 2, frontZ + D / 2), new Vector3(.2f, 4, D));
                 Col("Kit - Portico column collider", new Vector3(s * 2, 1.525f, frontZ - 2.4f), new Vector3(.4f, 3.05f, .4f));
             }
+            // Service yard (stair to the west side door, cellar bulkhead, east manifold + bollards, basement gate bollards). Blender-layout coordinates, same frame as the funeral home.
+            var yard = new GameObject("Service Yard").transform; yard.SetParent(root, false); yard.SetPositionAndRotation(fh.position, fh.rotation);
+            const float DoorY = 14, StairFoot = DoorY - 7.16f, BulkY = 5, ManY = 6; // landing (x 6.16..8.16 of the stair) centred on the door; stair foot at y 6.84
+            P("Stair_Concrete", -hw, StairFoot, 0, -90, -1, yard); P("Bulkhead_CellarDoor", -hw, BulkY, 0, -90, 1, yard); P("PipeManifold_Meter", hw, ManY, 0, 90, 1, yard);
+            foreach(var dy in new[] { -.9f, 0, .9f }) P("Bollard", hw + 1.0f, ManY + dy, 0, 0, 1, yard);
+            Physics.SyncTransforms();
+            foreach(var gx in new[] { -4.25f, 4.25f })
+            {
+                float gy = Physics.Raycast(new Vector3(gx, 3, 95.4f), Vector3.down, out var gh, 6) ? gh.point.y : 0;
+                P("Bollard", gx, 95.4f - frontZ, gy, 0, 1, yard);
+                Cap("Kit - Bollard collider", new Vector3(gx, gy, 95.4f));
+            }
+            foreach(var dy in new[] { -.9f, 0, .9f }) Cap("Kit - Bollard collider", new Vector3(hw + 1.0f, 0, frontZ + ManY + dy));
+            // Stepped stair colliders (low half to the mid flight, high half incl. landing + guard), bulkhead and manifold boxes: (x0,x1) world X, (y0,y1) layout y, h height.
+            void Block(string n, float x0, float x1, float y0, float y1, float h) => Col(n, new Vector3((x0 + x1) / 2, h / 2, frontZ + (y0 + y1) / 2), new Vector3(x1 - x0, h, y1 - y0));
+            float mid = StairFoot + 3.08f;
+            Block("Kit - Stair collider (low)", -hw - 1.2f, -hw + .05f, StairFoot, mid, 3.1f); Block("Kit - Stair collider (high)", -hw - 1.2f, -hw + .05f, mid, StairFoot + 8.16f, 4.9f);
+            Block("Kit - Bulkhead collider", -hw - 1.6f, -hw + .05f, BulkY - .85f, BulkY + .85f, .87f);
+            Block("Kit - Manifold collider", hw - .05f, hw + .42f, ManY - .85f, ManY + .85f, 1.78f);
             // Interior ceiling (no collider): top at y 4.0, hides the roof underside from inside.
             float cz0 = floor.position.z - floor.lossyScale.z / 2, cz1 = rearZ;
             var ceil = GameObject.CreatePrimitive(PrimitiveType.Cube); ceil.name = "Kit - Lobby ceiling";
